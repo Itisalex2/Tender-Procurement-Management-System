@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const userRouter = require('./routes/user');
+const adminRouter = require('./routes/admin');
 
 // Create express server
 const app = express();
@@ -18,6 +19,7 @@ const uri = process.env.ATLAS_URI;
 
 // Routers
 app.use('/api/user', userRouter)
+app.use('/api/admin', adminRouter)
 
 // Connect to MongoDB
 mongoose.connect(uri);

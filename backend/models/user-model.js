@@ -1,69 +1,74 @@
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const validator = require('validator')
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const validator = require('validator');
 const Schema = mongoose.Schema;
-const { ObjectID } = require('mongoose').Types
 
 const userSchema = new Schema({
   username: { type: String, required: true },
-  email: { type: String, required: true, unique: true }, // Email must be unique
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   number: { type: Number, required: true },
+  role: {
+    type: String,
+    required: true,
+    enum: ['admin', 'supplier', 'workerEngineering', 'workerCost'],
+    default: 'supplier'
+  },
 }, {
   timestamps: true,
 });
 
 // static signup method
-userSchema.statics.signup = async function (username, email, password, number) {
+userSchema.statics.signup = async function (username, email, password, number, role = 'supplier') {
   // validation
-  if (!username || !email || !password || !number) {
-    throw Error('All fields must be filled')
+  if (!username || !email || !password || !number || !role) {
+    throw Error('所有字段必须填写');
   }
 
-  //email validation and existence
+  // Email validation and existence check
   if (!validator.isEmail(email)) {
-    throw Error('Email not valid')
+    throw Error('邮件地址不符合要求');
   }
 
-  const exists = await this.findOne({ email })
-
+  const exists = await this.findOne({ email });
   if (exists) {
-    throw Error('Email already in use')
+    throw Error('邮件地址已存在');
   }
 
-  //password strength check & hashing+salting
-  //Password requirements: minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1
+  // Password strength check & hashing + salting
   if (!validator.isStrongPassword(password)) {
-    throw Error('Password is not strong enough')
+    throw Error('密码不符合要求');
   }
 
-  const salt = await bcrypt.genSalt(10) // the higher this number, the harder the password is to crack
-  const hash = await bcrypt.hash(password, salt)
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
 
-  //create user object
-  const user = await this.create({ username, email, password: hash, number })
+  // Create user object with the provided role
+  const user = await this.create({ username, email, password: hash, number, role });
 
-  return user
-}
+  return user;
+};
 
-//static login method
+// static login method
 userSchema.statics.login = async function (email, password) {
   if (!email || !password) {
-    throw Error('All fields must be filled')
+    throw Error('所有字段必须填写');
   }
 
-  //run email & pswd matches
-  const user = await this.findOne({ email })
+  // Check if the email exists and password matches
+  const user = await this.findOne({ email });
   if (!user) {
-    throw Error('Incorrect email')
-  }
-  const match = await bcrypt.compare(password, user.password)
-  if (!match) {
-    throw Error('Incorrect password')
+    throw Error('邮件地址/密码不正确');
   }
 
-  return user
-}
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    throw Error('邮件地址/密码不正确');
+  }
+
+  return user;
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

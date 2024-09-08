@@ -5,3 +5,13 @@
   color: white;
   /* Light text for contrast */
 }
+
+/* Custom class to center the dropdown below the profile icon */
+.dropdown-menu-center {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+  /* Ensures the dropdown appears below the icon */
+  position: absolute;
+  /* Ensures the dropdown is positioned correctly */
+}
