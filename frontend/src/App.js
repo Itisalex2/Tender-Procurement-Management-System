@@ -7,11 +7,18 @@ import Login from './pages/Login';
 import Settings from './pages/Settings';
 import PageNotFound from './pages/Page-Not-Found';
 import AdminSettings from './pages/Admin-Settings';
+import CreateTender from './pages/Create-Tender'; // Import the CreateTender page
 import Navbar from './components/Navbar';
 
 import { useAuthContext } from './hooks/use-auth-context';
 import useFetchUser from './hooks/use-fetch-user'; // Import the custom hook
+import permissionRoles from './utils/permissions'; // Import the permissions for role-based access
 import { useEffect } from 'react';
+
+// Helper function to check if the user has permission to create tenders
+const hasCreateTenderPermission = (role) => {
+  return permissionRoles.createTender.includes(role);
+};
 
 function App() {
   const { user: authUser, loading: authLoading } = useAuthContext(); // Get auth token and loading state from context
@@ -52,6 +59,10 @@ function App() {
             {/* Only load admin-settings if userData is loaded and role is admin */}
             <Route path='/admin-settings'
               element={authUser && userData?.role === 'admin' ? <AdminSettings /> : <Navigate to='/' />} />
+
+            {/* Only allow access to create-tender if user has the proper permissions */}
+            <Route path='/create-tender'
+              element={authUser && userData && hasCreateTenderPermission(userData.role) ? <CreateTender /> : <Navigate to='/' />} />
 
             <Route path='*' element={<Navigate to='/pageNotFound' />} />
           </Routes>
