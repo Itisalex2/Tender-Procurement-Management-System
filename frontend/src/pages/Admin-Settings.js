@@ -9,7 +9,6 @@ const AdminSettings = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      console.log("HII");
       try {
         const response = await fetch('/api/admin/users', {
           method: 'GET',
@@ -36,7 +35,11 @@ const AdminSettings = () => {
 
   }, [authUser]);
 
+  // Confirm before changing role
   const handleRoleChange = async (userId, newRole) => {
+    const confirmChange = window.confirm('您确定要更改这位用户的角色吗?');
+    if (!confirmChange) return;
+
     try {
       const response = await fetch(`/api/admin/users/${userId}/role`, {
         method: 'PATCH',
@@ -60,7 +63,11 @@ const AdminSettings = () => {
     }
   };
 
+  // Confirm before deleting user
   const handleDeleteUser = async (userId) => {
+    const confirmDelete = window.confirm('您确定要删除这位用户吗?这个操作无法撤销。');
+    if (!confirmDelete) return;
+
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
@@ -81,7 +88,7 @@ const AdminSettings = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   if (error) {
@@ -111,8 +118,8 @@ const AdminSettings = () => {
                 >
                   <option value="admin">管理员</option>
                   <option value="supplier">供应商</option>
-                  <option value="workerEngineering">工程工人</option>
-                  <option value="workerCost">成本工人</option>
+                  <option value="tenderProcurementGroup">招标管理组</option>
+                  <option value="gjcWorker">国酒城员工</option>
                 </select>
               </td>
               <td>

@@ -5,6 +5,8 @@ import { useLogout } from '../hooks/use-logout';
 import useFetchUser from '../hooks/use-fetch-user'; // Custom hook for fetching user info
 import { useAuthContext } from '../hooks/use-auth-context';
 import '../css-components/navbar.css';
+const roleMap = require('../utils/english-to-chinese-role-map');
+const permissionRoles = require('../utils/permissions'); // Import permission roles
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -12,6 +14,11 @@ const Navbar = () => {
   const { user: authUser } = useAuthContext(); // Check if user is logged in via context
   const { userData, loading, error, fetchUserData } = useFetchUser(); // Fetch user data only when needed
   const [profileOpen, setProfileOpen] = useState(false); // React state to control dropdown visibility
+
+  // Helper to check if the user has permission to create a tender
+  const hasCreateTenderPermission = (role) => {
+    return permissionRoles.createTender.includes(role);
+  };
 
   const handleLogoutClick = () => {
     logout();
@@ -93,12 +100,20 @@ const Navbar = () => {
                           <>
                             <li className="dropdown-item text-center">
                               <strong>{userData.username}</strong>
-                              <p>{userData.role}</p>
+                              <p>{roleMap[userData.role]}</p>
                             </li>
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item" onClick={() => handleNavigation('/settings')}>
                               <i className="bi bi-gear me-2"></i>设置
                             </li>
+
+                            {/* Conditionally render the "Create Tender" button based on permissions */}
+                            {userData && hasCreateTenderPermission(userData.role) && (
+                              <li className="dropdown-item" onClick={() => handleNavigation('/create-tender')}>
+                                <i className="bi bi-plus-square me-2"></i>创建招标
+                              </li>
+                            )}
+
                             {userData.role === 'admin' && (
                               <li className="dropdown-item" onClick={() => handleNavigation('/admin-settings')}>
                                 <i className="bi bi-tools me-2"></i>管理后台
@@ -136,3 +151,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

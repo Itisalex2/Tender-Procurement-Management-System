@@ -11,7 +11,7 @@ const userSchema = new Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'supplier', 'workerEngineering', 'workerCost'],
+    enum: ['admin', 'supplier', 'tenderProcurementGroup', 'gjcWorker'],
     default: 'supplier'
   },
 }, {

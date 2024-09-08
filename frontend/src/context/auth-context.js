@@ -18,14 +18,17 @@ export const AuthContextProvider = ({ children }) => {
         user: null,
     });
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Manage loading state
 
     useEffect(() => {
+        // Simulate async localStorage fetch to get the user
         const user = JSON.parse(localStorage.getItem('user'));
+
         if (user) {
             dispatch({ type: 'LOGIN', payload: user });
         }
-        setLoading(false);
+
+        setLoading(false); // Stop loading once user data is fetched
     }, []);
 
     return (
