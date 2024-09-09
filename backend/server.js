@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
@@ -22,6 +23,7 @@ const uri = process.env.ATLAS_URI;
 app.use('/api/user', userRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/tender', tenderRouter)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve the uploads folder as static files
 
 // Connect to MongoDB
 mongoose.connect(uri);

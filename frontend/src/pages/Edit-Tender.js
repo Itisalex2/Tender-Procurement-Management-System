@@ -1,17 +1,15 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import permissionRoles from '../utils/permissions';
 
-const CreateTender = () => {
+const EditTender = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  // Use the permissions list to get the roles
-  const roles = permissionRoles.includeInTenderTargetedUsers.join(','); // Get the roles for targeted users
-  const { users, usersLoading, usersError } = useFetchAllUsers(roles);
-
-  // State for the tender fields
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [issueDate, setIssueDate] = useState('');
@@ -20,30 +18,67 @@ const CreateTender = () => {
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [otherRequirements, setOtherRequirements] = useState('');
-  const [relatedFiles, setRelatedFiles] = useState([]);
-  const [targetedUsers, setTargetedUsers] = useState([]); // For selected targeted users
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [relatedFiles, setRelatedFiles] = useState([]); // Existing files
+  const [newFiles, setNewFiles] = useState([]); // New files to add
+  const [targetedUsers, setTargetedUsers] = useState([]);
+  // Use the permissions list to get the roles
+  const roles = permissionRoles.includeInTenderTargetedUsers.join(','); // Get the roles for targeted users
+  const { users, usersLoading, usersError } = useFetchAllUsers(roles);
 
-  // Handle file selection
+  // Fetch the tender data by ID when the component mounts
+  useEffect(() => {
+    const fetchTender = async () => {
+      try {
+        const response = await fetch(`/api/tender/${id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch tender');
+        }
+
+        // Set the fetched tender and populate form fields
+        setTitle(data.title);
+        setDescription(data.description);
+        setIssueDate(data.issueDate);
+        setClosingDate(data.closingDate);
+        setContactName(data.contactInfo.name);
+        setContactEmail(data.contactInfo.email);
+        setContactPhone(data.contactInfo.phone);
+        setOtherRequirements(data.otherRequirements);
+        setRelatedFiles(data.relatedFiles); // Existing files
+        setTargetedUsers(data.targetedUsers.map(user => user._id)); // Populate targetedUsers
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchTender();
+  }, [id, user.token]);
+
+  // Handle file selection for new files
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setRelatedFiles(files);
+    setNewFiles(files);
   };
 
-  // Show confirmation modal
-  const handleConfirm = () => {
-    setShowConfirm(true);
+  const handleUserCheckboxChange = (userId) => {
+    setTargetedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId) // Deselect if already selected
+        : [...prev, userId] // Add to selected if not already
+    );
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess(false);
 
-    const tenderData = {
+    const updatedTender = {
       title,
       description,
       issueDate,
@@ -54,92 +89,57 @@ const CreateTender = () => {
         phone: contactPhone,
       },
       otherRequirements,
-      targetedUsers, // Include selected targeted users
+      targetedUsers,
     };
 
     try {
       const formData = new FormData();
-
       // Add each field to FormData
-      Object.keys(tenderData).forEach((key) => {
+      Object.keys(updatedTender).forEach((key) => {
         if (key === 'contactInfo' || key === 'targetedUsers') {
-          formData.append(key, JSON.stringify(tenderData[key])); // Contact info and targetedUsers as a JSON string
+          formData.append(key, JSON.stringify(updatedTender[key]));
         } else {
-          formData.append(key, tenderData[key]);
+          formData.append(key, updatedTender[key]);
         }
       });
 
-      // Append each file to FormData
-      relatedFiles.forEach((file) => {
+      // Append new files to FormData (existing files are not overwritten)
+      newFiles.forEach((file) => {
         formData.append('relatedFiles', file);
       });
 
-      const response = await fetch('/api/tender/create', {
-        method: 'POST',
+      const response = await fetch(`/api/tender/${id}`, {
+        method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${user.token}`, // Send the token for authorization
+          Authorization: `Bearer ${user.token}`,
         },
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create tender');
+        throw new Error('Failed to update tender');
       }
 
-      setSuccess(true);
-      setShowConfirm(false); // Hide confirmation modal
-      navigate('/'); // Redirect to the homepage after success
+      navigate('/manage-tenders'); // Redirect to the tender management page after successful update
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Handle checkbox selection for targeted users
-  const handleUserCheckboxChange = (userId) => {
-    setTargetedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId) // Deselect if already selected
-        : [...prev, userId] // Add to selected if not already
-    );
-  };
+  if (loading || usersLoading) {
+    return <div></div>;
+  }
 
-  if (usersLoading) return <div>Loading...</div>;
-  if (usersError) return <div>Error fetching users: {usersError}</div>;
+  if (error || usersError) {
+    return <div>Error: {error || usersError}</div>;
+  }
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">创建招标</h1>
+      <h1 className="mb-4">编辑招标</h1>
       {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">招标创建成功！</div>}
-
-      {/* Confirmation Modal */}
-      {showConfirm && (
-        <div className="modal fade show" style={{ display: 'block' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">确认创建招标</h5>
-                <button type="button" className="close" onClick={() => setShowConfirm(false)}>
-                  <span>&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <p>您确定要创建这个招标吗？</p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowConfirm(false)}>
-                  取消
-                </button>
-                <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                  确认
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        {/* Form fields for tender details */}
         <div className="mb-3">
           <label htmlFor="title" className="form-label">标题</label>
           <input
@@ -168,7 +168,7 @@ const CreateTender = () => {
             type="datetime-local"
             className="form-control"
             id="issueDate"
-            value={issueDate}
+            value={issueDate.slice(0, 16)}
             onChange={(e) => setIssueDate(e.target.value)}
             required
           />
@@ -180,7 +180,7 @@ const CreateTender = () => {
             type="datetime-local"
             className="form-control"
             id="closingDate"
-            value={closingDate}
+            value={closingDate.slice(0, 16)}
             onChange={(e) => setClosingDate(e.target.value)}
             required
           />
@@ -231,6 +231,37 @@ const CreateTender = () => {
           ></textarea>
         </div>
 
+        {/* Section to display existing files */}
+        <div className="mb-3">
+          <label className="form-label">现有文件</label>
+          <ul>
+            {relatedFiles.map((file, index) => (
+              <li key={index}>
+                <a
+                  href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {file.fileName}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Section to add new files */}
+        <div className="mb-3">
+          <label htmlFor="relatedFiles" className="form-label">添加新文件</label>
+          <input
+            type="file"
+            className="form-control"
+            id="relatedFiles"
+            multiple
+            onChange={handleFileChange}
+          />
+        </div>
+
+        {/* Targeted Users */}
         <div className="mb-3">
           <label htmlFor="targetedUsers" className="form-label">选择目标用户</label>
           {users.map((user) => (
@@ -246,23 +277,10 @@ const CreateTender = () => {
           ))}
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="relatedFiles" className="form-label">相关文件</label>
-          <input
-            type="file"
-            className="form-control"
-            id="relatedFiles"
-            multiple
-            onChange={handleFileChange}
-          />
-        </div>
-
-        <button type="button" className="btn btn-primary" onClick={handleConfirm}>
-          创建招标
-        </button>
+        <button type="submit" className="btn btn-primary">更新招标</button>
       </form>
     </div>
   );
 };
 
-export default CreateTender;
+export default EditTender;

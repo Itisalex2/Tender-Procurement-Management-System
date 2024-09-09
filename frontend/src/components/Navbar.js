@@ -2,22 +2,21 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useLogout } from '../hooks/use-logout';
-import useFetchUser from '../hooks/use-fetch-user'; // Custom hook for fetching user info
+import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import '../css-components/navbar.css';
 const roleMap = require('../utils/english-to-chinese-role-map');
-const permissionRoles = require('../utils/permissions'); // Import permission roles
+const permissionRoles = require('../utils/permissions');
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const { user: authUser } = useAuthContext(); // Check if user is logged in via context
+  const { user: authUser } = useAuthContext();
   const { userData, loading, error, fetchUserData } = useFetchUser(); // Fetch user data only when needed
-  const [profileOpen, setProfileOpen] = useState(false); // React state to control dropdown visibility
+  const [profileOpen, setProfileOpen] = useState(false);
 
-  // Helper to check if the user has permission to create a tender
-  const hasCreateTenderPermission = (role) => {
-    return permissionRoles.createTender.includes(role);
+  const hasPermission = (permission) => {
+    return userData && permissionRoles[permission]?.includes(userData.role);
   };
 
   const handleLogoutClick = () => {
@@ -89,8 +88,7 @@ const Navbar = () => {
                             </li>
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item text-danger" onClick={handleLogoutClick}>
-                              <i className="bi bi-box-arrow-right me-2"></i>退出 (Logout)
-                            </li>
+                              <i className="bi bi-box-arrow-right me-2"></i>退出</li>
                           </>
                         ) : error ? (
                           <li className="dropdown-item text-center text-danger">
@@ -108,21 +106,26 @@ const Navbar = () => {
                             </li>
 
                             {/* Conditionally render the "Create Tender" button based on permissions */}
-                            {userData && hasCreateTenderPermission(userData.role) && (
+                            {userData && hasPermission('createTender') && (
                               <li className="dropdown-item" onClick={() => handleNavigation('/create-tender')}>
                                 <i className="bi bi-plus-square me-2"></i>创建招标
                               </li>
                             )}
 
-                            {userData.role === 'admin' && (
+                            {userData && hasPermission('manageTenders') && (
+                              <li className="dropdown-item" onClick={() => handleNavigation('/manage-tenders')}>
+                                <i className="bi bi-layout-text-window-reverse me-2"></i>招标管理
+                              </li>
+                            )}
+
+                            {userData && hasPermission('modifyBackend') && (
                               <li className="dropdown-item" onClick={() => handleNavigation('/admin-settings')}>
-                                <i className="bi bi-tools me-2"></i>管理后台
+                                <i className="bi bi-tools me-2"></i>后台管理
                               </li>
                             )}
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item text-danger" onClick={handleLogoutClick}>
-                              <i className="bi bi-box-arrow-right me-2"></i>退出 (Logout)
-                            </li>
+                              <i className="bi bi-box-arrow-right me-2"></i>退出</li>
                           </>
                         )}
                       </ul>

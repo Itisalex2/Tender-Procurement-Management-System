@@ -95,5 +95,21 @@ const getUserInfo = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const { role } = req.query; // Get the 'role' query parameter from the request
 
-module.exports = { userSignup, userLogin, userSettings, getUserInfo };
+    // Create a query object. If 'role' is provided, use it to filter users by role.
+    const query = role ? { role: { $in: role.split(',') } } : {}; // Allow multiple roles by splitting with ','
+
+    // Find users that match the query, and exclude the password from the results.
+    const users = await User.find(query).select('-password');
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+};
+
+
+module.exports = { userSignup, userLogin, userSettings, getUserInfo, getAllUsers };

@@ -17,6 +17,11 @@ const tenderSchema = new mongoose.Schema({
   }],
   status: { type: String, enum: ['Open', 'Closed', 'Awarded'], default: 'Open' },
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }],
+  targetedUsers: [{ // Only targted users can view this tender)
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: []
+  }],
 });
 
 const Tender = mongoose.model('Tender', tenderSchema);
