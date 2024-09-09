@@ -14,10 +14,11 @@ const tenderSchema = new mongoose.Schema({
   relatedFiles: [{
     fileName: { type: String },
     fileUrl: { type: String },
+    dateUploaded: { type: Date, default: Date.now }, // Add dateUploaded field with default to current date
   }],
   status: { type: String, enum: ['Open', 'Closed', 'Awarded'], default: 'Open' },
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }],
-  targetedUsers: [{ // Only targted users can view this tender)
+  targetedUsers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     default: []

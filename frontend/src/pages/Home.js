@@ -7,7 +7,6 @@ const Home = () => {
   const [error, setError] = useState(null);
   const { user } = useAuthContext();
 
-
   useEffect(() => {
     const fetchTenders = async () => {
       try {
@@ -70,9 +69,16 @@ const Home = () => {
                   <ul>
                     {tender.relatedFiles.map((file, index) => (
                       <li key={index}>
-                        <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
+                        <a
+                          href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           {file.fileName}
                         </a>
+                        {file.dateUploaded && (
+                          <span> - 上传时间: {new Date(file.dateUploaded).toLocaleString()}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -80,7 +86,6 @@ const Home = () => {
                   '无相关文件'
                 )}
               </td>
-
             </tr>
           ))}
         </tbody>

@@ -244,6 +244,9 @@ const EditTender = () => {
                 >
                   {file.fileName}
                 </a>
+                {file.dateUploaded && (
+                  <span> - 上传时间: {new Date(file.dateUploaded).toLocaleString()}</span>
+                )}
               </li>
             ))}
           </ul>
