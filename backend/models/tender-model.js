@@ -19,11 +19,8 @@ const tenderSchema = new mongoose.Schema({
   }],
   status: { type: String, enum: ['Open', 'Closed', 'Awarded'], default: 'Open' },
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }],
-  targetedUsers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    default: []
-  }],
+  targetedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }], // Users that are able to see the tender
+  conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', default: [] }], // Conversations related to the tender
 });
 
 const Tender = mongoose.model('Tender', tenderSchema);

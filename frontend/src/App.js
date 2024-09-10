@@ -13,6 +13,7 @@ import AdminSettings from './pages/Admin-Settings';
 import CreateTender from './pages/Create-Tender';
 import ManageTenders from './pages/Manage-Tendors';
 import EditTender from './pages/Edit-Tender';
+import SubmitBid from './pages/Submit-Bid';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
 
@@ -93,6 +94,16 @@ function App() {
                 <ProtectedRoute>
                   <ProtectedTenderRoute userData={userData} />
                 </ProtectedRoute>
+              }
+            />
+
+            {/* New Bid Submission Route */}
+            <Route
+              path="/tender/:id/bid"
+              element={
+                <ProtectedPermissionRoute userData={userData} permission="submitBid">
+                  <SubmitBid />
+                </ProtectedPermissionRoute>
               }
             />
 

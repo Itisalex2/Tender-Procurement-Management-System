@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGetTender } from '../hooks/use-get-tender';
+import useFetchUser from '../hooks/use-fetch-user';
+import permissionRoles from '../utils/permissions';
 
 const ViewTender = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [tenderDetails, setTenderDetails] = useState({
     title: '',
     description: '',
@@ -20,6 +23,7 @@ const ViewTender = () => {
   });
 
   const { tender, loading, error } = useGetTender(id);
+  const { userData, loading: userLoading, error: userError } = useFetchUser(); // Fetch the user data
 
   // Update tenderDetails when tender data is fetched
   useEffect(() => {
@@ -37,13 +41,23 @@ const ViewTender = () => {
     }
   }, [tender]);
 
-  if (loading) {
+  // Check if the user has permission to submit a bid
+  const canSubmitBid = () => {
+    if (!userData) return false;
+    return permissionRoles.submitBid.includes(userData.role); // Check if user's role is in submitBid permissions
+  };
+
+  if (loading || userLoading) {
     return <div>下载中...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (error || userError) {
+    return <div>Error: {error || userError}</div>;
   }
+
+  const handleBidSubmit = () => {
+    navigate(`/tender/${id}/bid`);
+  };
 
   return (
     <div className="container mt-5">
@@ -112,6 +126,14 @@ const ViewTender = () => {
         </ul>
       </div>
 
+      {/* Show the Submit Bid button if the user is a tenderer */}
+      {canSubmitBid() && (
+        <div className="mt-3">
+          <button className="btn btn-primary" onClick={handleBidSubmit}>
+            提交投标
+          </button>
+        </div>
+      )}
     </div>
   );
 };

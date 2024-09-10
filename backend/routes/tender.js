@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createTender, getTenders, getTenderById, updateTenderById, deleteTenderById } = require('../controllers/tender-controller');
+const { createTender, getTenders, getTenderById, updateTenderById, deleteTenderById, submitBid } = require('../controllers/tender-controller');
 const requireAuth = require('../middleware/require-auth');
 const multer = require('multer');
 
@@ -24,5 +24,6 @@ router.patch('/:id', upload.array('relatedFiles'), updateTenderById); // Update 
 router.delete('/:id', deleteTenderById); // Delete a tender by ID
 router.get('', getTenders); // Get all tenders
 router.get('/:id', getTenderById); // Get a tender by ID
+router.post('/:id/bid', upload.array('files'), submitBid); // Submit a bid with file uploads
 
 module.exports = router;

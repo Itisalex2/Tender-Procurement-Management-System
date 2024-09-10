@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
-import { useNavigate } from 'react-router-dom'; // For navigation
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [tenders, setTenders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuthContext();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTenders = async () => {

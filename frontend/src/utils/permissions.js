@@ -7,6 +7,8 @@ const permissionRoles = {
   manageTenders: ['admin', 'tenderProcurementGroup'],
   editTender: ['admin', 'tenderProcurementGroup'],
   includeInTenderTargetedUsers: ['tenderer', 'gjcWorker'],
+  submitBid: ['tenderer'],
+  messageOnAllTenders: ['admin', 'tenderProcurementGroup'],
 };
 
 module.exports = permissionRoles;
