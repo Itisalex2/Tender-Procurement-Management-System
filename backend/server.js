@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const startCronJob = require('./utils/cron-jobs');
 
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
@@ -20,21 +21,21 @@ const port = process.env.PORT || 4000;
 const uri = process.env.ATLAS_URI;
 
 // Routers
-app.use('/api/user', userRouter)
-app.use('/api/admin', adminRouter)
-app.use('/api/tender', tenderRouter)
+app.use('/api/user', userRouter);
+app.use('/api/admin', adminRouter);
+app.use('/api/tender', tenderRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve the uploads folder as static files
 
 // Connect to MongoDB
-mongoose.connect(uri);
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log("MongoDB database connection established successfully");
-});
+mongoose.connect(uri)
+  .then(() => {
+    console.log("MongoDB database connection established successfully");
+    // Start the cron job after MongoDB is connected
+    startCronJob();
+  })
+  .catch((error) => console.error("MongoDB connection error:", error));
 
 // Start backend server
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
-
-

@@ -11,15 +11,15 @@ const userSchema = new Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'supplier', 'tenderProcurementGroup', 'gjcWorker'],
-    default: 'supplier'
+    enum: ['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'],
+    default: 'tenderer'
   },
 }, {
   timestamps: true,
 });
 
 // static signup method
-userSchema.statics.signup = async function (username, email, password, number, role = 'supplier') {
+userSchema.statics.signup = async function (username, email, password, number, role = 'tenderer') {
   // validation
   if (!username || !email || !password || !number || !role) {
     throw Error('所有字段必须填写');

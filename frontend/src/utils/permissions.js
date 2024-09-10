@@ -1,4 +1,4 @@
-// Roles: 'admin', 'supplier', 'tenderProcurementGroup', 'gjcWorker'
+// Roles: 'admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'
 
 const permissionRoles = {
   modifyBackend: ['admin'],
@@ -6,7 +6,7 @@ const permissionRoles = {
   viewAllTenders: ['admin', 'tenderProcurementGroup'],
   manageTenders: ['admin', 'tenderProcurementGroup'],
   editTender: ['admin', 'tenderProcurementGroup'],
-  includeInTenderTargetedUsers: ['supplier', 'gjcWorker'],
+  includeInTenderTargetedUsers: ['tenderer', 'gjcWorker'],
 };
 
 module.exports = permissionRoles;
