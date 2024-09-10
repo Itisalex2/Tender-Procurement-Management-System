@@ -66,7 +66,7 @@ const ManageTenders = () => {
   };
 
   if (loading) {
-    return <div></div>;
+    return <div>下载中...</div>;
   }
 
   if (error) {

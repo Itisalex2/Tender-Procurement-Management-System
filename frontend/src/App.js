@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
+// Pages
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
@@ -11,6 +12,9 @@ import CreateTender from './pages/Create-Tender';
 import Navbar from './components/Navbar';
 import ManageTenders from "./pages/Manage-Tendors";
 import EditTender from "./pages/Edit-Tender";
+
+// Protected routes
+import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 
 import { useAuthContext } from './hooks/use-auth-context';
 import useFetchUser from './hooks/use-fetch-user';
@@ -71,6 +75,12 @@ function App() {
 
             {/* Only allow access to edit-tenders if user has proper permissions*/}
             <Route path='/tender/edit/:id' element={authUser && userData && hasPermission('editTender') ? <EditTender /> : <Navigate to='/' />} />
+
+            {/* Protected route for viewing tender details */}
+            <Route
+              path='/tender/:id'
+              element={authUser && userData ? <ProtectedTenderRoute userData={userData} /> : <Navigate to='/login' />}
+            />
 
             <Route path='/pageNotFound' element={<PageNotFound />} />
             <Route path='*' element={<Navigate to='/pageNotFound' />} />

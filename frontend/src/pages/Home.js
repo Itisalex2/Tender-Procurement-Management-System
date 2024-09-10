@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
+import { useNavigate } from 'react-router-dom'; // For navigation
 
 const Home = () => {
   const [tenders, setTenders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuthContext();
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     const fetchTenders = async () => {
       try {
-        // Only get open tenders
         const response = await fetch('/api/tender?status=Open', {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
-        }); // Fetch tenders from backend
+        });
         const data = await response.json();
 
         if (!response.ok) {
@@ -34,8 +35,13 @@ const Home = () => {
     fetchTenders();
   }, [user.token]);
 
+  const handleRowClick = (tenderId) => {
+    // Navigate to the new ViewTender page with the tenderId
+    navigate(`/tender/${tenderId}`);
+  };
+
   if (loading) {
-    return <div></div>;
+    return <div>下载中...</div>;
   }
 
   if (error) {
@@ -58,7 +64,7 @@ const Home = () => {
         </thead>
         <tbody>
           {tenders.map((tender) => (
-            <tr key={tender._id}>
+            <tr key={tender._id} onClick={() => handleRowClick(tender._id)} style={{ cursor: 'pointer' }}>
               <td>{tender.title}</td>
               <td>{tender.description}</td>
               <td>{new Date(tender.issueDate).toLocaleString()}</td>

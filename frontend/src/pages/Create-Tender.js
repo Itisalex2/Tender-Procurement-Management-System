@@ -103,7 +103,7 @@ const CreateTender = () => {
     );
   };
 
-  if (usersLoading) return <div>Loading...</div>;
+  if (usersLoading) return <div>下载中...</div>;
   if (usersError) return <div>Error fetching users: {usersError}</div>;
 
   return (
