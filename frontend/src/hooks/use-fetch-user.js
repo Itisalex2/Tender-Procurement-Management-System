@@ -1,43 +1,44 @@
-import { useState } from 'react';
-import { useAuthContext } from './use-auth-context'; // Assuming you already have this context
+import { useState, useEffect } from 'react';
+import { useAuthContext } from './use-auth-context';
 
 const useFetchUser = () => {
-  const { user: authUser } = useAuthContext(); // Get the token from the context
-  const [userData, setUserData] = useState(null); // To store user data from MongoDB
-  const [loading, setLoading] = useState(false); // Default to not loading
-  const [error, setError] = useState(null); // Error state
+  const { user: authUser } = useAuthContext();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const fetchUserData = async () => {
-    if (!authUser || !authUser.token) {
-      setError('No authentication token found');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch('/api/user', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authUser.token}`, // Pass the token for authorization
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch user data');
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!authUser) {
+        setLoading(false);
+        return;
       }
 
-      setUserData(data);
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
+      try {
+        const response = await fetch('/api/user', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
+          },
+        });
 
-  return { userData, loading, error, fetchUserData };
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+
+        const data = await response.json();
+        setUserData(data); // Set the user data in state
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [authUser]);
+
+  return { userData, loading, error };
 };
 
 export default useFetchUser;

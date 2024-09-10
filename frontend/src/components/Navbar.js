@@ -12,7 +12,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const { user: authUser } = useAuthContext();
-  const { userData, loading, error, fetchUserData } = useFetchUser(); // Fetch user data only when needed
+  const { userData, loading, error } = useFetchUser();
   const [profileOpen, setProfileOpen] = useState(false);
 
   const hasPermission = (permission) => {
@@ -27,9 +27,6 @@ const Navbar = () => {
 
   const handleProfileClick = () => {
     setProfileOpen((prevState) => !prevState); // Toggle dropdown
-    if (!userData && authUser) {
-      fetchUserData(); // Fetch user data only when opening profile for the first time
-    }
   };
 
   const handleNavigation = (path) => {
