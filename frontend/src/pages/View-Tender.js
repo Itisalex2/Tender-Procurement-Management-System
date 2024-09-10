@@ -104,6 +104,9 @@ const ViewTender = () => {
               {file.dateUploaded && (
                 <span> - 上传时间: {new Date(file.dateUploaded).toLocaleString()}</span>
               )}
+              {file.uploadedBy && (
+                <span> - 上传者: {file.uploadedBy.username}</span>
+              )}
             </li>
           ))}
         </ul>

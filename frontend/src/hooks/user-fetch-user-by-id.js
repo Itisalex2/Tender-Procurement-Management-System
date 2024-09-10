@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from './use-auth-context';
 
-/* Fetch the authenticated user's info, NOT an arbitrary user */
-const useFetchUser = () => {
+/* Fetch a specific user's info by ID */
+const useFetchUserById = (userId) => {
   const { user: authUser } = useAuthContext();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,13 +10,13 @@ const useFetchUser = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!authUser) {
+      if (!authUser || !userId) {
         setLoading(false);
         return;
       }
 
       try {
-        const response = await fetch('/api/user/me', {
+        const response = await fetch(`/api/user/${userId}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
@@ -37,9 +37,9 @@ const useFetchUser = () => {
     };
 
     fetchUserData();
-  }, [authUser]);
+  }, [authUser, userId]); // Fetch user data whenever authUser or userId changes
 
   return { userData, loading, error };
 };
 
-export default useFetchUser;
+export default useFetchUserById;

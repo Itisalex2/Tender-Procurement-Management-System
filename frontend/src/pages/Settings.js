@@ -1,51 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
+import useFetchUser from '../hooks/use-fetch-user';
 
 const Settings = () => {
   const { user } = useAuthContext();
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { userData, loading, error } = useFetchUser(); // Use the hook for user data
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  // State for editable fields
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
 
+  // Populate form data when userData is fetched
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch('/api/user', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch user data');
-        }
-
-        setUserData(data);
-        setUsername(data.username);
-        setEmail(data.email);
-        setNumber(data.number);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [user.token]);
+    if (userData) {
+      setUsername(userData.username);
+      setEmail(userData.email);
+      setNumber(userData.number);
+    }
+  }, [userData]);
 
   const handleSaveChanges = async () => {
     setSubmitting(true);
-    setError(null);
     setSuccess(false);
 
     try {
@@ -66,7 +44,7 @@ const Settings = () => {
 
       setSuccess(true);
     } catch (error) {
-      setError(error.message);
+      console.error(error.message);
     } finally {
       setSubmitting(false);
     }
@@ -107,7 +85,7 @@ const Settings = () => {
             type="text"
             className="form-control"
             id="role"
-            value={userData.role} // Get role from userData
+            value={userData?.role || ''} // Get role from userData
             readOnly
           />
         </div>
@@ -136,12 +114,11 @@ const Settings = () => {
           />
         </div>
 
-        {/* Save Changes Button */}
         <div className="text-center mt-4">
           <button
             className="btn btn-primary"
             onClick={handleSaveChanges}
-            readOnly={submitting}
+            disabled={submitting}
           >
             {submitting ? '保存中...' : '保存更改'}
           </button>

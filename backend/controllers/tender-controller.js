@@ -14,6 +14,7 @@ const createTender = async (req, res) => {
     const relatedFiles = req.files.map(file => ({
       fileName: file.originalname,
       fileUrl: `/uploads/${file.filename}`,
+      uploadedBy: req.user._id,
     }));
 
     // Parse contactInfo as it's sent as JSON string
@@ -96,6 +97,7 @@ const updateTenderById = async (req, res) => {
       const newFiles = req.files.map(file => ({
         fileName: file.originalname,
         fileUrl: `/uploads/${file.filename}`,
+        uploadedBy: req.user._id,
       }));
 
       // Append the new files to the existing relatedFiles
@@ -118,10 +120,15 @@ const updateTenderById = async (req, res) => {
 // Controller to get a specific tender by ID
 const getTenderById = async (req, res) => {
   try {
-    const { id } = req.params; // Get the tender ID from the route parameters
+    const { id } = req.params;
 
-    // Find the tender by ID
-    const tender = await Tender.findById(id).populate('targetedUsers', 'username');
+    // Find the tender by ID and populate both targetedUsers and uploadedBy fields
+    const tender = await Tender.findById(id)
+      .populate('targetedUsers', 'username') // Populate targetedUsers' username
+      .populate({
+        path: 'relatedFiles.uploadedBy', // Populate the uploadedBy field within relatedFiles
+        select: 'username', // Only return the username for uploadedBy
+      });
 
     if (!tender) {
       return res.status(404).json({ error: 'Tender not found' });
