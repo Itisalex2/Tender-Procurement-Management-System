@@ -1,12 +1,12 @@
 // ProtectedTenderRoute.js
 import { useParams, Navigate } from 'react-router-dom';
-import { useGetTender } from '../../hooks/use-get-tender';
+import { useFetchTender } from '../../hooks/use-fetch-tender';
 import permissionRoles from '../../utils/permissions'; // Import permission roles
 import ViewTender from '../../pages/View-Tender'; // Import the ViewTender component
 
 const ProtectedTenderRoute = ({ userData }) => {
   const { id } = useParams(); // Extract tender ID from URL. e.g. path='/tender/:id'
-  const { tender, loading, error } = useGetTender(id);
+  const { tender, loading, error } = useFetchTender(id);
 
   if (loading) return <div>下载中...</div>;
   if (error) return <div>Error: {error}</div>;

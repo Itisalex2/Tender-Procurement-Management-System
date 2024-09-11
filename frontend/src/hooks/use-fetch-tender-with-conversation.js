@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from './use-auth-context';
 
-const useGetTender = (id) => {
+const useFetchTenderWithConversation = (id) => {
   const { user } = useAuthContext();
   const [tender, setTender] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTender = async () => {
+    const fetchTenderWithConversation = async () => {
       try {
-        const response = await fetch(`/api/tender/${id}`, {
+        const response = await fetch(`/api/tender/${id}?populate=conversations`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -18,7 +18,7 @@ const useGetTender = (id) => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch tender');
+          throw new Error(data.error || 'Failed to fetch tender with conversations');
         }
 
         setTender(data);
@@ -29,10 +29,10 @@ const useGetTender = (id) => {
       }
     };
 
-    fetchTender();
+    fetchTenderWithConversation();
   }, [id, user.token]);
 
   return { tender, loading, error };
 };
 
-export { useGetTender };
+export { useFetchTenderWithConversation };

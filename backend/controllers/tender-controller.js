@@ -1,8 +1,9 @@
 const Tender = require('../models/tender-model');
-const Bid = require('../models/bid-model');
 const permissionRoles = require('../../frontend/src/utils/permissions');
 const fs = require('fs');
 const path = require('path');
+const Conversation = require('../models/conversation-model');
+const Message = require('../models/message-model');
 
 const createTender = async (req, res) => {
   try {
@@ -118,18 +119,41 @@ const updateTenderById = async (req, res) => {
 };
 
 
-// Controller to get a specific tender by ID
 const getTenderById = async (req, res) => {
   try {
     const { id } = req.params;
+    const { populate } = req.query; // Check for the populate query parameter
 
-    // Find the tender by ID and populate both targetedUsers and uploadedBy fields
-    const tender = await Tender.findById(id)
+    // Start building the query to find the tender
+    let query = Tender.findById(id)
       .populate('targetedUsers', 'username') // Populate targetedUsers' username
       .populate({
         path: 'relatedFiles.uploadedBy', // Populate the uploadedBy field within relatedFiles
         select: 'username', // Only return the username for uploadedBy
       });
+
+    // If the populate query contains 'conversations', populate the conversations
+    if (populate === 'conversations') {
+      query = query.populate({
+        path: 'conversations',
+        populate: [
+          {
+            path: 'user', // Populate the user field in conversations
+            select: 'username', // Only return the username for the user
+          },
+          {
+            path: 'messages',
+            populate: {
+              path: 'sender',
+              select: 'username', // Only return the username for the sender
+            },
+          },
+        ],
+      });
+    }
+
+    // Execute the query
+    const tender = await query;
 
     if (!tender) {
       return res.status(404).json({ error: 'Tender not found' });
@@ -141,6 +165,7 @@ const getTenderById = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch tender' });
   }
 };
+
 
 const deleteTenderById = async (req, res) => {
   try {
@@ -174,51 +199,8 @@ const deleteTenderById = async (req, res) => {
   }
 };
 
-// Controller to submit a bid with file uploads
-const submitBid = async (req, res) => {
-  try {
-    const { amount, content } = req.body;
-    const tenderId = req.params.id;
-    const userId = req.user._id;
 
-    // Check if the tender exists
-    const tender = await Tender.findById(tenderId);
-    if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
-    }
 
-    // Handle file uploads
-    let uploadedFiles = [];
-    if (req.files && req.files.length > 0) {
-      uploadedFiles = req.files.map((file) => ({
-        fileName: file.originalname,
-        fileUrl: `/uploads/${file.filename}`,
-        uploadedBy: userId,
-      }));
-    }
-
-    // Create a new bid
-    const bid = new Bid({
-      amount,
-      content,
-      tender: tenderId,
-      bidder: userId,
-      files: uploadedFiles,
-    });
-
-    // Save the bid
-    await bid.save();
-
-    // Add the bid to the tender's bid array
-    tender.bids.push(bid._id);
-    await tender.save();
-
-    res.status(201).json({ message: 'Bid submitted successfully', bid });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to submit bid' });
-  }
+module.exports = {
+  createTender, getTenders, updateTenderById, getTenderById, deleteTenderById,
 };
-
-
-module.exports = { createTender, getTenders, updateTenderById, getTenderById, deleteTenderById, submitBid };

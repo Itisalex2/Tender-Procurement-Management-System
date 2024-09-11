@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
-import { useGetTender } from '../hooks/use-get-tender';
+import { useFetchTender } from '../hooks/use-fetch-tender';
 import permissionRoles from '../utils/permissions';
 
 const SubmitBid = () => {
@@ -10,7 +10,7 @@ const SubmitBid = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { userData, loading: userLoading, error: userError } = useFetchUser();
-  const { tender, loading: tenderLoading, error: tenderError } = useGetTender(id);
+  const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
 
   const [amount, setAmount] = useState('');
   const [content, setContent] = useState('');

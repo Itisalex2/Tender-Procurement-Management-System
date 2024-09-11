@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
-import { useGetTender } from '../hooks/use-get-tender';
+import { useFetchTender } from '../hooks/use-fetch-tender';
 import permissionRoles from '../utils/permissions';
 
 const EditTender = () => {
@@ -32,7 +32,7 @@ const EditTender = () => {
   const { users, usersLoading, usersError } = useFetchAllUsers(roles);
 
   // Use the hook to get the tender data by ID
-  const { tender, loading, error } = useGetTender(id);
+  const { tender, loading, error } = useFetchTender(id);
 
   // Update formData when tender data is fetched
   useEffect(() => {
