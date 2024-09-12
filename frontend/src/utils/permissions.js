@@ -9,6 +9,8 @@ const permissionRoles = {
   includeInTenderTargetedUsers: ['tenderer', 'gjcWorker'],
   submitBid: ['tenderer'],
   messageOnAllTenders: ['admin', 'tenderProcurementGroup'],
+  confirmAllowViewBids: ['tenderProcurementGroup'], // Press button to allow viewing of bids
+  canViewBids: ['admin', 'tenderProcurementGroup'],
 };
 
 module.exports = permissionRoles;

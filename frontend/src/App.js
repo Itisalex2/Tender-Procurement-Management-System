@@ -14,8 +14,10 @@ import CreateTender from './pages/Create-Tender';
 import ManageTenders from './pages/Manage-Tendors';
 import EditTender from './pages/Edit-Tender';
 import SubmitBid from './pages/Submit-Bid';
+import ViewBids from './pages/View-Bids';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
+
 
 // Components
 import Navbar from './components/Navbar';
@@ -103,6 +105,16 @@ function App() {
               element={
                 <ProtectedPermissionRoute userData={userData} permission="submitBid">
                   <SubmitBid />
+                </ProtectedPermissionRoute>
+              }
+            />
+
+            {/* View Bids Route */}
+            <Route
+              path="/tender/:id/bids"
+              element={
+                <ProtectedPermissionRoute userData={userData} permission="canViewBids">
+                  <ViewBids />
                 </ProtectedPermissionRoute>
               }
             />

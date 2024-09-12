@@ -22,14 +22,20 @@ const EditTender = () => {
     },
     otherRequirements: '',
     relatedFiles: [],
-    targetedUsers: []
+    targetedUsers: [],
+    procurementGroup: []
   });
 
   const [newFiles, setNewFiles] = useState([]);
 
-  // Use the permissions list to get the roles
+  // Use the permissions list to get the roles for targeted users
   const roles = permissionRoles.includeInTenderTargetedUsers.join(',');
   const { users, usersLoading, usersError } = useFetchAllUsers(roles);
+
+  // Fetch all users for procurement group selection (filtered by `s` permissions)
+  const { users: procurementUsers, usersLoading: procurementLoading, usersError: procurementError } = useFetchAllUsers(
+    permissionRoles.confirmAllowViewBids.join(',')
+  );
 
   // Use the hook to get the tender data by ID
   const { tender, loading, error } = useFetchTender(id);
@@ -45,7 +51,8 @@ const EditTender = () => {
         contactInfo: tender.contactInfo,
         otherRequirements: tender.otherRequirements,
         relatedFiles: tender.relatedFiles || [],
-        targetedUsers: tender.targetedUsers.map(user => user._id)
+        targetedUsers: tender.targetedUsers.map((user) => user._id),
+        procurementGroup: tender.procurementGroup.map((user) => user._id)
       });
     }
   }, [tender]);
@@ -89,19 +96,30 @@ const EditTender = () => {
     }));
   };
 
+  // Handle checkbox selection for procurement group users
+  const handleProcurementGroupChange = (userId) => {
+    setFormData((prev) => ({
+      ...prev,
+      procurementGroup: prev.procurementGroup.includes(userId)
+        ? prev.procurementGroup.filter((id) => id !== userId)
+        : [...prev.procurementGroup, userId]
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const updatedTender = {
       ...formData,
       contactInfo: formData.contactInfo,
-      targetedUsers: formData.targetedUsers
+      targetedUsers: formData.targetedUsers,
+      procurementGroup: formData.procurementGroup
     };
 
     try {
       const formDataToSend = new FormData();
       Object.keys(updatedTender).forEach((key) => {
-        if (key === 'contactInfo' || key === 'targetedUsers') {
+        if (key === 'contactInfo' || key === 'targetedUsers' || key === 'procurementGroup') {
           formDataToSend.append(key, JSON.stringify(updatedTender[key]));
         } else {
           formDataToSend.append(key, updatedTender[key]);
@@ -131,12 +149,12 @@ const EditTender = () => {
     }
   };
 
-  if (loading || usersLoading) {
+  if (loading || usersLoading || procurementLoading) {
     return <div>下载中...</div>;
   }
 
-  if (error || usersError) {
-    return <div>Error: {error || usersError}</div>;
+  if (error || usersError || procurementError) {
+    return <div>Error: {error || usersError || procurementError}</div>;
   }
 
   return (
@@ -285,6 +303,21 @@ const EditTender = () => {
                 value={user._id}
                 checked={formData.targetedUsers.includes(user._id)}
                 onChange={() => handleUserCheckboxChange(user._id)}
+              />
+              <label>{user.username}</label>
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员</label>
+          {procurementUsers.map((user) => (
+            <div key={user._id}>
+              <input
+                type="checkbox"
+                value={user._id}
+                checked={formData.procurementGroup.includes(user._id)}
+                onChange={() => handleProcurementGroupChange(user._id)}
               />
               <label>{user.username}</label>
             </div>

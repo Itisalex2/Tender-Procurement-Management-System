@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { useNavigate } from 'react-router-dom';
+import { statusMap } from "../utils/english-to-chinese-map";
 
 const Home = () => {
   const [tenders, setTenders] = useState([]);
@@ -69,7 +70,7 @@ const Home = () => {
               <td>{tender.description}</td>
               <td>{new Date(tender.issueDate).toLocaleString()}</td>
               <td>{new Date(tender.closingDate).toLocaleString()}</td>
-              <td>{tender.status === 'Open' ? '开放' : tender.status === 'Closed' ? '关闭' : '已授予'}</td>
+              <td>{statusMap[tender.status]}</td>
               <td>
                 {tender.relatedFiles && tender.relatedFiles.length > 0 ? (
                   <ul>

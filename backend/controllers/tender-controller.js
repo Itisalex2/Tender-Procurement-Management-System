@@ -7,10 +7,11 @@ const Message = require('../models/message-model');
 
 const createTender = async (req, res) => {
   try {
-    const { title, description, issueDate, closingDate, contactInfo, otherRequirements, targetedUsers } = req.body;
+    const { title, description, issueDate, closingDate, contactInfo, otherRequirements, targetedUsers, procurementGroup } = req.body;
 
-    // Parse targetedUsers from JSON string
+    // Parse targetedUsers and procurementGroup from JSON strings
     const parsedTargetedUsers = JSON.parse(targetedUsers);
+    const parsedProcurementGroup = JSON.parse(procurementGroup);
 
     // Process uploaded files
     const relatedFiles = req.files.map(file => ({
@@ -19,7 +20,7 @@ const createTender = async (req, res) => {
       uploadedBy: req.user._id,
     }));
 
-    // Parse contactInfo as it's sent as JSON string
+    // Parse contactInfo as it's sent as a JSON string
     const contactDetails = JSON.parse(contactInfo);
 
     // Create a new tender
@@ -32,6 +33,7 @@ const createTender = async (req, res) => {
       otherRequirements,
       relatedFiles, // Store file data
       targetedUsers: parsedTargetedUsers, // Store targeted users as an array of ObjectIds
+      procurementGroup: parsedProcurementGroup, // Store procurement group as an array of ObjectIds
     });
 
     // Save the tender to the database
@@ -42,6 +44,7 @@ const createTender = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 const getTenders = async (req, res) => {
@@ -61,12 +64,12 @@ const getTenders = async (req, res) => {
     // Check if the user role has permission to view all tenders
     if (permissionRoles.viewAllTenders.includes(role)) {
       // If the user has permission to view all tenders, return tenders with the status filter
-      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role');
+      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role').populate('procurementGroup', 'username');
       return res.status(200).json(tenders);
     } else {
       // If the user does not have permission to view all tenders, filter by targetedUsers
       query.targetedUsers = _id; // Only return tenders where the user is targeted
-      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role');
+      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role').populate('procurementGroup', 'username')
       return res.status(200).json(tenders);
     }
   } catch (error) {
@@ -78,9 +81,9 @@ const getTenders = async (req, res) => {
 const updateTenderById = async (req, res) => {
   try {
     const tenderId = req.params.id;
-    const { title, description, issueDate, closingDate, contactInfo, otherRequirements, targetedUsers } = req.body;
+    const { title, description, issueDate, closingDate, contactInfo, otherRequirements, targetedUsers, procurementGroup } = req.body;
 
-    // Parse contactInfo and targetedUsers if they are sent as JSON strings
+    // Parse contactInfo, targetedUsers, and procurementGroup if they are sent as JSON strings
     const updatedData = {
       title,
       description,
@@ -89,6 +92,7 @@ const updateTenderById = async (req, res) => {
       contactInfo: JSON.parse(contactInfo),
       otherRequirements,
       targetedUsers: targetedUsers ? JSON.parse(targetedUsers) : [], // Parse targetedUsers array
+      procurementGroup: procurementGroup ? JSON.parse(procurementGroup) : [] // Parse procurementGroup array
     };
 
     // Retrieve the existing tender to preserve existing files
@@ -119,6 +123,7 @@ const updateTenderById = async (req, res) => {
 };
 
 
+
 const getTenderById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -127,6 +132,7 @@ const getTenderById = async (req, res) => {
     // Start building the query to find the tender
     let query = Tender.findById(id)
       .populate('targetedUsers', 'username') // Populate targetedUsers' username
+      .populate('procurementGroup', 'username') // Populate procurementGroup's username
       .populate({
         path: 'relatedFiles.uploadedBy', // Populate the uploadedBy field within relatedFiles
         select: 'username', // Only return the username for uploadedBy

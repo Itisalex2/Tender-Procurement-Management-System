@@ -5,7 +5,7 @@ import { useLogout } from '../hooks/use-logout';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import '../css-components/navbar.css';
-const roleMap = require('../utils/english-to-chinese-role-map');
+const { roleMap } = require('../utils/english-to-chinese-map');
 const permissionRoles = require('../utils/permissions');
 
 const Navbar = () => {

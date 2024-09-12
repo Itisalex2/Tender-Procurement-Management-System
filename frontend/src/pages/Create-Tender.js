@@ -7,9 +7,13 @@ import permissionRoles from '../utils/permissions';
 const CreateTender = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  // Use the permissions list to get the roles
-  const roles = permissionRoles.includeInTenderTargetedUsers.join(','); // Get the roles for targeted users
-  const { users, usersLoading, usersError } = useFetchAllUsers(roles);
+
+  // Use the permissions list to get the roles for targeted users and procurement group members
+  const targetedUserRoles = permissionRoles.includeInTenderTargetedUsers.join(',');
+  const procurementGroupRoles = permissionRoles.confirmAllowViewBids.join(',');
+
+  const { users: targetedUsersList, usersLoading, usersError } = useFetchAllUsers(targetedUserRoles);
+  const { users: procurementGroupList, usersLoading: procurementGroupLoading, usersError: procurementGroupError } = useFetchAllUsers(procurementGroupRoles);
 
   // State for the tender fields
   const [title, setTitle] = useState('');
@@ -22,6 +26,7 @@ const CreateTender = () => {
   const [otherRequirements, setOtherRequirements] = useState('');
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [targetedUsers, setTargetedUsers] = useState([]); // For selected targeted users
+  const [procurementGroup, setProcurementGroup] = useState([]); // For selected procurement group members
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -55,6 +60,7 @@ const CreateTender = () => {
       },
       otherRequirements,
       targetedUsers, // Include selected targeted users
+      procurementGroup, // Include selected procurement group members
     };
 
     try {
@@ -62,8 +68,8 @@ const CreateTender = () => {
 
       // Add each field to FormData
       Object.keys(tenderData).forEach((key) => {
-        if (key === 'contactInfo' || key === 'targetedUsers') {
-          formData.append(key, JSON.stringify(tenderData[key])); // Contact info and targetedUsers as a JSON string
+        if (key === 'contactInfo' || key === 'targetedUsers' || key === 'procurementGroup') {
+          formData.append(key, JSON.stringify(tenderData[key])); // Contact info, targetedUsers, and procurementGroup as JSON strings
         } else {
           formData.append(key, tenderData[key]);
         }
@@ -95,16 +101,16 @@ const CreateTender = () => {
   };
 
   // Handle checkbox selection for targeted users
-  const handleUserCheckboxChange = (userId) => {
-    setTargetedUsers((prev) =>
+  const handleUserCheckboxChange = (userId, setArrayState) => {
+    setArrayState((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId) // Deselect if already selected
         : [...prev, userId] // Add to selected if not already
     );
   };
 
-  if (usersLoading) return <div>下载中...</div>;
-  if (usersError) return <div>Error fetching users: {usersError}</div>;
+  if (usersLoading || procurementGroupLoading) return <div>下载中...</div>;
+  if (usersError || procurementGroupError) return <div>Error fetching users: {usersError || procurementGroupError}</div>;
 
   return (
     <div className="container mt-5">
@@ -233,13 +239,28 @@ const CreateTender = () => {
 
         <div className="mb-3">
           <label htmlFor="targetedUsers" className="form-label">选择目标用户</label>
-          {users.map((user) => (
+          {targetedUsersList.map((user) => (
             <div key={user._id}>
               <input
                 type="checkbox"
                 value={user._id}
                 checked={targetedUsers.includes(user._id)}
-                onChange={() => handleUserCheckboxChange(user._id)}
+                onChange={() => handleUserCheckboxChange(user._id, setTargetedUsers)}
+              />
+              <label>{user.username}</label>
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员</label>
+          {procurementGroupList.map((user) => (
+            <div key={user._id}>
+              <input
+                type="checkbox"
+                value={user._id}
+                checked={procurementGroup.includes(user._id)}
+                onChange={() => handleUserCheckboxChange(user._id, setProcurementGroup)}
               />
               <label>{user.username}</label>
             </div>
