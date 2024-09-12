@@ -1,0 +1,14 @@
+{
+  "name": "your-app",
+  "version": "1.0.0",
+  "scripts": {
+    "frontend": "npm run frontend --prefix frontend",
+    "backend": "npm run backend --prefix backend",
+    "backend:dev": "npm run backend:dev --prefix backend",
+    "dev": "concurrently --no-kill-others \"npm run frontend > frontend.log 2>&1\" \"npm run backend > backend.log 2>&1\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
+}
