@@ -59,6 +59,17 @@ const Navbar = () => {
                     <button className="btn btn-link nav-link" onClick={() => handleNavigation('/')}>主页</button>
                   </li>
 
+                  {/* Mail Icon */}
+                  <li className="nav-item me-3">
+                    <button className="btn btn-link nav-link" onClick={() => handleNavigation('/inbox')}>
+                      <i className="bi bi-envelope-fill" style={{ fontSize: '1.5rem' }}></i>
+                      {/* You can add a badge to show unread mail count */}
+                      {userData && userData.inbox.length > 0 && (
+                        <span className="badge bg-danger rounded-pill">{userData.inbox.length}</span>
+                      )}
+                    </button>
+                  </li>
+
                   {/* Profile Icon Dropdown */}
                   <li className="nav-item dropdown">
                     <button

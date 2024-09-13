@@ -14,6 +14,7 @@ const userSchema = new Schema({
     enum: ['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'],
     default: 'tenderer'
   },
+  inbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Mail', default: [] }],
 }, {
   timestamps: true,
 });

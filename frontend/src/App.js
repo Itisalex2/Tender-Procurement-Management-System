@@ -15,6 +15,7 @@ import ManageTenders from './pages/Manage-Tendors';
 import EditTender from './pages/Edit-Tender';
 import SubmitBid from './pages/Submit-Bid';
 import ViewBids from './pages/View-Bids';
+import Inbox from './pages/Inbox';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
 
@@ -42,12 +43,22 @@ function App() {
             <Route path="/login" element={authUser ? <Navigate to="/" /> : <Login />} />
             <Route path="/signup" element={authUser ? <Navigate to="/" /> : <SignUp />} />
 
-            {/* Protected Routes */}
+            {/* Protected Settings Routes */}
             <Route
               path="/settings"
               element={
                 <ProtectedRoute>
                   <Settings />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Protected Mail Routes */}
+            <Route
+              path="/inbox"
+              element={
+                <ProtectedRoute>
+                  <Inbox />
                 </ProtectedRoute>
               }
             />

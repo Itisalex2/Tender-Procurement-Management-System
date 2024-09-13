@@ -26,7 +26,6 @@ const ViewBids = () => {
         }
 
         const data = await response.json();
-        console.log(data);
         setBids(data);
       } catch (err) {
         setError(err.message);

@@ -1,6 +1,9 @@
 const User = require('../models/user-model');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const validator = require('validator');
+const Mail = require('../models/mail-model');
 
 // Helper function to create a token
 const createToken = (_id) => {
@@ -128,4 +131,81 @@ const getUserById = async (req, res) => {
 };
 
 
-module.exports = { userSignup, userLogin, userSettings, getUserInfo, getAllUsers, getUserById };
+
+const updateUserById = async (req, res) => {
+  const userId = req.params.id;
+  const { username, email, password, number, role, newMail } = req.body;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update fields if provided
+    if (username) {
+      user.username = username;
+    }
+
+    if (email) {
+      // Check if the new email is valid
+      if (!validator.isEmail(email)) {
+        return res.status(400).json({ error: 'Invalid email address' });
+      }
+
+      // Check if email is already in use
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(400).json({ error: 'Email is already in use' });
+      }
+
+      user.email = email;
+    }
+
+    if (password) {
+      // Check if the new password is strong
+      if (!validator.isStrongPassword(password)) {
+        return res.status(400).json({ error: 'Password does not meet strength requirements' });
+      }
+
+      // Hash the new password
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      user.password = hash;
+    }
+
+    if (number) {
+      user.number = number;
+    }
+
+    if (role) {
+      // Ensure the role is one of the allowed values
+      if (!['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'].includes(role)) {
+        return res.status(400).json({ error: 'Invalid role' });
+      }
+      user.role = role;
+    }
+
+    // Add new mail to inbox if provided
+    if (newMail) {
+      // Create a new Mail document
+      const mail = new Mail(newMail);
+      await mail.save();
+
+      // Add the new mail's ObjectId to the user's inbox
+      user.inbox.push(mail._id);
+    }
+
+    // Save the updated user
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+module.exports = { userSignup, userLogin, userSettings, getUserInfo, getAllUsers, getUserById, updateUserById };

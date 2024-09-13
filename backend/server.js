@@ -8,6 +8,7 @@ const startCronJob = require('./utils/cron-jobs');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const tenderRouter = require('./routes/tender');
+const mailRouter = require('./routes/mail');
 
 // Create express server
 const app = express();
@@ -24,6 +25,7 @@ const uri = process.env.ATLAS_URI;
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/tender', tenderRouter);
+app.use('/api/mail', mailRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve the uploads folder as static files
 
 // Connect to MongoDB
