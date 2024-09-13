@@ -11,6 +11,7 @@ const Mail = () => {
   const [selectedMails, setSelectedMails] = useState([]); // Track selected emails
   const [selectAll, setSelectAll] = useState(false); // State for select all checkbox
 
+
   const handleMarkAsRead = async (mailIds) => {
     try {
       await fetch(`/api/mail/markAsRead`, {
@@ -77,9 +78,34 @@ const Mail = () => {
     handleDeleteMails(selectedMails);
   };
 
-  const handleNavigate = (relatedItem, mailId) => {
-    handleMarkAsRead(mailId);
+  const handleNavigateTenderType = (relatedItem, mailId) => {
+    handleMarkAsRead([mailId]);
     navigate(`/tender/${relatedItem}`);
+  };
+
+  const handleNavigateBidType = async (relatedItem, mailId) => {
+    // Mark the mail as read
+    handleMarkAsRead([mailId]);
+
+    try {
+      // Fetch tender data before navigating
+      const response = await fetch(`/api/bid/${relatedItem}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch tender.');
+      }
+
+      const bid = await response.json();
+
+      // Navigate to the bid page once the tender is loaded
+      navigate(`/tender/${bid.tender}/bid/${bid._id}`);
+    } catch (err) {
+      console.error('Error fetching tender:', err);
+    }
   };
 
   const toggleMailContent = (mailId) => {
@@ -208,9 +234,17 @@ const Mail = () => {
                   {mail.type === 'tender' && mail.relatedItem && (
                     <button
                       className="btn btn-primary mt-3"
-                      onClick={() => handleNavigate(mail.relatedItem, mail._id)}
+                      onClick={() => handleNavigateTenderType(mail.relatedItem, mail._id)}
                     >
                       查看招标
+                    </button>
+                  )}
+                  {mail.type === 'bid' && mail.relatedItem && (
+                    <button
+                      className="btn btn-primary mt-3"
+                      onClick={() => handleNavigateBidType(mail.relatedItem, mail._id)}
+                    >
+                      查看投标
                     </button>
                   )}
                 </div>

@@ -1,5 +1,6 @@
 const Bid = require('../models/bid-model');
 const Tender = require('../models/tender-model');
+const Mail = require('../models/mail-model');
 
 // Controller to submit a bid with file uploads
 const submitBid = async (req, res) => {
@@ -72,6 +73,7 @@ const approveBidViewing = async (req, res) => {
       tender.status = 'ClosedAndCanSeeBids';
       await tender.save();
     }
+
 
     res.status(200).json(tender);
   } catch (error) {
@@ -195,6 +197,7 @@ const addBidEvaluation = async (req, res) => {
 
 const selectWinningBid = async (req, res) => {
   const { tenderId, bidId } = req.params;
+  const userId = req.user._id;
 
   try {
     // Find the tender and populate its bids
@@ -204,8 +207,8 @@ const selectWinningBid = async (req, res) => {
       return res.status(404).json({ error: '招标不存在' });
     }
 
-    // Set the status of the winning bid to 'win'
-    const winningBid = await Bid.findById(bidId);
+    // Set the status of the winning bid to 'won'
+    const winningBid = await Bid.findById(bidId).populate('bidder');
     if (!winningBid) {
       return res.status(404).json({ error: 'Bid not found' });
     }
@@ -221,16 +224,33 @@ const selectWinningBid = async (req, res) => {
       }
     }
 
+    // Create and save mail to the winner
+    const mail = new Mail({
+      sender: userId,
+      recipient: winningBid.bidder._id,
+      type: 'bid',
+      subject: `您${tender.title}的投标已被选中`,
+      content: `恭喜！您的投标已被选中。请查看招标详情以获取更多信息。`,
+      relatedItem: winningBid._id,
+    });
+
+    const savedMail = await mail.save();
+
+    // Push the saved mail to the winner's inbox
+    winningBid.bidder.inbox.push(savedMail._id);
+    await winningBid.bidder.save();
+
     // Update the tender's winning bid
     tender.winningBid = bidId;
     await tender.save();
 
-    res.status(200).json({ message: 'Winning bid selected and statuses updated successfully' });
+    res.status(200).json(bidId);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update bids' });
   }
 };
+
 
 
 module.exports = {

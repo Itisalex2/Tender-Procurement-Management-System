@@ -31,6 +31,7 @@ const ViewBids = () => {
       }
 
       alert('中标投标已成功选择！');
+      window.location.reload(); // Reload the page to reflect the change
     } catch (err) {
       console.error(err);
       alert('选择中标投标失败。');
