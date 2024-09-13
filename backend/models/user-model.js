@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const Schema = mongoose.Schema;
+const roles = require('../../frontend/src/utils/roles')
 
 const userSchema = new Schema({
   username: { type: String, required: true },
@@ -11,7 +12,7 @@ const userSchema = new Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker', 'secretary'],
+    enum: roles,
     default: 'tenderer'
   },
   inbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Mail', default: [] }],

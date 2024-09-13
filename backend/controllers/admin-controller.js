@@ -1,4 +1,5 @@
 const User = require('../models/user-model');
+const roles = require('../../frontend/src/utils/roles')
 
 // Get all users (admin only)
 const getAllUsers = async (req, res) => {
@@ -16,7 +17,7 @@ const updateUserRole = async (req, res) => {
   const { role } = req.body;
 
   try {
-    const validRoles = ['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker', 'secretary'];
+    const validRoles = roles;
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role' });
     }

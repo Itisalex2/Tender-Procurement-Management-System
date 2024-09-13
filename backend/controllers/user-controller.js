@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const Mail = require('../models/mail-model');
+const roles = require('../../frontend/src/utils/roles');
 
 // Helper function to create a token
 const createToken = (_id) => {
@@ -195,7 +196,7 @@ const updateUserById = async (req, res) => {
 
     if (role) {
       // Ensure the role is one of the allowed values
-      if (!['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'].includes(role)) {
+      if (!roles.includes(role)) {
         return res.status(400).json({ error: 'Invalid role' });
       }
       user.role = role;
