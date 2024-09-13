@@ -6,8 +6,8 @@ import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import '../css-components/navbar.css';
 import useFetchMails from '../hooks/use-fetch-mails';
-const { roleMap } = require('../utils/english-to-chinese-map');
-const permissionRoles = require('../utils/permissions');
+import { roleMap } from '../utils/english-to-chinese-map';
+import permissionRoles from '../utils/permissions';
 
 const Navbar = () => {
   const navigate = useNavigate();

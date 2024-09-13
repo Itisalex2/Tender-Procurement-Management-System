@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Controllers
 const { createTender, getTenders, getTenderById, updateTenderById, deleteTenderById } = require('../controllers/tender-controller');
-const { submitBid, approveBidViewing, viewBids } = require('../controllers/bid-controller');
+const { submitBid, approveBidViewing, viewBids, selectWinningBid } = require('../controllers/bid-controller');
 const { addMessageToConversation, getConversationMessages } = require('../controllers/chat-controller');
 
 // Middleware
@@ -39,6 +39,7 @@ router.get('/:id', getTenderById); // Get a tender by ID
 router.post('/:id/bid', upload.array('files'), submitBid); // Submit a bid with file uploads
 router.post('/:id/approveBidViewing', approveBidViewing); // Approve bid viewing
 router.get('/:id/bids', viewBids); // View bids for a tender
+router.patch('/:tenderId/bid/:bidId/select-winning-bid', selectWinningBid); // Select a winning bid
 
 // Chat
 router.post('/:id/conversation', addMessageToConversation); // Post a message to a conversation

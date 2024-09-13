@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import BidEvaluations from '../components/BidEvaluations';
-const permissionRoles = require('../utils/permissions');
+import { bidStatusMap } from '../utils/english-to-chinese-map';
+import permissionRoles from '../utils/permissions';
 
 const ViewBid = () => {
   const { tenderId, bidId } = useParams();
@@ -62,6 +63,7 @@ const ViewBid = () => {
         <div className="card-body">
           <h5 className="card-title">投标金额: {bid.amount}</h5>
           <p className="card-text">投标信息: {bid.content || '无'}</p>
+          <p className="card-text">状态: {bidStatusMap[bid.status]}</p>
 
           <BidEvaluations
             user={user}

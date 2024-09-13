@@ -119,7 +119,7 @@ const AdminSettings = () => {
                   <option value="admin">管理员</option>
                   <option value="tenderer">供应商</option>
                   <option value="tenderProcurementGroup">招标管理组</option>
-                  <option value="gjcWorker">国酒城员工</option>
+                  <option value="secretary">招标秘书</option>
                 </select>
               </td>
               <td>

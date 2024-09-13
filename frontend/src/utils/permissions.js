@@ -2,16 +2,17 @@
 
 const permissionRoles = {
   modifyBackend: ['admin'],
-  createTender: ['admin', 'tenderProcurementGroup'],
-  viewAllTenders: ['admin', 'tenderProcurementGroup'],
-  manageTenders: ['admin', 'tenderProcurementGroup'],
-  editTender: ['admin', 'tenderProcurementGroup'],
-  includeInTenderTargetedUsers: ['tenderer', 'gjcWorker'],
+  createTender: ['admin', 'secretary'],
+  viewAllTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
+  manageTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
+  editTender: ['admin', 'secretary'],
+  includeInTenderTargetedUsers: ['tenderer'],
   submitBid: ['tenderer'],
   messageOnAllTenders: ['admin', 'tenderProcurementGroup'],
-  confirmAllowViewBids: ['tenderProcurementGroup'], // Press button to allow viewing of bids
-  canViewBids: ['admin', 'tenderProcurementGroup'],
+  confirmAllowViewBids: ['tenderProcurementGroup'],
+  canViewBids: ['admin', 'tenderProcurementGroup', 'secretary'],
   canViewAndEditBidEvaluations: ['admin', 'tenderProcurementGroup'],
+  selectWinningBid: ['secretary', 'tenderProcurementGroup'],
 };
 
 module.exports = permissionRoles;

@@ -97,7 +97,7 @@ const ManageTenders = () => {
     return tender.procurementGroupApprovals.some((userId) => userId === userData._id);
   };
 
-  if (loading) {
+  if (loading || !userData) {
     return <div>下载中...</div>;
   }
 
@@ -139,12 +139,12 @@ const ManageTenders = () => {
                   </td>
                   <td>{statusMap[tender.status]}</td>
                   <td>
-                    <button className="btn btn-primary me-2" onClick={() => handleEditTender(tender._id)}>
+                    {permissionRoles.editTender.includes(userData.role) && <button className="btn btn-primary me-2" onClick={() => handleEditTender(tender._id)}>
                       编辑
-                    </button>
-                    <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
+                    </button>}
+                    {permissionRoles.editTender.includes(userData.role) && <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
                       删除
-                    </button>
+                    </button>}
                     {/* Confirm to See Bids button for procurement group members */}
                     {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (
                       <div className="mt-2">

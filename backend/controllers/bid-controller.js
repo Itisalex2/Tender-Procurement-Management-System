@@ -193,6 +193,44 @@ const addBidEvaluation = async (req, res) => {
   }
 };
 
+const selectWinningBid = async (req, res) => {
+  const { tenderId, bidId } = req.params;
+
+  try {
+    // Find the tender and populate its bids
+    const tender = await Tender.findById(tenderId).populate('bids');
+
+    if (!tender) {
+      return res.status(404).json({ error: 'Tender not found' });
+    }
+
+    // Set the status of the winning bid to 'win'
+    const winningBid = await Bid.findById(bidId);
+    if (!winningBid) {
+      return res.status(404).json({ error: 'Bid not found' });
+    }
+
+    winningBid.status = 'won';
+    await winningBid.save();
+
+    // Set all other bids in the tender to 'lost'
+    for (let bid of tender.bids) {
+      if (bid._id.toString() !== bidId) {
+        bid.status = 'lost';
+        await bid.save();
+      }
+    }
+
+    // Update the tender's winning bid
+    tender.winningBid = bidId;
+    await tender.save();
+
+    res.status(200).json({ message: 'Winning bid selected and statuses updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update bids' });
+  }
+};
 
 
 module.exports = {
@@ -201,4 +239,5 @@ module.exports = {
   viewBids,
   getBidById,
   addBidEvaluation,
+  selectWinningBid
 };

@@ -11,7 +11,7 @@ const userSchema = new Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'],
+    enum: ['admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker', 'secretary'],
     default: 'tenderer'
   },
   inbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Mail', default: [] }],
