@@ -68,7 +68,7 @@ const Chatbox = ({
         sender: userData._id,
         recipient: userData.role === 'tenderer' ? tender.procurementGroup : tendererId,
         type: 'tender',
-        subject: `${userData.username}发来的消息`,
+        subject: `${tender.title}`,
         content: messageContent,
         relatedItem: tender._id,
       };

@@ -18,7 +18,7 @@ const addMessageToConversation = async (req, res) => {
     const tender = await Tender.findById(id).populate('conversations');
 
     if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
+      return res.status(404).json({ error: '招标不存在' });
     }
 
     // If the request is from an admin/procurement member, use tendererId to find the conversation

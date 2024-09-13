@@ -65,15 +65,55 @@ const updateMailById = async (req, res) => {
   }
 };
 
-// Mark all mails as read
-const markAllMailsAsRead = async (req, res) => {
+const markMailsAsRead = async (req, res) => {
+  const { mailIds, read } = req.body; // Expecting an array of mail IDs and a "read" status
+
+  if (!mailIds || !Array.isArray(mailIds)) {
+    return res.status(400).json({ error: 'mailIds must be an array of mail IDs' });
+  }
+
+  if (typeof read !== 'boolean') {
+    return res.status(400).json({ error: 'read must be a boolean value' });
+  }
+
   try {
-    await Mail.updateMany({ recipient: req.user._id, read: false }, { read: true });
-    res.status(200).json({ message: 'All mails marked as read' });
+    // Update the read status for the specified mails belonging to the authenticated user
+    await Mail.updateMany(
+      { _id: { $in: mailIds }, recipient: req.user._id }, // Ensure the mails belong to the current user
+      { read: read }
+    );
+
+    res.status(200).json({ mailIds });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: 'Failed to mark all mails as read' });
+    console.log(error);
+    res.status(500).json({ error: 'Failed to update mail status' });
   }
 };
 
-module.exports = { getUserMails, updateMailById, markAllMailsAsRead };
+const deleteMails = async (req, res) => {
+  const { mailIds } = req.body; // Expecting an array of mail IDs
+
+  if (!mailIds || !Array.isArray(mailIds)) {
+    return res.status(400).json({ error: 'mailIds must be an array of mail IDs' });
+  }
+
+  try {
+    // Delete the mails that belong to the authenticated user
+    const result = await Mail.deleteMany({
+      _id: { $in: mailIds },
+      recipient: req.user._id, // Ensure the mails belong to the current user
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'No mails found or you don\'t have permission to delete these mails' });
+    }
+
+    res.status(200).json({ mailIds });
+  } catch (error) {
+    console.log('Error deleting mails:', error);
+    res.status(500).json({ error: 'Failed to delete mails' });
+  }
+};
+
+
+module.exports = { getUserMails, updateMailById, markMailsAsRead, deleteMails };

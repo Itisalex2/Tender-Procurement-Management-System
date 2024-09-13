@@ -15,6 +15,7 @@ const userSchema = new Schema({
     default: 'tenderer'
   },
   inbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Mail', default: [] }],
+  bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid', default: [] }], // Only relevant if role is tenderer
 }, {
   timestamps: true,
 });

@@ -134,7 +134,7 @@ const getUserById = async (req, res) => {
 
 const updateUserById = async (req, res) => {
   const userId = req.params.id;
-  const { username, email, password, number, role, newMail } = req.body;
+  const { username, email, password, number, role, newMail, newBidId } = req.body;
 
   try {
     // Find the user by ID
@@ -196,6 +196,10 @@ const updateUserById = async (req, res) => {
 
       // Add the new mail's ObjectId to the user's inbox
       user.inbox.push(mail._id);
+    }
+
+    if (newBidId) {
+      user.bids.push(newBidId);
     }
 
     // Save the updated user

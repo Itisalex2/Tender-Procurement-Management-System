@@ -4,6 +4,7 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useFetchTender } from '../hooks/use-fetch-tender';
 import permissionRoles from '../utils/permissions';
+import useUpdateUser from '../hooks/use-update-user';
 
 const SubmitBid = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const SubmitBid = () => {
   const { user } = useAuthContext();
   const { userData, loading: userLoading, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
+  const { updateUserById } = useUpdateUser();
 
   const [amount, setAmount] = useState('');
   const [content, setContent] = useState('');
@@ -25,6 +27,10 @@ const SubmitBid = () => {
   const handleFileChange = (e) => {
     setFiles(e.target.files);
   };
+
+  const handleAddBidToTenderer = (bidId) => {
+    updateUserById({ newBidId: bidId });
+  }
 
   const handleSubmitBid = async (e) => {
     e.preventDefault();
@@ -56,6 +62,10 @@ const SubmitBid = () => {
         throw new Error(data.error || '提交投标失败');
       }
 
+      const data = await response.json();
+      // Update the tenderers bid list
+      handleAddBidToTenderer(data._id);
+
       setSuccess(true);
       setErrorMsg('');
       setTimeout(() => {
@@ -73,6 +83,8 @@ const SubmitBid = () => {
   if (userError || tenderError) {
     return <div>错误: {userError || tenderError}</div>;
   }
+
+  console.log(user.bids);
 
   return (
     <div className="container mt-5">

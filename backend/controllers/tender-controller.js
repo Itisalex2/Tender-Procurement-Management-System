@@ -162,7 +162,7 @@ const getTenderById = async (req, res) => {
     const tender = await query;
 
     if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
+      return res.status(404).json({ error: '招标不存在' });
     }
 
     res.status(200).json(tender);
@@ -181,7 +181,7 @@ const deleteTenderById = async (req, res) => {
     const tender = await Tender.findById(tenderId);
 
     if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
+      return res.status(404).json({ error: '招标不存在' });
     }
 
     // Delete all related files from the file system

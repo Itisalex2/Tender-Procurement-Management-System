@@ -11,7 +11,7 @@ const submitBid = async (req, res) => {
     // Check if the tender exists
     const tender = await Tender.findById(tenderId);
     if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
+      return res.status(404).json({ error: '招标不存在' });
     }
 
     // Handle file uploads
@@ -40,7 +40,7 @@ const submitBid = async (req, res) => {
     tender.bids.push(bid._id);
     await tender.save();
 
-    res.status(201).json({ message: 'Bid submitted successfully', bid });
+    res.status(201).json(bid);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to submit bid' });
@@ -60,7 +60,7 @@ const approveBidViewing = async (req, res) => {
     ).populate('procurementGroup');
 
     if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
+      return res.status(404).json({ error: '招标不存在' });
     }
 
     // Check if all procurement group members have approved
@@ -201,7 +201,7 @@ const selectWinningBid = async (req, res) => {
     const tender = await Tender.findById(tenderId).populate('bids');
 
     if (!tender) {
-      return res.status(404).json({ error: 'Tender not found' });
+      return res.status(404).json({ error: '招标不存在' });
     }
 
     // Set the status of the winning bid to 'win'
