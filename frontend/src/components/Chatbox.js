@@ -73,6 +73,8 @@ const Chatbox = ({
         relatedItem: tender._id,
       };
 
+
+
       if (userData.role === 'tenderer') {
         await Promise.all(
           tender.procurementGroup.map(async (procurementMember) => {
@@ -80,7 +82,7 @@ const Chatbox = ({
             await updateUserById(procurementMember._id, { newMail });
           })
         );
-      } else if (userData.role === 'tenderProcurementGroup') {
+      } else if (permissionRoles.messageOnAllTenders.includes(userData.role)) {
         await updateUserById(tendererId, { newMail });
       }
 

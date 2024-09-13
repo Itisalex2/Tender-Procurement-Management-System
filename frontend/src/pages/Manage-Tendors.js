@@ -14,6 +14,7 @@ const ManageTenders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTender, setSelectedTender] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');  // State to track the selected status for filtering
 
   // Fetch all tenders from the backend
   useEffect(() => {
@@ -97,6 +98,12 @@ const ManageTenders = () => {
     return tender.procurementGroupApprovals.some((userId) => userId === userData._id);
   };
 
+  // Filter tenders based on the selected status
+  const filteredTenders = tenders.filter((tender) => {
+    if (statusFilter === 'all') return true;
+    return tender.status === statusFilter;
+  });
+
   if (loading || !userData) {
     return <div>下载中...</div>;
   }
@@ -109,7 +116,24 @@ const ManageTenders = () => {
     <div className="container mt-5">
       <h1 className="mb-4">招标管理</h1>
 
-      {tenders.length === 0 ? (
+      {/* Status filter dropdown */}
+      <div className="mb-4">
+        <label className="form-label">筛选招标状态</label>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="form-select"
+          style={{ width: '200px' }}
+        >
+          <option value="all">所有状态</option>
+          <option value="Open">开放</option>
+          <option value="Closed">关闭</option>
+          <option value="ClosedAndCanSeeBids">关闭可查看投标</option>
+          <option value="Awarded">已授予</option>
+        </select>
+      </div>
+
+      {filteredTenders.length === 0 ? (
         <div>无招标项目</div>
       ) : (
         <table className="table table-striped">
@@ -125,7 +149,7 @@ const ManageTenders = () => {
             </tr>
           </thead>
           <tbody>
-            {tenders.map((tender) => (
+            {filteredTenders.map((tender) => (
               <React.Fragment key={tender._id}>
                 <tr onClick={() => toggleTenderDetails(tender._id)} style={{ cursor: 'pointer' }}>
                   <td>{tender.title}</td>
@@ -161,14 +185,13 @@ const ManageTenders = () => {
                     {tender.status === 'ClosedAndCanSeeBids' && (
                       <div className="mt-2">
                         <button
-                          className="btn btn-info me-2" // Using btn-info for light blue
+                          className="btn btn-info me-2"
                           onClick={() => handleViewBids(tender._id)}
                         >
                           查看投标
                         </button>
                       </div>
                     )}
-
                   </td>
                 </tr>
 

@@ -69,4 +69,17 @@ const getUserById = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, updateUserRole, deleteUser, getUserById };
+// Add a new user (admin only)
+const createUser = async (req, res) => {
+  const { username, email, password, number, role } = req.body;
+
+  try {
+    // Use the signup method defined in the User model to create the user
+    const newUser = await User.signup(username, email, password, number, role);
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = { getAllUsers, updateUserRole, deleteUser, getUserById, createUser };

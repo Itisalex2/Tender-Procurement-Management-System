@@ -203,6 +203,8 @@ const selectWinningBid = async (req, res) => {
     // Find the tender and populate its bids
     const tender = await Tender.findById(tenderId).populate('bids');
 
+
+
     if (!tender) {
       return res.status(404).json({ error: '招标不存在' });
     }
@@ -242,6 +244,7 @@ const selectWinningBid = async (req, res) => {
 
     // Update the tender's winning bid
     tender.winningBid = bidId;
+    tender.status = 'Awarded';
     await tender.save();
 
     res.status(200).json(bidId);
