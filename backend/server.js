@@ -9,6 +9,7 @@ const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const tenderRouter = require('./routes/tender');
 const mailRouter = require('./routes/mail');
+const bidRouter = require('./routes/bid');
 
 // Create express server
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/tender', tenderRouter);
 app.use('/api/mail', mailRouter);
+app.use('/api/bid', bidRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve the uploads folder as static files
 
 // Connect to MongoDB

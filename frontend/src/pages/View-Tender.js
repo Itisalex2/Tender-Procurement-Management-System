@@ -49,7 +49,7 @@ const ViewTender = () => {
 
   const canSubmitBid = () => {
     if (!userData) return false;
-    return permissionRoles.submitBid.includes(userData.role);
+    return permissionRoles.submitBid.includes(userData.role) && tenderDetails.status === 'open';
   };
 
   const handleBidSubmit = () => {

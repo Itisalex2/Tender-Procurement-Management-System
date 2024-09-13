@@ -5,6 +5,7 @@ import { useLogout } from '../hooks/use-logout';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import '../css-components/navbar.css';
+import useFetchMails from '../hooks/use-fetch-mails';
 const { roleMap } = require('../utils/english-to-chinese-map');
 const permissionRoles = require('../utils/permissions');
 
@@ -14,6 +15,7 @@ const Navbar = () => {
   const { user: authUser } = useAuthContext();
   const { userData, loading, error } = useFetchUser();
   const [profileOpen, setProfileOpen] = useState(false);
+  const { mails, loading: mailLoading } = useFetchMails(true, false);
 
   const hasPermission = (permission) => {
     return userData && permissionRoles[permission]?.includes(userData.role);
@@ -64,7 +66,7 @@ const Navbar = () => {
                     <button className="btn btn-link nav-link" onClick={() => handleNavigation('/inbox')}>
                       <i className="bi bi-envelope-fill" style={{ fontSize: '1.5rem' }}></i>
                       {/* You can add a badge to show unread mail count */}
-                      {userData && userData.inbox.length > 0 && (
+                      {userData && !mailLoading && mails.length > 0 && (
                         <span className="badge bg-danger rounded-pill">{userData.inbox.length}</span>
                       )}
                     </button>

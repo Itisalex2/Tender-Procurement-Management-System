@@ -145,6 +145,30 @@ const ManageTenders = () => {
                     <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
                       删除
                     </button>
+                    {/* Confirm to See Bids button for procurement group members */}
+                    {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (
+                      <div className="mt-2">
+                        <button
+                          className="btn btn-warning me-2"
+                          onClick={() => handleConfirmToSeeBids(tender._id)}
+                          disabled={hasUserApproved(tender)}
+                        >
+                          {hasUserApproved(tender) ? '已确认' : '确认查看投标'}
+                        </button>
+                      </div>
+                    )}
+                    {/* View Bids button when status is ClosedAndCanSeeBids */}
+                    {tender.status === 'ClosedAndCanSeeBids' && (
+                      <div className="mt-2">
+                        <button
+                          className="btn btn-info me-2" // Using btn-info for light blue
+                          onClick={() => handleViewBids(tender._id)}
+                        >
+                          查看投标
+                        </button>
+                      </div>
+                    )}
+
                   </td>
                 </tr>
 
@@ -156,7 +180,7 @@ const ManageTenders = () => {
                           <p><strong>描述:</strong> {tender.description}</p>
                           <p><strong>其他要求:</strong> {tender.otherRequirements}</p>
                           <p><strong>联系:</strong> {tender.contactInfo.name}, {tender.contactInfo.email}, {tender.contactInfo.phone}</p>
-                          <p><strong>状态:</strong> {tender.status}</p>
+                          <p><strong>状态:</strong> {statusMap[tender.status]}</p>
                           <p><strong>目标用户:</strong></p>
                           <ul>
                             {tender.targetedUsers.map((user) => (

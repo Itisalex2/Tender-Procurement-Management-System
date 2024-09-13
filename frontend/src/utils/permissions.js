@@ -11,6 +11,7 @@ const permissionRoles = {
   messageOnAllTenders: ['admin', 'tenderProcurementGroup'],
   confirmAllowViewBids: ['tenderProcurementGroup'], // Press button to allow viewing of bids
   canViewBids: ['admin', 'tenderProcurementGroup'],
+  canViewAndEditBidEvaluations: ['admin', 'tenderProcurementGroup'],
 };
 
 module.exports = permissionRoles;

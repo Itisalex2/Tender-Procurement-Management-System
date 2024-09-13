@@ -13,7 +13,7 @@ const Chatbox = ({
   const [messageContent, setMessageContent] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [chatError, setChatError] = useState('');
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(true);
   const [isSending, setIsSending] = useState(false); // State for handling message sending
 
   const handleSelectConversation = (conversation) => {
@@ -107,7 +107,7 @@ const Chatbox = ({
         }}
         onClick={() => setIsChatOpen(!isChatOpen)}
       >
-        {isChatOpen ? '关闭聊天' : '打开聊天'}
+        {isChatOpen ? '关闭招标答疑' : '打开招标答疑'}
       </button>
 
       {isChatOpen && (

@@ -23,6 +23,7 @@ const tenderSchema = new mongoose.Schema({
   conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', default: [] }], // Conversations related to the tender
   procurementGroupApprovals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }], // Track who has approved
   procurementGroup: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }], // Array of users in the procurement group
+  winningBid: { type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }, // Winning bid
 });
 
 const Tender = mongoose.model('Tender', tenderSchema);

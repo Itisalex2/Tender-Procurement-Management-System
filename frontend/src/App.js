@@ -16,13 +16,14 @@ import EditTender from './pages/Edit-Tender';
 import SubmitBid from './pages/Submit-Bid';
 import ViewBids from './pages/View-Bids';
 import Inbox from './pages/Inbox';
+import ViewBid from './pages/View-Bid';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
 
 
 // Components
 import Navbar from './components/Navbar';
-import ProtectedPermissionRoute from './components/routes/Protected-Permission-Route'; // New combined route
+import ProtectedPermissionRoute from './components/routes/Protected-Permission-Route';
 
 function App() {
   const { user: authUser, loading: authLoading } = useAuthContext();
@@ -59,6 +60,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Inbox />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Protected View Bid Route */}
+            <Route
+              path="/tender/:tenderId/bid/:bidId"
+              element={
+                <ProtectedRoute>
+                  <ViewBid />
                 </ProtectedRoute>
               }
             />
