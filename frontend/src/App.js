@@ -17,6 +17,7 @@ import SubmitBid from './pages/Submit-Bid';
 import ViewBids from './pages/View-Bids';
 import Inbox from './pages/Inbox';
 import ViewBid from './pages/View-Bid';
+import ViewOwnBids from './pages/View-Own-Bids';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
 
@@ -137,6 +138,15 @@ function App() {
               element={
                 <ProtectedPermissionRoute userData={userData} permission="canViewBids">
                   <ViewBids />
+                </ProtectedPermissionRoute>
+              }
+            />
+
+            <Route
+              path="/view-own-bids"
+              element={
+                <ProtectedPermissionRoute userData={userData} permission="viewOwnBids">
+                  <ViewOwnBids />
                 </ProtectedPermissionRoute>
               }
             />

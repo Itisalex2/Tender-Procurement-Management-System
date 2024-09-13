@@ -54,40 +54,72 @@ const Navbar = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
-              {/* Show profile dropdown if the user is logged in (based on authUser) */}
+              {/* Show navigation options if the user is authenticated */}
               {authUser && (
                 <div className="d-flex align-items-center">
                   <li className="nav-item me-3">
                     <button className="btn btn-link nav-link" onClick={() => handleNavigation('/')}>主页</button>
                   </li>
 
+                  {/* Core Actions: Create Tender, Manage Tenders, View Own Bids */}
+                  {hasPermission('createTender') && (
+                    <li className="nav-item me-3">
+                      <button className="btn btn-link nav-link" onClick={() => handleNavigation('/create-tender')}>
+                        创建招标
+                      </button>
+                    </li>
+                  )}
+
+                  {hasPermission('manageTenders') && (
+                    <li className="nav-item me-3">
+                      <button className="btn btn-link nav-link" onClick={() => handleNavigation('/manage-tenders')}>
+                        招标管理
+                      </button>
+                    </li>
+                  )}
+
+                  {hasPermission('viewOwnBids') && (
+                    <li className="nav-item me-3">
+                      <button className="btn btn-link nav-link" onClick={() => handleNavigation('/view-own-bids')}>
+                        查看我的投标
+                      </button>
+                    </li>
+                  )}
+
+                  {/* Add the "后台管理" (Admin Management) option */}
+                  {hasPermission('modifyBackend') && (
+                    <li className="nav-item me-3">
+                      <button className="btn btn-link nav-link" onClick={() => handleNavigation('/admin-settings')}>
+                        后台管理
+                      </button>
+                    </li>
+                  )}
+
                   {/* Mail Icon */}
                   <li className="nav-item me-3">
                     <button className="btn btn-link nav-link" onClick={() => handleNavigation('/inbox')}>
                       <i className="bi bi-envelope-fill" style={{ fontSize: '1.5rem' }}></i>
-                      {/* You can add a badge to show unread mail count */}
+                      {/* Display unread mail count */}
                       {userData && !mailLoading && mails.length > 0 && (
                         <span className="badge bg-danger rounded-pill">{userData.inbox.length}</span>
                       )}
                     </button>
                   </li>
 
-                  {/* Profile Icon Dropdown */}
+                  {/* Profile Dropdown for User Settings and Logout */}
                   <li className="nav-item dropdown">
                     <button
                       className="btn btn-link nav-link p-0"
                       aria-expanded={profileOpen}
-                      onClick={handleProfileClick} // Toggle dropdown with React state
+                      onClick={handleProfileClick}
                     >
                       <i className="bi bi-person-circle" style={{ fontSize: '1.5rem' }}></i>
                     </button>
 
-                    {/* Conditionally render dropdown only if profileOpen is true */}
                     {profileOpen && (
                       <ul className="dropdown-menu dropdown-menu-end dropdown-menu-center show" aria-labelledby="profileDropdown">
                         {loading ? (
                           <>
-                            {/* Placeholder while loading */}
                             <li className="dropdown-item text-center">
                               <strong>{'\u00A0'}</strong>
                               <p>{'\u00A0'}</p>
@@ -114,28 +146,10 @@ const Navbar = () => {
                             <li className="dropdown-item" onClick={() => handleNavigation('/settings')}>
                               <i className="bi bi-gear me-2"></i>设置
                             </li>
-
-                            {/* Conditionally render the "Create Tender" button based on permissions */}
-                            {userData && hasPermission('createTender') && (
-                              <li className="dropdown-item" onClick={() => handleNavigation('/create-tender')}>
-                                <i className="bi bi-plus-square me-2"></i>创建招标
-                              </li>
-                            )}
-
-                            {userData && hasPermission('manageTenders') && (
-                              <li className="dropdown-item" onClick={() => handleNavigation('/manage-tenders')}>
-                                <i className="bi bi-layout-text-window-reverse me-2"></i>招标管理
-                              </li>
-                            )}
-
-                            {userData && hasPermission('modifyBackend') && (
-                              <li className="dropdown-item" onClick={() => handleNavigation('/admin-settings')}>
-                                <i className="bi bi-tools me-2"></i>后台管理
-                              </li>
-                            )}
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item text-danger" onClick={handleLogoutClick}>
-                              <i className="bi bi-box-arrow-right me-2"></i>退出</li>
+                              <i className="bi bi-box-arrow-right me-2"></i>退出
+                            </li>
                           </>
                         )}
                       </ul>
@@ -144,7 +158,7 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* Show sign up and login if user is not authenticated */}
+              {/* Show login/signup options if user is not authenticated */}
               {!authUser && (
                 <div className="d-flex">
                   <li className="nav-item">
@@ -161,7 +175,8 @@ const Navbar = () => {
       </nav>
     </header>
   );
+
+
 };
 
 export default Navbar;
-

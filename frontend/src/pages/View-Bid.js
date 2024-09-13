@@ -51,7 +51,15 @@ const ViewBid = () => {
     return <div>加载中...</div>;
   }
 
-  const canAddEvaluations = userData?.role && permissionRoles.canViewAndEditBidEvaluations.includes(userData.role);
+  const isBidder = bid.bidder._id === userData._id; // Check if the user is the bidder
+  const canViewPage = isBidder || permissionRoles.canViewBids.includes(userData.role);
+  const canViewEvaluations = !isBidder && permissionRoles.canViewBids.includes(userData.role); // Non-bidders can view evaluations
+
+  if (!canViewPage) {
+    return (
+      <div>您没有权限看见这个投标</div>
+    );
+  }
 
   return (
     <div className="container mt-4">
@@ -65,14 +73,36 @@ const ViewBid = () => {
           <p className="card-text">投标信息: {bid.content || '无'}</p>
           <p className="card-text">状态: {bidStatusMap[bid.status]}</p>
 
-          <BidEvaluations
-            user={user}
-            evaluations={bid.evaluations}
-            bidId={bidId}
-            tenderId={tenderId}
-            canAddEvaluations={canAddEvaluations}
-            onEvaluationAdded={handleEvaluationAdded}
-          />
+          {/* Render files if any are present, otherwise show a message */}
+          {bid.files && bid.files.length > 0 ? (
+            <div>
+              <h5 className="card-title">投标文件:</h5>
+              <ul className="list-group">
+                {bid.files.map((file, index) => (
+                  <li key={index} className="list-group-item">
+                    <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
+                      {file.fileName} - 上传时间: {new Date(file.dateUploaded).toLocaleDateString()}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="card-text">无投标文件</p>
+          )}
+
+
+          {/* Only show evaluations if the user is not the bidder and has permission */}
+          {canViewEvaluations && (
+            <BidEvaluations
+              user={user}
+              evaluations={bid.evaluations}
+              bidId={bidId}
+              tenderId={tenderId}
+              canAddEvaluations={canViewEvaluations}
+              onEvaluationAdded={handleEvaluationAdded}
+            />
+          )}
         </div>
         <div className="card-footer text-muted">
           提交时间: {new Date(bid.submittedAt).toLocaleDateString()}

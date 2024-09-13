@@ -82,11 +82,23 @@ const userSettings = async (req, res) => {
   }
 };
 
-// Fetch user info
+// Fetch the authenticated user's info
 const getUserInfo = async (req, res) => {
   try {
     const userId = req.user._id;
-    const user = await User.findById(userId).select('-password');
+    const { includeBids } = req.query;
+
+    // Construct the query to exclude password and optionally populate bids
+    let query = User.findById(userId).select('-password');
+
+    if (includeBids === 'true') {
+      query = query.populate({
+        path: 'bids',
+        populate: { path: 'tender', select: 'title' }, // Populate the related tender's title for each bid
+      });
+    }
+
+    const user = await query;
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -97,6 +109,7 @@ const getUserInfo = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 const getAllUsers = async (req, res) => {
   try {

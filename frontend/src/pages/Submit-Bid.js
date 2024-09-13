@@ -29,7 +29,7 @@ const SubmitBid = () => {
   };
 
   const handleAddBidToTenderer = (bidId) => {
-    updateUserById({ newBidId: bidId });
+    updateUserById(userData._id, { newBidId: bidId });
   }
 
   const handleSubmitBid = async (e) => {
@@ -83,8 +83,6 @@ const SubmitBid = () => {
   if (userError || tenderError) {
     return <div>错误: {userError || tenderError}</div>;
   }
-
-  console.log(user.bids);
 
   return (
     <div className="container mt-5">

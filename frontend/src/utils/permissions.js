@@ -1,8 +1,8 @@
 // Roles: 'admin', 'tenderer', 'tenderProcurementGroup', 'gjcWorker'
 
 const permissionRoles = {
-  modifyBackend: ['admin'],
-  createTender: ['admin', 'secretary'],
+  modifyBackend: ['admin'], // 管理后台
+  createTender: ['admin', 'secretary'], // 创建招标
   viewAllTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
   manageTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
   editTender: ['admin', 'secretary'],
@@ -13,6 +13,7 @@ const permissionRoles = {
   canViewBids: ['admin', 'tenderProcurementGroup', 'secretary'],
   canViewAndEditBidEvaluations: ['admin', 'tenderProcurementGroup'],
   selectWinningBid: ['secretary', 'tenderProcurementGroup'],
+  viewOwnBids: ['tenderer'], // Only tenderers have bids
 };
 
 module.exports = permissionRoles;

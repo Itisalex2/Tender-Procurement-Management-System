@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from './use-auth-context';
 
-/* Fetch the authenticated user's info, NOT an arbitrary user */
-const useFetchUser = () => {
+/* Fetch the authenticated user's info, with an option to include bids */
+const useFetchUser = (includeBids = false) => {
   const { user: authUser } = useAuthContext();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const useFetchUser = () => {
       }
 
       try {
-        const response = await fetch('/api/user/me', {
+        const response = await fetch(`/api/user/me${includeBids ? '?includeBids=true' : ''}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
@@ -37,7 +37,7 @@ const useFetchUser = () => {
     };
 
     fetchUserData();
-  }, [authUser]);
+  }, [authUser, includeBids]);
 
   return { userData, loading, error };
 };
