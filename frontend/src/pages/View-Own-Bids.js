@@ -17,8 +17,6 @@ const ViewOwnBids = () => {
     return <div>您没有提交任何投标。</div>;
   }
 
-  console.log(userData.bids);
-
   return (
     <div className="container mt-4">
       <h1 className="mb-4">我的投标</h1>
