@@ -1,6 +1,7 @@
 const Bid = require('../models/bid-model');
 const Tender = require('../models/tender-model');
 const Mail = require('../models/mail-model');
+const convertToUTF8 = require("../utils/file-conversion");
 
 // Controller to submit a bid with file uploads
 const submitBid = async (req, res) => {
@@ -19,7 +20,7 @@ const submitBid = async (req, res) => {
     let uploadedFiles = [];
     if (req.files && req.files.length > 0) {
       uploadedFiles = req.files.map((file) => ({
-        fileName: file.originalname,
+        fileName: convertToUTF8(file.originalname),
         fileUrl: `/uploads/${file.filename}`,
         uploadedBy: userId,
       }));
@@ -160,7 +161,7 @@ const addBidEvaluation = async (req, res) => {
     let uploadedFiles = [];
     if (req.files && req.files.length > 0) {
       uploadedFiles = req.files.map((file) => ({
-        fileName: file.originalname,
+        fileName: convertToUTF8(file.originalname),
         fileUrl: `/uploads/${file.filename}`,
         uploadedBy: evaluatorId,
       }));

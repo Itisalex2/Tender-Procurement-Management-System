@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const Conversation = require('../models/conversation-model');
 const Message = require('../models/message-model');
+const convertToUTF8 = require("../utils/file-conversion");
 
 const createTender = async (req, res) => {
   try {
@@ -13,9 +14,10 @@ const createTender = async (req, res) => {
     const parsedTargetedUsers = JSON.parse(targetedUsers);
     const parsedProcurementGroup = JSON.parse(procurementGroup);
 
-    // Process uploaded files
+
+    // Process uploaded files, explicitly encoding the originalname to UTF-8
     const relatedFiles = req.files.map(file => ({
-      fileName: file.originalname,
+      fileName: convertToUTF8(file.originalname),
       fileUrl: `/uploads/${file.filename}`,
       uploadedBy: req.user._id,
     }));
@@ -92,7 +94,7 @@ const updateTenderById = async (req, res) => {
       contactInfo: JSON.parse(contactInfo),
       otherRequirements,
       targetedUsers: targetedUsers ? JSON.parse(targetedUsers) : [], // Parse targetedUsers array
-      procurementGroup: procurementGroup ? JSON.parse(procurementGroup) : [] // Parse procurementGroup array
+      procurementGroup: procurementGroup ? JSON.parse(procurementGroup) : [], // Parse procurementGroup array
     };
 
     // Retrieve the existing tender to preserve existing files
@@ -101,7 +103,7 @@ const updateTenderById = async (req, res) => {
     // Append new files to the existing ones
     if (req.files.length > 0) {
       const newFiles = req.files.map(file => ({
-        fileName: file.originalname,
+        fileName: convertToUTF8(file.originalname), // Convert originalname to UTF-8
         fileUrl: `/uploads/${file.filename}`,
         uploadedBy: req.user._id,
       }));

@@ -8,19 +8,7 @@ const { addMessageToConversation, getConversationMessages } = require('../contro
 
 // Middleware
 const requireAuth = require('../middleware/require-auth');
-const multer = require('multer');
-
-// Set up multer for file uploads 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Store files in the 'uploads/' directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Unique file name
-  }
-});
-
-const upload = multer({ storage });
+const upload = require('../utils/multer');
 
 /* Routes */
 

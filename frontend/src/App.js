@@ -137,7 +137,7 @@ function App() {
             <Route
               path="/tender/:id/bids"
               element={
-                <ProtectedPermissionRoute userData={userData} permission="canViewBids">
+                <ProtectedPermissionRoute userData={userData} permission="viewBids">
                   <ViewBids />
                 </ProtectedPermissionRoute>
               }

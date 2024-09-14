@@ -52,8 +52,8 @@ const ViewBid = () => {
   }
 
   const isBidder = bid.bidder._id === userData._id; // Check if the user is the bidder
-  const canViewPage = isBidder || permissionRoles.canViewBids.includes(userData.role);
-  const canViewEvaluations = !isBidder && permissionRoles.canViewBids.includes(userData.role); // Non-bidders can view evaluations
+  const canViewPage = isBidder || permissionRoles.viewBids.includes(userData.role);
+  const canViewEvaluations = !isBidder && permissionRoles.viewBids.includes(userData.role); // Non-bidders can view evaluations
 
   if (!canViewPage) {
     return (
@@ -80,7 +80,7 @@ const ViewBid = () => {
               <ul className="list-group">
                 {bid.files.map((file, index) => (
                   <li key={index} className="list-group-item">
-                    <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
+                    <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
                       {file.fileName} - 上传时间: {new Date(file.dateUploaded).toLocaleDateString()}
                     </a>
                   </li>
