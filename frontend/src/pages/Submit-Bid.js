@@ -5,6 +5,7 @@ import useFetchUser from '../hooks/use-fetch-user';
 import { useFetchTender } from '../hooks/use-fetch-tender';
 import permissionRoles from '../utils/permissions';
 import useUpdateUser from '../hooks/use-update-user';
+import FileUpload from '../components/File-Upload'; // Import the FileUpload component
 
 const SubmitBid = () => {
   const { id } = useParams();
@@ -16,7 +17,7 @@ const SubmitBid = () => {
 
   const [amount, setAmount] = useState('');
   const [content, setContent] = useState('');
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([]); // Files state
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -24,13 +25,9 @@ const SubmitBid = () => {
     return userData && permissionRoles.submitBid.includes(userData.role);
   };
 
-  const handleFileChange = (e) => {
-    setFiles(e.target.files);
-  };
-
   const handleAddBidToTenderer = (bidId) => {
     updateUserById(userData._id, { newBidId: bidId });
-  }
+  };
 
   const handleSubmitBid = async (e) => {
     e.preventDefault();
@@ -44,9 +41,9 @@ const SubmitBid = () => {
     const formData = new FormData();
     formData.append('amount', amount);
     formData.append('content', content);
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
 
     try {
       const response = await fetch(`/api/tender/${id}/bid`, {
@@ -63,7 +60,7 @@ const SubmitBid = () => {
       }
 
       const data = await response.json();
-      // Update the tenderers bid list
+      // Update the tenderer's bid list
       handleAddBidToTenderer(data._id);
 
       setSuccess(true);
@@ -74,6 +71,10 @@ const SubmitBid = () => {
     } catch (err) {
       setErrorMsg(err.message);
     }
+  };
+
+  const handleFilesChange = (updatedFiles) => {
+    setFiles(updatedFiles); // Update files state when the user selects files
   };
 
   if (userLoading || tenderLoading) {
@@ -114,16 +115,7 @@ const SubmitBid = () => {
           ></textarea>
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="files" className="form-label">上传文件</label>
-          <input
-            type="file"
-            className="form-control"
-            id="files"
-            multiple
-            onChange={handleFileChange} // Handle file selection
-          />
-        </div>
+        <FileUpload onFilesChange={handleFilesChange} />
 
         <button type="submit" className="btn btn-primary">提交投标</button>
       </form>

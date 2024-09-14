@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
-import UserList from '../components/admin/UserList';
-import AddUserForm from '../components/AddUserForm';
+import UserList from '../components/admin/User-List';
+import AddUserForm from '../components/Add-User-Form';
 
 const AdminSettings = () => {
   const { user: authUser } = useAuthContext();

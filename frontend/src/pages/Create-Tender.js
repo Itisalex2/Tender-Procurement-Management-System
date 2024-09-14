@@ -3,19 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import permissionRoles from '../utils/permissions';
+import FileUpload from '../components/File-Upload';
 
 const CreateTender = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
 
-  // Use the permissions list to get the roles for targeted users and procurement group members
   const targetedUserRoles = permissionRoles.includeInTenderTargetedUsers.join(',');
   const procurementGroupRoles = permissionRoles.confirmAllowViewBids.join(',');
 
   const { users: targetedUsersList, usersLoading, usersError } = useFetchAllUsers(targetedUserRoles);
   const { users: procurementGroupList, usersLoading: procurementGroupLoading, usersError: procurementGroupError } = useFetchAllUsers(procurementGroupRoles);
 
-  // State for the tender fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [issueDate, setIssueDate] = useState('');
@@ -25,15 +24,13 @@ const CreateTender = () => {
   const [contactPhone, setContactPhone] = useState('');
   const [otherRequirements, setOtherRequirements] = useState('');
   const [relatedFiles, setRelatedFiles] = useState([]);
-  const [targetedUsers, setTargetedUsers] = useState([]); // For selected targeted users
-  const [procurementGroup, setProcurementGroup] = useState([]); // For selected procurement group members
+  const [targetedUsers, setTargetedUsers] = useState([]);
+  const [procurementGroup, setProcurementGroup] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Handle file selection
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+  const handleFilesChange = (files) => {
     setRelatedFiles(files);
   };
 
@@ -42,7 +39,6 @@ const CreateTender = () => {
     setShowConfirm(true);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -59,23 +55,20 @@ const CreateTender = () => {
         phone: contactPhone,
       },
       otherRequirements,
-      targetedUsers, // Include selected targeted users
-      procurementGroup, // Include selected procurement group members
+      targetedUsers,
+      procurementGroup,
     };
 
     try {
       const formData = new FormData();
-
-      // Add each field to FormData
       Object.keys(tenderData).forEach((key) => {
         if (key === 'contactInfo' || key === 'targetedUsers' || key === 'procurementGroup') {
-          formData.append(key, JSON.stringify(tenderData[key])); // Contact info, targetedUsers, and procurementGroup as JSON strings
+          formData.append(key, JSON.stringify(tenderData[key]));
         } else {
           formData.append(key, tenderData[key]);
         }
       });
 
-      // Append each file to FormData
       relatedFiles.forEach((file) => {
         formData.append('relatedFiles', file);
       });
@@ -83,7 +76,7 @@ const CreateTender = () => {
       const response = await fetch('/api/tender/create', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${user.token}`, // Send the token for authorization
+          Authorization: `Bearer ${user.token}`,
         },
         body: formData,
       });
@@ -93,8 +86,8 @@ const CreateTender = () => {
       }
 
       setSuccess(true);
-      setShowConfirm(false); // Hide confirmation modal
-      navigate('/'); // Redirect to the homepage after success
+      setShowConfirm(false);
+      navigate('/');
     } catch (err) {
       setError(err.message);
     }
@@ -267,16 +260,7 @@ const CreateTender = () => {
           ))}
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="relatedFiles" className="form-label">相关文件</label>
-          <input
-            type="file"
-            className="form-control"
-            id="relatedFiles"
-            multiple
-            onChange={handleFileChange}
-          />
-        </div>
+        <FileUpload onFilesChange={handleFilesChange} />
 
         <button type="button" className="btn btn-primary" onClick={handleConfirm}>
           创建招标

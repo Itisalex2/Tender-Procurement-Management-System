@@ -4,6 +4,7 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import { useFetchTender } from '../hooks/use-fetch-tender';
 import permissionRoles from '../utils/permissions';
+import FileUpload from '../components/File-Upload'; // Import the FileUpload component
 
 const EditTender = () => {
   const { id } = useParams();
@@ -32,27 +33,33 @@ const EditTender = () => {
   const roles = permissionRoles.includeInTenderTargetedUsers.join(',');
   const { users, usersLoading, usersError } = useFetchAllUsers(roles);
 
-  // Fetch all users for procurement group selection (filtered by `s` permissions)
+  // Fetch all users for procurement group selection
   const { users: procurementUsers, usersLoading: procurementLoading, usersError: procurementError } = useFetchAllUsers(
     permissionRoles.confirmAllowViewBids.join(',')
   );
 
-  // Use the hook to get the tender data by ID
+  // Fetch the tender data by ID
   const { tender, loading, error } = useFetchTender(id);
 
-  // Update formData when tender data is fetched
   useEffect(() => {
     if (tender) {
+      const formatToLocalDatetime = (dateString) => {
+        const date = new Date(dateString);
+        const offset = date.getTimezoneOffset(); // Get the timezone offset in minutes
+        date.setMinutes(date.getMinutes() - offset); // Adjust to local timezone
+        return date.toISOString().slice(0, 16); // Return in YYYY-MM-DDTHH:MM format
+      };
+
       setFormData({
         title: tender.title,
         description: tender.description,
-        issueDate: tender.issueDate,
-        closingDate: tender.closingDate,
+        issueDate: formatToLocalDatetime(tender.issueDate),
+        closingDate: formatToLocalDatetime(tender.closingDate),
         contactInfo: tender.contactInfo,
         otherRequirements: tender.otherRequirements,
         relatedFiles: tender.relatedFiles || [],
         targetedUsers: tender.targetedUsers.map((user) => user._id),
-        procurementGroup: tender.procurementGroup.map((user) => user._id)
+        procurementGroup: tender.procurementGroup.map((user) => user._id),
       });
     }
   }, [tender]);
@@ -62,7 +69,6 @@ const EditTender = () => {
     const { name, value } = e.target;
 
     if (name.startsWith('contactInfo.')) {
-      // If the field is part of contactInfo
       const contactField = name.split('.')[1];
       setFormData((prev) => ({
         ...prev,
@@ -72,18 +78,11 @@ const EditTender = () => {
         }
       }));
     } else {
-      // Handle all other fields
       setFormData((prev) => ({
         ...prev,
         [name]: value
       }));
     }
-  };
-
-  // Handle file selection for new files
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setNewFiles(files);
   };
 
   // Handle checkbox selection for targeted users
@@ -106,6 +105,11 @@ const EditTender = () => {
     }));
   };
 
+  // Handle new file selection from FileUpload component
+  const handleFilesChange = (updatedFiles) => {
+    setNewFiles(updatedFiles);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -126,7 +130,7 @@ const EditTender = () => {
         }
       });
 
-      // Append new files to FormData (existing files are not overwritten)
+      // Append new files to FormData
       newFiles.forEach((file) => {
         formDataToSend.append('relatedFiles', file);
       });
@@ -283,16 +287,8 @@ const EditTender = () => {
           </ul>
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="relatedFiles" className="form-label">添加新文件</label>
-          <input
-            type="file"
-            className="form-control"
-            id="relatedFiles"
-            multiple
-            onChange={handleFileChange}
-          />
-        </div>
+        {/* Use the FileUpload component for new file uploads */}
+        <FileUpload onFilesChange={handleFilesChange} />
 
         <div className="mb-3">
           <label htmlFor="targetedUsers" className="form-label">选择目标用户</label>

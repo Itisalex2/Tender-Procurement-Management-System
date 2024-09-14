@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
-import BidEvaluations from '../components/BidEvaluations';
+import BidEvaluations from '../components/Bid-Evaluations';
 import { bidStatusMap } from '../utils/english-to-chinese-map';
 import permissionRoles from '../utils/permissions';
 
@@ -53,7 +53,7 @@ const ViewBid = () => {
 
   const isBidder = bid.bidder._id === userData._id; // Check if the user is the bidder
   const canViewPage = isBidder || permissionRoles.viewBids.includes(userData.role);
-  const canViewEvaluations = !isBidder && permissionRoles.viewBids.includes(userData.role); // Non-bidders can view evaluations
+  const canViewEvaluations = !isBidder && permissionRoles.viewAndEditBidEvaluations.includes(userData.role); // Non-bidders can view evaluations
 
   if (!canViewPage) {
     return (
