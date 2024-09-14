@@ -69,9 +69,7 @@ const Login = () => {
       if (response.ok) {
         localStorage.setItem('user', JSON.stringify(json))
         setSmsMessage('登陆成功！')
-        console.log("about to navigate");
         window.location.reload();
-        console.log("finished the navigate");
       } else {
         setSmsError(json.message || '登陆失败')
       }

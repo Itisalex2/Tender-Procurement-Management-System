@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { useLogout } from '../hooks/use-logout';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
-import '../css-components/navbar.css';
 import useFetchMails from '../hooks/use-fetch-mails';
 import { roleMap } from '../utils/english-to-chinese-map';
 import permissionRoles from '../utils/permissions';
+import '../css-components/navbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -91,6 +91,15 @@ const Navbar = () => {
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/admin-settings')}>
                         后台管理
+                      </button>
+                    </li>
+                  )}
+
+                  {/* Create Tenderer button */}
+                  {userData && permissionRoles.onlyAddTenderers.includes(userData.role) && (
+                    <li className="nav-item me-3">
+                      <button className="btn btn-link nav-link" onClick={() => handleNavigation('/add-tenderer')}>
+                        创建供应商
                       </button>
                     </li>
                   )}

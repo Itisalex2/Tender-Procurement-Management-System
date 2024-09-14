@@ -18,6 +18,7 @@ import ViewBids from './pages/View-Bids';
 import Inbox from './pages/Inbox';
 import ViewBid from './pages/View-Bid';
 import ViewOwnBids from './pages/View-Own-Bids';
+import AddTenderer from './pages/Add-Tenderer';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
 
@@ -147,6 +148,16 @@ function App() {
               element={
                 <ProtectedPermissionRoute userData={userData} permission="viewOwnBids">
                   <ViewOwnBids />
+                </ProtectedPermissionRoute>
+              }
+            />
+
+            {/* Create tenderer Route */}
+            <Route
+              path="/add-tenderer"
+              element={
+                <ProtectedPermissionRoute userData={userData} permission="onlyAddTenderers">
+                  <AddTenderer />
                 </ProtectedPermissionRoute>
               }
             />
