@@ -182,7 +182,7 @@ const ManageTenders = () => {
                       </div>
                     )}
                     {/* View Bids button when status is ClosedAndCanSeeBids */}
-                    {tender.status === 'ClosedAndCanSeeBids' && (
+                    {(tender.status === 'ClosedAndCanSeeBids' || tender.status === "Awarded") && (
                       <div className="mt-2">
                         <button
                           className="btn btn-info me-2"

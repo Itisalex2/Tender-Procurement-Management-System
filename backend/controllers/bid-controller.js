@@ -107,7 +107,7 @@ const viewBids = async (req, res) => {
     }
 
     // Check if the tender's status allows viewing bids
-    if (tender.status !== 'ClosedAndCanSeeBids') {
+    if (tender.status !== 'ClosedAndCanSeeBids' && tender.status !== 'Awarded') {
       return res.status(403).json({ message: '您无权查看此招标的投标。' });
     }
 

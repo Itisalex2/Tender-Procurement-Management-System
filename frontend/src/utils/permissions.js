@@ -12,7 +12,7 @@ const permissionRoles = {
   confirmAllowViewBids: ['tenderProcurementGroup'],
   canViewBids: ['admin', 'tenderProcurementGroup', 'secretary'],
   canViewAndEditBidEvaluations: ['admin', 'tenderProcurementGroup'],
-  selectWinningBid: ['secretary', 'tenderProcurementGroup'],
+  selectWinningBid: ['secretary'],
   viewOwnBids: ['tenderer'], // Only tenderers have bids
 };
 
