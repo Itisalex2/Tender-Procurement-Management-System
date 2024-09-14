@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const startCronJob = require('./utils/cron-jobs');
+const { sendSMS } = require('./utils/sendSMS');
 
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
@@ -17,6 +18,18 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Send SMS route
+app.post('/send-sms', async (req, res) => {
+  const { phoneNumber, signName, templateCode, templateParam } = req.body;
+
+  try {
+    const response = await sendSMS(phoneNumber, signName, templateCode, templateParam);
+    res.status(200).json({ success: true, message: 'SMS sent successfully!', data: response });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error sending SMS', error: error.message });
+  }
+});
 
 // Variables
 const port = process.env.PORT || 4000;
@@ -38,6 +51,8 @@ mongoose.connect(uri)
     startCronJob();
   })
   .catch((error) => console.error("MongoDB connection error:", error));
+
+
 
 // Start backend server
 app.listen(port, () => {
