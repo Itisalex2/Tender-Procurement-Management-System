@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
+import { roleMap } from '../utils/english-to-chinese-map';
 
 const Settings = () => {
   const { user } = useAuthContext();
@@ -85,7 +86,7 @@ const Settings = () => {
             type="text"
             className="form-control"
             id="role"
-            value={userData?.role || ''} // Get role from userData
+            value={roleMap[userData?.role] || ''} // Get role from userData
             readOnly
           />
         </div>

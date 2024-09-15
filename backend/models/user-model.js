@@ -5,10 +5,10 @@ const Schema = mongoose.Schema;
 const roles = require('../../frontend/src/utils/roles')
 
 const userSchema = new Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true }, // If tenderer, this means buisness name
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  number: { type: Number, required: true },
+  number: { type: Number, required: true, unique: true },
   role: {
     type: String,
     required: true,
@@ -17,6 +17,11 @@ const userSchema = new Schema({
   },
   inbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Mail', default: [] }],
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid', default: [] }], // Only relevant if role is tenderer
+  tendererDetails: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TendererDetails',
+    default: null
+  }
 }, {
   timestamps: true,
 });
