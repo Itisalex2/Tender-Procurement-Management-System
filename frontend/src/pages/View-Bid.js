@@ -81,7 +81,7 @@ const ViewBid = () => {
                 {bid.files.map((file, index) => (
                   <li key={index} className="list-group-item">
                     <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
-                      {file.fileName} - 上传时间: {new Date(file.dateUploaded).toLocaleDateString()}
+                      {file.fileName} - 上传时间: {new Date(file.dateUploaded).toLocaleString()}
                     </a>
                   </li>
                 ))}
@@ -105,7 +105,7 @@ const ViewBid = () => {
           )}
         </div>
         <div className="card-footer text-muted">
-          提交时间: {new Date(bid.submittedAt).toLocaleDateString()}
+          提交时间: {new Date(bid.submittedAt).toLocaleString()}
         </div>
       </div>
     </div>

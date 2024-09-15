@@ -149,7 +149,7 @@ const ManageTenders = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredTenders.map((tender) => (
+            {filteredTenders.slice().reverse().map((tender) => (
               <React.Fragment key={tender._id}>
                 <tr onClick={() => toggleTenderDetails(tender._id)} style={{ cursor: 'pointer' }}>
                   <td>{tender.title}</td>

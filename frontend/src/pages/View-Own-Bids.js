@@ -21,7 +21,7 @@ const ViewOwnBids = () => {
     <div className="container mt-4">
       <h1 className="mb-4">我的投标</h1>
       <div className="row">
-        {userData.bids.map((bid) => {
+        {userData.bids.slice().reverse().map((bid) => {
           // Ensure we return JSX when `bid` and `bid.tender` exist
           if (bid && bid.tender) {
             return (
@@ -37,7 +37,7 @@ const ViewOwnBids = () => {
                       {bid.content && <p className="card-text">投标信息: {bid.content}</p>}
                     </div>
                     <div className="card-footer text-muted">
-                      提交时间: {new Date(bid.submittedAt).toLocaleDateString()}
+                      提交时间: {new Date(bid.submittedAt).toLocaleString()}
                     </div>
                   </div>
                 </Link>

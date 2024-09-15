@@ -115,7 +115,7 @@ const ViewBids = () => {
                   )}
                 </div>
                 <div className="card-footer text-muted">
-                  提交时间: {new Date(bid.submittedAt).toLocaleDateString()}
+                  提交时间: {new Date(bid.submittedAt).toLocalString()}
                 </div>
               </div>
             </div>
