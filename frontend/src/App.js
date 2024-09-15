@@ -19,6 +19,8 @@ import Inbox from './pages/Inbox';
 import ViewBid from './pages/View-Bid';
 import ViewOwnBids from './pages/View-Own-Bids';
 import AddTenderer from './pages/Add-Tenderer';
+import ManageTenderers from './pages/Manage-Tenderers';
+import ViewTenderer from './pages/View-Tenderer';
 import ProtectedTenderRoute from './components/routes/Protected-Tender-Route';
 import ProtectedRoute from './components/routes/Protected-Route';
 
@@ -161,6 +163,27 @@ function App() {
                 </ProtectedPermissionRoute>
               }
             />
+
+            {/* Mananage tenderers Route */}
+            <Route
+              path="/manage-tenderers"
+              element={
+                <ProtectedPermissionRoute userData={userData} permission="viewTenderers">
+                  <ManageTenderers />
+                </ProtectedPermissionRoute>
+              }
+            />
+
+            {/* View tenderer Route */}
+            <Route
+              path="/tenderer/:id"
+              element={
+                <ProtectedPermissionRoute userData={userData} permission="viewTenderers">
+                  <ViewTenderer />
+                </ProtectedPermissionRoute>
+              }
+            />
+
 
             {/* Page Not Found */}
             <Route path="/pageNotFound" element={<PageNotFound />} />

@@ -4,6 +4,8 @@ const permissionRoles = {
   // Backend
   modifyBackend: ['admin'], // 管理后台
   onlyAddTenderers: ['secretary'], // Create a new tenderer
+  viewTenderers: ['admin', 'tenderProcurementGroup', 'secretary'], // View all tenderers
+  editTenderersDetails: ['admin', 'tenderProcurementGroup', 'secretary'], // Edit tenderer details
 
   // Tenders
   createTender: ['admin', 'secretary'], // 创建招标

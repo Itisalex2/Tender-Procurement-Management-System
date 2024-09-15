@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import { roleMap } from '../utils/english-to-chinese-map';
+import TendererDetailsForm from '../components/Tenderer-Details-Form';
 
 const Settings = () => {
   const { user } = useAuthContext();
-  const { userData, loading, error } = useFetchUser(); // Use the hook for user data
+  const { userData, loading, error } = useFetchUser({ includeTendererDetails: true });
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [normalSettingsSuccess, setNormalSettingsSuccess] = useState(false); // For normal settings
+  const [tendererDetailsSuccess, setTendererDetailsSuccess] = useState(false); // For tenderer details
 
   // State for editable fields
   const [username, setUsername] = useState('');
@@ -25,7 +27,7 @@ const Settings = () => {
 
   const handleSaveChanges = async () => {
     setSubmitting(true);
-    setSuccess(false);
+    setNormalSettingsSuccess(false); // Reset normal settings success message
 
     try {
       const response = await fetch('/api/user/settings', {
@@ -43,12 +45,16 @@ const Settings = () => {
         throw new Error(data.error || 'Failed to update settings');
       }
 
-      setSuccess(true);
+      setNormalSettingsSuccess(true); // Show success for normal settings
     } catch (error) {
       console.error(error.message);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleTendererDetailsSave = () => {
+    setTendererDetailsSuccess(true); // Set success message for tenderer details
   };
 
   if (loading) {
@@ -61,69 +67,98 @@ const Settings = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">个人设置</h1>
+      {userData.role !== 'tenderer' && (
+        <h1 className="mb-4">个人设置</h1>
+      )}
+      {userData.role === 'tenderer' && (
+        <h1 className="mb-4">设置</h1>
+      )}
 
-      <div className="card p-4 shadow-sm" style={{ maxWidth: '600px', margin: 'auto' }}>
+      <div className="row">
+        {/* Normal User Settings */}
+        <div className="col-md-6">
+          <div className="card p-4 shadow-sm">
+            <h2 className="mb-4">基本信息</h2>
+            {error && <div className="alert alert-danger">{error}</div>}
+            {normalSettingsSuccess && <div className="alert alert-success">设置改变成功!</div>}
 
-        {error && <div className="alert alert-danger">{error}</div>}
-        {success && <div className="alert alert-success">设置改变成功!</div>}
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">
+                {userData.role === 'tenderer' ? '企业名' : '用户名'}
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                readOnly={submitting}
+              />
+            </div>
 
-        <div className="mb-3">
-          <label htmlFor="username" className="form-label">用户名</label>
-          <input
-            type="text"
-            className="form-control"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            readOnly={submitting}
-          />
+            <div className="mb-3">
+              <label htmlFor="role" className="form-label">角色</label>
+              <input
+                type="text"
+                className="form-control"
+                id="role"
+                value={roleMap[userData?.role] || ''} // Get role from userData
+                readOnly
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">邮件地址</label>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                readOnly={submitting}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="number" className="form-label">电话号码</label>
+              <input
+                type="number"
+                className="form-control"
+                id="number"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                readOnly={submitting}
+              />
+            </div>
+
+            <div className="text-center mt-4">
+              <button
+                className="btn btn-primary"
+                onClick={handleSaveChanges}
+                disabled={submitting}
+              >
+                {submitting ? '保存中...' : '保存更改'}
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="role" className="form-label">角色</label>
-          <input
-            type="text"
-            className="form-control"
-            id="role"
-            value={roleMap[userData?.role] || ''} // Get role from userData
-            readOnly
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">邮件地址</label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            readOnly={submitting}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="number" className="form-label">电话号码</label>
-          <input
-            type="number"
-            className="form-control"
-            id="number"
-            value={number}
-            onChange={(e) => setNumber(e.target.value)}
-            readOnly={submitting}
-          />
-        </div>
-
-        <div className="text-center mt-4">
-          <button
-            className="btn btn-primary"
-            onClick={handleSaveChanges}
-            disabled={submitting}
-          >
-            {submitting ? '保存中...' : '保存更改'}
-          </button>
-        </div>
+        {/* Tenderer-specific Settings (only show if the user is a tenderer) */}
+        {userData.role === 'tenderer' && (
+          <div className="col-md-6">
+            <div className="card p-4 shadow-sm">
+              <h2 className="mb-4">企业详情</h2>
+              {tendererDetailsSuccess && (
+                <div className="alert alert-success">企业详情已保存成功!</div>
+              )}
+              <TendererDetailsForm
+                user={user}
+                tendererDetails={userData.tendererDetails}
+                onSave={handleTendererDetailsSave} // Separate success handler for tenderer details
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

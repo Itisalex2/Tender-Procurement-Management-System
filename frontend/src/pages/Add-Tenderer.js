@@ -73,7 +73,7 @@ const AddTenderer = () => {
       <h1 className="mb-4">创建供应商(密码随机生成)</h1>
       <form onSubmit={handleAddUser} className="mb-4">
         <div className="mb-3">
-          <label className="form-label">用户名</label>
+          <label className="form-label">企业名</label>
           <input
             type="text"
             className="form-control"

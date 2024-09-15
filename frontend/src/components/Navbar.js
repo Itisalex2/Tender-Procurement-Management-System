@@ -86,7 +86,16 @@ const Navbar = () => {
                     </li>
                   )}
 
-                  {/* Add the "后台管理" (Admin Management) option */}
+                  {/* Manage tenderers */}
+                  {hasPermission('viewTenderers') && (
+                    <li className="nav-item me-3">
+                      <button className="btn btn-link nav-link" onClick={() => handleNavigation('/manage-tenderers')}>
+                        供应商库
+                      </button>
+                    </li>
+                  )}
+
+                  {/* Admin Management */}
                   {hasPermission('modifyBackend') && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/admin-settings')}>

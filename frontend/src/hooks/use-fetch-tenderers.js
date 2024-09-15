@@ -1,28 +1,30 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from './use-auth-context';
 
-/* Fetch the authenticated user's info, with options to include bids and tendererDetails */
-const useFetchUser = ({ includeBids = false, includeTendererDetails = false } = {}) => {
+/* Hook to fetch tenderers with optional filters */
+const useFetchTenderers = ({ verified = null } = {}) => {
   const { user: authUser } = useAuthContext();
-  const [userData, setUserData] = useState(null);
+  const [tenderers, setTenderers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchTenderers = async () => {
       if (!authUser) {
         setLoading(false);
         return;
       }
 
       try {
+        // Construct query parameters
         const queryParams = [];
-        if (includeBids) queryParams.push('includeBids=true');
-        if (includeTendererDetails) queryParams.push('populate=tendererDetails');
+        if (verified !== null) {
+          queryParams.push(`verified=${verified}`);
+        }
 
         const queryString = queryParams.length ? `?${queryParams.join('&')}` : '';
 
-        const response = await fetch(`/api/user/me${queryString}`, {
+        const response = await fetch(`/api/user/getTenderers${queryString}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
@@ -30,11 +32,11 @@ const useFetchUser = ({ includeBids = false, includeTendererDetails = false } = 
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error('Failed to fetch tenderers');
         }
 
         const data = await response.json();
-        setUserData(data); // Set the user data in state
+        setTenderers(data); // Set the tenderers data in state
       } catch (err) {
         setError(err.message);
       } finally {
@@ -42,10 +44,10 @@ const useFetchUser = ({ includeBids = false, includeTendererDetails = false } = 
       }
     };
 
-    fetchUserData();
-  }, [authUser, includeBids, includeTendererDetails]);
+    fetchTenderers();
+  }, [authUser, verified]);
 
-  return { userData, loading, error };
+  return { tenderers, loading, error };
 };
 
-export default useFetchUser;
+export default useFetchTenderers;

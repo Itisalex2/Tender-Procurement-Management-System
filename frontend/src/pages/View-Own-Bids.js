@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { bidStatusMap } from '../utils/english-to-chinese-map';
 
 const ViewOwnBids = () => {
-  const { userData, loading, error } = useFetchUser(true); // Fetch user data along with bids
+  const { userData, loading, error } = useFetchUser({ includeBids: true }); // Fetch user data along with bids
 
   if (loading) {
     return <div>加载中...</div>;

@@ -39,7 +39,7 @@ const useFetchUserById = (userId) => {
     fetchUserData();
   }, [authUser, userId]); // Fetch user data whenever authUser or userId changes
 
-  return { userData, loading, error };
+  return { userData, loading, error, setUserData };
 };
 
 export default useFetchUserById;
