@@ -12,6 +12,7 @@ const permissionRoles = {
   editTender: ['admin', 'secretary'],
   includeInTenderTargetedUsers: ['tenderer'],
   messageOnAllTenders: ['admin', 'tenderProcurementGroup'],
+  statusCanViewBids: ['ClosedAndCanSeeBids', 'Awarded'],
 
   // Bids
   submitBid: ['tenderer'],
@@ -22,4 +23,10 @@ const permissionRoles = {
   viewOwnBids: ['tenderer'], // Only tenderers have bids
 };
 
-module.exports = permissionRoles;
+// Permissions based on the status of various things
+const permissionStatus = {
+  // Tenders
+  canViewBids: ['ClosedAndCanSeeBids', 'Awarded'],
+}
+
+module.exports = { permissionRoles, permissionStatus };

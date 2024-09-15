@@ -4,7 +4,7 @@ import { useFetchTenderWithConversation } from '../hooks/use-fetch-tender-with-c
 import { useAuthContext } from '../hooks/use-auth-context';
 import useUpdateUser from '../hooks/use-update-user';
 import useFetchUser from '../hooks/use-fetch-user';
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
 import Chatbox from '../components/Chatbox';
 
 const ViewTender = () => {
@@ -26,6 +26,7 @@ const ViewTender = () => {
     relatedFiles: [],
     targetedUsers: [],
     conversations: [],
+    bids: [], // Include bids here
   });
 
   const { tender, loading, error } = useFetchTenderWithConversation(id);
@@ -43,6 +44,7 @@ const ViewTender = () => {
         relatedFiles: tender.relatedFiles || [],
         targetedUsers: tender.targetedUsers.map((user) => user._id),
         conversations: tender.conversations || [],
+        bids: tender.bids || [], // Populate the bids here
       });
     }
   }, [tender]);
@@ -63,6 +65,8 @@ const ViewTender = () => {
   if (error || userError) {
     return <div>Error: {error || userError}</div>;
   }
+
+  console.log(tenderDetails);
 
   return (
     <div className="container mt-5" style={{ display: 'flex', flexDirection: 'row' }}>
@@ -132,6 +136,27 @@ const ViewTender = () => {
           </ul>
         </div>
 
+        {/* Show the list of bidders */}
+        {permissionRoles.viewBids.includes(userData.role) && (
+          <div className="mb-3">
+            <label className="form-label">投标者</label>
+            <ul>
+              {tenderDetails.bids.map((bid, index) => (
+                <li key={index}>
+                  供应商: {bid.bidder.username} - 提交时间: {new Date(bid.submittedAt).toLocaleString('en-GB', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  })}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {canSubmitBid() && (
           <div className="mt-3">
             <button className="btn btn-primary" onClick={handleBidSubmit}>
@@ -152,8 +177,6 @@ const ViewTender = () => {
       />
     </div>
   );
-
-
 };
 
 export default ViewTender;

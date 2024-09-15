@@ -1,5 +1,5 @@
 const Tender = require('../models/tender-model');
-const permissionRoles = require('../../frontend/src/utils/permissions');
+const { permissionRoles } = require('../../frontend/src/utils/permissions');
 const fs = require('fs');
 const path = require('path');
 const Conversation = require('../models/conversation-model');
@@ -59,19 +59,28 @@ const getTenders = async (req, res) => {
 
     // Build the query object for filtering
     const query = {};
-    if (status) {
+    if (status !== 'all') {
       query.status = status; // Filter by status if provided (e.g., 'Open')
     }
 
     // Check if the user role has permission to view all tenders
     if (permissionRoles.viewAllTenders.includes(role)) {
       // If the user has permission to view all tenders, return tenders with the status filter
-      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role').populate('procurementGroup', 'username');
+      const tenders = await Tender.find(query)
+        .populate('targetedUsers', 'username email role') // Populate targetedUsers
+        .populate('procurementGroup', 'username') // Populate procurementGroup
+        .populate({
+          path: 'bids', // First, populate the 'bids' field
+          populate: {
+            path: 'bidder', // Then, populate the 'bidder' field inside each bid
+            select: 'username' // Specify the fields to include from the bidder
+          }
+        });
       return res.status(200).json(tenders);
     } else {
       // If the user does not have permission to view all tenders, filter by targetedUsers
       query.targetedUsers = _id; // Only return tenders where the user is targeted
-      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role').populate('procurementGroup', 'username')
+      const tenders = await Tender.find(query).populate('targetedUsers', 'username email role').populate('procurementGroup', 'username');
       return res.status(200).json(tenders);
     }
   } catch (error) {
@@ -138,6 +147,13 @@ const getTenderById = async (req, res) => {
       .populate({
         path: 'relatedFiles.uploadedBy', // Populate the uploadedBy field within relatedFiles
         select: 'username', // Only return the username for uploadedBy
+      })
+      .populate({
+        path: 'bids',
+        populate: {
+          path: 'bidder',
+          select: 'username',
+        }
       });
 
     // If the populate query contains 'conversations', populate the conversations

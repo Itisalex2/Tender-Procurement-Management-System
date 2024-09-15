@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
 
 const Chatbox = ({
   tenderDetails,

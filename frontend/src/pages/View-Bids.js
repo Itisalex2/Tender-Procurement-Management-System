@@ -4,7 +4,7 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import { bidStatusMap } from "../utils/english-to-chinese-map";
 import { useFetchTender } from "../hooks/use-fetch-tender";
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
 
 const ViewBids = () => {
   const { id } = useParams(); // Get tender id from URL
@@ -115,7 +115,7 @@ const ViewBids = () => {
                   )}
                 </div>
                 <div className="card-footer text-muted">
-                  提交时间: {new Date(bid.submittedAt).toLocalString()}
+                  提交时间: {new Date(bid.submittedAt).toLocaleString()}
                 </div>
               </div>
             </div>

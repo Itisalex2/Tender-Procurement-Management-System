@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
 import FileUpload from '../components/File-Upload';
 
 const CreateTender = () => {

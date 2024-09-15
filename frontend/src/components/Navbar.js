@@ -6,7 +6,7 @@ import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchMails from '../hooks/use-fetch-mails';
 import { roleMap } from '../utils/english-to-chinese-map';
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
 import '../css-components/navbar.css';
 
 const Navbar = () => {

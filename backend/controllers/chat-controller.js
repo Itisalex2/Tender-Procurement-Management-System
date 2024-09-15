@@ -2,7 +2,7 @@ const Message = require('../models/message-model');
 const User = require('../models/user-model');
 const Conversation = require('../models/conversation-model');
 const Tender = require('../models/tender-model');
-const permissionRoles = require('../../frontend/src/utils/permissions');
+const { permissionRoles } = require('../../frontend/src/utils/permissions');
 
 const addMessageToConversation = async (req, res) => {
   const { id } = req.params; // tender ID

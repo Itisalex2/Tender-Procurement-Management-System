@@ -1,7 +1,7 @@
 // ProtectedTenderRoute.js
 import { useParams, Navigate } from 'react-router-dom';
 import { useFetchTender } from '../../hooks/use-fetch-tender';
-import permissionRoles from '../../utils/permissions'; // Import permission roles
+import { permissionRoles } from '../../utils/permissions'; // Import permission roles
 import ViewTender from '../../pages/View-Tender'; // Import the ViewTender component
 
 const ProtectedTenderRoute = ({ userData }) => {

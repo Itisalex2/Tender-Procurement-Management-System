@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useFetchTender } from '../hooks/use-fetch-tender';
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
 import useUpdateUser from '../hooks/use-update-user';
 import FileUpload from '../components/File-Upload'; // Import the FileUpload component
 

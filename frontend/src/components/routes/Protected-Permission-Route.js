@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuthContext } from '../../hooks/use-auth-context';
-import permissionRoles from '../../utils/permissions';
+import { permissionRoles } from '../../utils/permissions';
 
 const ProtectedPermissionRoute = ({ userData, permission, children }) => {
   const { user: authUser } = useAuthContext();

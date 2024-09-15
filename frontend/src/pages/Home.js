@@ -1,40 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useAuthContext } from '../hooks/use-auth-context';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { statusMap } from "../utils/english-to-chinese-map";
+import useFetchTenders from '../hooks/use-fetch-tenders';
+import { statusMap } from '../utils/english-to-chinese-map';
 
 const Home = () => {
-  const [tenders, setTenders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { user } = useAuthContext();
+  const { tenders, loading, error } = useFetchTenders('Open'); // Fetch open tenders
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchTenders = async () => {
-      try {
-        const response = await fetch('/api/tender?status=Open', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch tenders');
-        }
-
-        setTenders(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchTenders();
-  }, [user.token]);
 
   const handleRowClick = (tenderId) => {
     // Navigate to the new ViewTender page with the tenderId

@@ -1,74 +1,41 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../hooks/use-auth-context';
+import useFetchTenders from '../hooks/use-fetch-tenders';
 import useFetchUser from '../hooks/use-fetch-user';
-import permissionRoles from '../utils/permissions';
-import { statusMap } from "../utils/english-to-chinese-map";
-import React from 'react';
+import { useAuthContext } from '../hooks/use-auth-context';
+import { permissionRoles, permissionStatus } from '../utils/permissions';
+import { statusMap } from '../utils/english-to-chinese-map';
 
 const ManageTenders = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { userData } = useFetchUser();
-  const [tenders, setTenders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all'); // Default filter status is 'all'
+  const { tenders, loading, error, setTenders } = useFetchTenders(statusFilter); // Fetch tenders based on filter
   const [selectedTender, setSelectedTender] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');  // State to track the selected status for filtering
 
-  // Fetch all tenders from the backend
-  useEffect(() => {
-    const fetchTenders = async () => {
+  const handleDeleteTender = async (e, tenderId) => {
+    e.stopPropagation();
+    if (window.confirm('您确定要删除这个招标吗？')) {
       try {
-        const response = await fetch('/api/tender', {
+        const response = await fetch(`/api/tender/${tenderId}`, {
+          method: 'DELETE',
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         });
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch tenders');
+        if (response.ok) {
+          setTenders(tenders.filter(tender => tender._id !== tenderId));
+        } else {
+          throw new Error('Failed to delete tender');
         }
-        setTenders(data);
-        setLoading(false);
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        console.error(err.message);
       }
-    };
-    fetchTenders();
-  }, [user.token]);
-
-  const handleDeleteTender = async (e, tenderId) => {
-    e.stopPropagation();
-    const confirmDelete = window.confirm('您确定要删除这个招标吗？');
-    if (!confirmDelete) return;
-
-    try {
-      const response = await fetch(`/api/tender/${tenderId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete tender');
-      }
-
-      setTenders(tenders.filter((tender) => tender._id !== tenderId));
-    } catch (err) {
-      setError(err.message);
     }
   };
 
-  const handleEditTender = (tenderId) => {
-    navigate(`/tender/edit/${tenderId}`);
-  };
-
-  const toggleTenderDetails = (tenderId) => {
-    setSelectedTender((prevId) => (prevId === tenderId ? null : tenderId));
-  };
+  const handleEditTender = (tenderId) => navigate(`/tender/edit/${tenderId}`);
 
   const handleConfirmToSeeBids = async (tenderId) => {
     try {
@@ -79,38 +46,25 @@ const ManageTenders = () => {
           'Content-Type': 'application/json',
         },
       });
-      if (!response.ok) {
-        throw new Error('Failed to confirm');
+      if (response.ok) {
+        const updatedTender = await response.json();
+        setTenders(tenders.map(tender => (tender._id === tenderId ? updatedTender : tender)));
+      } else {
+        throw new Error('Failed to confirm bid viewing');
       }
-      const updatedTender = await response.json();
-      setTenders(tenders.map(tender => (tender._id === tenderId ? updatedTender : tender)));
     } catch (error) {
       console.error('Error confirming bid viewing:', error);
     }
   };
 
-  const handleViewBids = (tenderId) => {
-    navigate(`/tender/${tenderId}/bids`);
-  };
+  const handleViewBids = (tenderId) => navigate(`/tender/${tenderId}/bids`);
 
-  const hasUserApproved = (tender) => {
-    if (!userData) return false;
-    return tender.procurementGroupApprovals.some((userId) => userId === userData._id);
-  };
+  const toggleTenderDetails = (tenderId) => setSelectedTender(prevId => (prevId === tenderId ? null : tenderId));
 
-  // Filter tenders based on the selected status
-  const filteredTenders = tenders.filter((tender) => {
-    if (statusFilter === 'all') return true;
-    return tender.status === statusFilter;
-  });
+  const hasUserApproved = (tender) => userData && tender.procurementGroupApprovals.includes(userData._id);
 
-  if (loading || !userData) {
-    return <div>下载中...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (loading || !userData) return <div>下载中...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="container mt-5">
@@ -133,7 +87,7 @@ const ManageTenders = () => {
         </select>
       </div>
 
-      {filteredTenders.length === 0 ? (
+      {tenders.length === 0 ? (
         <div>无招标项目</div>
       ) : (
         <table className="table table-striped">
@@ -149,7 +103,7 @@ const ManageTenders = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredTenders.slice().reverse().map((tender) => (
+            {tenders.slice().reverse().map(tender => (
               <React.Fragment key={tender._id}>
                 <tr onClick={() => toggleTenderDetails(tender._id)} style={{ cursor: 'pointer' }}>
                   <td>{tender.title}</td>
@@ -163,36 +117,37 @@ const ManageTenders = () => {
                   </td>
                   <td>{statusMap[tender.status]}</td>
                   <td>
-                    {permissionRoles.editTender.includes(userData.role) && <button className="btn btn-primary me-2" onClick={() => handleEditTender(tender._id)}>
-                      编辑
-                    </button>}
-                    {permissionRoles.editTender.includes(userData.role) && <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
-                      删除
-                    </button>}
-                    {/* Confirm to See Bids button for procurement group members */}
-                    {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (
-                      <div className="mt-2">
+                    <div className="d-flex flex-wrap gap-2">
+                      {permissionRoles.editTender.includes(userData.role) && (
+                        <>
+                          <button className="btn btn-primary" onClick={() => handleEditTender(tender._id)}>
+                            编辑
+                          </button>
+                          <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
+                            删除
+                          </button>
+                        </>
+                      )}
+                      {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (
                         <button
-                          className="btn btn-warning me-2"
+                          className="btn btn-warning"
                           onClick={() => handleConfirmToSeeBids(tender._id)}
                           disabled={hasUserApproved(tender)}
                         >
                           {hasUserApproved(tender) ? '已确认' : '确认查看投标'}
                         </button>
-                      </div>
-                    )}
-                    {/* View Bids button when status is ClosedAndCanSeeBids */}
-                    {(tender.status === 'ClosedAndCanSeeBids' || tender.status === "Awarded") && (
-                      <div className="mt-2">
-                        <button
-                          className="btn btn-info me-2"
-                          onClick={() => handleViewBids(tender._id)}
-                        >
+                      )}
+                      <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tender._id}`)}>
+                        查看招标
+                      </button>
+                      {permissionStatus.canViewBids.includes(tender.status) && (
+                        <button className="btn btn-info" onClick={() => handleViewBids(tender._id)}>
                           查看投标
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </td>
+
                 </tr>
 
                 {selectedTender === tender._id && (
@@ -206,29 +161,40 @@ const ManageTenders = () => {
                           <p><strong>状态:</strong> {statusMap[tender.status]}</p>
                           <p><strong>目标用户:</strong></p>
                           <ul>
-                            {tender.targetedUsers.map((user) => (
-                              <li key={user._id}>{user.username}</li>
+                            {tender.targetedUsers.map(user => <li key={user._id}>{user.username}</li>)}
+                          </ul>
+                          <p><strong>投标者:</strong></p>
+                          <ul>
+                            {tender.bids.map(bid => (
+                              <li key={bid._id}>
+                                {bid.bidder.username} {new Date(bid.submittedAt).toLocaleString('en-GB', {
+                                  year: 'numeric',
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: false,
+                                })}
+                              </li>
                             ))}
                           </ul>
                           <p><strong>采购组成员:</strong></p>
                           <ul>
-                            {tender.procurementGroup.map((user) => (
-                              <li key={user._id}>{user.username}</li>
-                            ))}
+                            {tender.procurementGroup.map(user => <li key={user._id}>{user.username}</li>)}
                           </ul>
-                          <p><strong>相关文件:</strong></p>
-                          {tender.relatedFiles && tender.relatedFiles.length > 0 ? (
-                            <ul>
-                              {tender.relatedFiles.map((file, index) => (
-                                <li key={index}>
-                                  <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
-                                    {file.fileName}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            ''
+                          {tender.relatedFiles?.length > 0 && (
+                            <>
+                              <p><strong>相关文件:</strong></p>
+                              <ul>
+                                {tender.relatedFiles.map((file, index) => (
+                                  <li key={index}>
+                                    <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
+                                      {file.fileName}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
                           )}
 
                           {/* Confirm to See Bids button for procurement group members */}
@@ -244,8 +210,12 @@ const ManageTenders = () => {
                             </div>
                           )}
 
+                          <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tender._id}`)}>
+                            查看招标
+                          </button>
+
                           {/* View Bids button when status is ClosedAndCanSeeBids */}
-                          {tender.status === 'ClosedAndCanSeeBids' && (
+                          {permissionStatus.canViewBids.includes(tender.status) && (
                             <div className="mt-4">
                               <button
                                 className="btn btn-info"
@@ -255,6 +225,7 @@ const ManageTenders = () => {
                               </button>
                             </div>
                           )}
+
                         </div>
                       </div>
                     </td>

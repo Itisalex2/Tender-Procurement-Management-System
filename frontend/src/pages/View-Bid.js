@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import BidEvaluations from '../components/Bid-Evaluations';
 import { bidStatusMap } from '../utils/english-to-chinese-map';
-import permissionRoles from '../utils/permissions';
+import { permissionRoles } from '../utils/permissions';
+
 
 const ViewBid = () => {
   const { tenderId, bidId } = useParams();
@@ -12,6 +14,7 @@ const ViewBid = () => {
   const { user } = useAuthContext();
   const [bid, setBid] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBid = async () => {
@@ -103,6 +106,12 @@ const ViewBid = () => {
               onEvaluationAdded={handleEvaluationAdded}
             />
           )}
+
+          <div className="mt-4">
+            <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tenderId}`)}>
+              查看招标
+            </button>
+          </div>
         </div>
         <div className="card-footer text-muted">
           提交时间: {new Date(bid.submittedAt).toLocaleString()}
