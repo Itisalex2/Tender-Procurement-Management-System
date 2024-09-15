@@ -118,16 +118,18 @@ const ManageTenders = () => {
                   <td>{statusMap[tender.status]}</td>
                   <td>
                     <div className="d-flex flex-wrap gap-2">
-                      {permissionRoles.editTender.includes(userData.role) && (
+                      {permissionRoles.editTender.includes(userData.role) && permissionStatus.editTender.includes(tender.status) && (
                         <>
                           <button className="btn btn-primary" onClick={() => handleEditTender(tender._id)}>
                             编辑
                           </button>
-                          <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
-                            删除
-                          </button>
                         </>
                       )}
+                      {permissionRoles.deleteTender.includes(userData.role) && (
+                        <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
+                          删除
+                        </button>)
+                      }
                       {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (
                         <button
                           className="btn btn-warning"
@@ -140,7 +142,7 @@ const ManageTenders = () => {
                       <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tender._id}`)}>
                         查看招标
                       </button>
-                      {permissionStatus.canViewBids.includes(tender.status) && (
+                      {permissionStatus.viewBids.includes(tender.status) && (
                         <button className="btn btn-info" onClick={() => handleViewBids(tender._id)}>
                           查看投标
                         </button>
@@ -215,7 +217,7 @@ const ManageTenders = () => {
                           </button>
 
                           {/* View Bids button when status is ClosedAndCanSeeBids */}
-                          {permissionStatus.canViewBids.includes(tender.status) && (
+                          {permissionStatus.viewBids.includes(tender.status) && (
                             <div className="mt-4">
                               <button
                                 className="btn btn-info"

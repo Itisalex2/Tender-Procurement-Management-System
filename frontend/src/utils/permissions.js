@@ -7,12 +7,12 @@ const permissionRoles = {
 
   // Tenders
   createTender: ['admin', 'secretary'], // 创建招标
+  deleteTender: ['admin'],
   viewAllTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
   manageTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
   editTender: ['admin', 'secretary'],
   includeInTenderTargetedUsers: ['tenderer'],
   messageOnAllTenders: ['admin', 'tenderProcurementGroup'],
-  statusCanViewBids: ['ClosedAndCanSeeBids', 'Awarded'],
 
   // Bids
   submitBid: ['tenderer'],
@@ -26,7 +26,8 @@ const permissionRoles = {
 // Permissions based on the status of various things
 const permissionStatus = {
   // Tenders
-  canViewBids: ['ClosedAndCanSeeBids', 'Awarded'],
+  viewBids: ['ClosedAndCanSeeBids', 'Awarded'],
+  editTender: ['Open'],
 }
 
 module.exports = { permissionRoles, permissionStatus };
