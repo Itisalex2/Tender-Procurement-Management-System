@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSignup } from '../hooks/use-signup';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
@@ -8,21 +9,22 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [number, setNumber] = useState('');
   const { signup, error } = useSignup();
+  const { localize } = useLocalize(); // Use localization hook
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page refresh on form submission
 
     await signup(username, email, password, number);
-    console.log(error)
+    console.log(error);
   };
 
   return (
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
       <div className="card p-4 shadow-sm" style={{ width: "100%", maxWidth: "500px" }}>
-        <h1 className="text-center mb-4">供应商报名</h1>
+        <h1 className="text-center mb-4">{localize('supplierSignup')}</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">
-            <label htmlFor="username">供应商名</label>
+            <label htmlFor="username">{localize('supplierName')}</label>
             <input
               type="text"
               id="username"
@@ -34,7 +36,7 @@ const SignUp = () => {
           </div>
 
           <div className="form-group mb-3">
-            <label htmlFor="email">邮件地址</label>
+            <label htmlFor="email">{localize('emailAddress')}</label>
             <input
               type="email"
               id="email"
@@ -46,7 +48,7 @@ const SignUp = () => {
           </div>
 
           <div className="form-group mb-3">
-            <label htmlFor="password">密码</label>
+            <label htmlFor="password">{localize('password')}</label>
             <input
               type="password"
               id="password"
@@ -58,7 +60,7 @@ const SignUp = () => {
           </div>
 
           <div className="form-group mb-3">
-            <label htmlFor="number">手机号</label>
+            <label htmlFor="number">{localize('phoneNumber')}</label>
             <input
               type="tel"
               id="number"
@@ -69,7 +71,7 @@ const SignUp = () => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100">报名</button>
+          <button type="submit" className="btn btn-primary w-100">{localize('signup')}</button>
         </form>
 
         {/* Display error message */}

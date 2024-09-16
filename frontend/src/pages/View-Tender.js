@@ -6,12 +6,14 @@ import useUpdateUser from '../hooks/use-update-user';
 import useFetchUser from '../hooks/use-fetch-user';
 import { permissionRoles } from '../utils/permissions';
 import Chatbox from '../components/Chatbox';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ViewTender = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { updateUserById } = useUpdateUser();
+  const { localize } = useLocalize(); // Use localization hook
   const [tenderDetails, setTenderDetails] = useState({
     title: '',
     description: '',
@@ -26,7 +28,7 @@ const ViewTender = () => {
     relatedFiles: [],
     targetedUsers: [],
     conversations: [],
-    bids: [], // Include bids here
+    bids: [],
   });
 
   const { tender, loading, error } = useFetchTenderWithConversation(id);
@@ -44,14 +46,18 @@ const ViewTender = () => {
         relatedFiles: tender.relatedFiles || [],
         targetedUsers: tender.targetedUsers.map((user) => user._id),
         conversations: tender.conversations || [],
-        bids: tender.bids || [], // Populate the bids here
+        bids: tender.bids || [],
       });
     }
   }, [tender]);
 
   const canSubmitBid = () => {
     if (!userData) return false;
-    return permissionRoles.submitBid.includes(userData.role) && tender && tender.status === 'Open';
+    return (
+      permissionRoles.submitBid.includes(userData.role) &&
+      tender &&
+      tender.status === 'Open'
+    );
   };
 
   const handleBidSubmit = () => {
@@ -59,60 +65,60 @@ const ViewTender = () => {
   };
 
   if (loading || userLoading || !userData) {
-    return <div>下载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (error || userError) {
-    return <div>Error: {error || userError}</div>;
+    return <div>{localize('error')}: {error || userError}</div>;
   }
 
   return (
     <div className="container mt-5" style={{ display: 'flex', flexDirection: 'row' }}>
       <div className="view-tender-content" style={{ flex: 1 }}>
-        <h1 className="mb-4">查看招标</h1>
+        <h1 className="mb-4">{localize('viewTender')}</h1>
 
         <div className="mb-3">
-          <label className="form-label">标题</label>
+          <label className="form-label">{localize('title')}</label>
           <p>{tenderDetails.title}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">描述</label>
+          <label className="form-label">{localize('description')}</label>
           <p>{tenderDetails.description}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">发布日期</label>
+          <label className="form-label">{localize('issueDate')}</label>
           <p>{new Date(tenderDetails.issueDate).toLocaleString()}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">截止日期</label>
+          <label className="form-label">{localize('closingDate')}</label>
           <p>{new Date(tenderDetails.closingDate).toLocaleString()}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">联系人姓名</label>
+          <label className="form-label">{localize('contactName')}</label>
           <p>{tenderDetails.contactInfo.name}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">联系人邮箱</label>
+          <label className="form-label">{localize('contactEmail')}</label>
           <p>{tenderDetails.contactInfo.email}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">联系人电话</label>
-          <p>{tenderDetails.contactInfo.phone || '无'}</p>
+          <label className="form-label">{localize('contactPhone')}</label>
+          <p>{tenderDetails.contactInfo.phone || localize('none')}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">其他要求</label>
-          <p>{tenderDetails.otherRequirements || '无'}</p>
+          <label className="form-label">{localize('otherRequirements')}</label>
+          <p>{tenderDetails.otherRequirements || localize('none')}</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label">现有文件</label>
+          <label className="form-label">{localize('existingFiles')}</label>
           <ul>
             {tenderDetails.relatedFiles.map((file, index) => (
               <li key={index}>
@@ -124,10 +130,13 @@ const ViewTender = () => {
                   {file.fileName}
                 </a>
                 {file.dateUploaded && (
-                  <span> - 上传时间: {new Date(file.dateUploaded).toLocaleString()}</span>
+                  <span>
+                    {' '}
+                    - {localize('uploadedAt')}: {new Date(file.dateUploaded).toLocaleString()}
+                  </span>
                 )}
                 {file.uploadedBy && (
-                  <span> - 上传者: {file.uploadedBy.username}</span>
+                  <span> - {localize('uploadedBy')}: {file.uploadedBy.username}</span>
                 )}
               </li>
             ))}
@@ -137,11 +146,11 @@ const ViewTender = () => {
         {/* Show the list of bidders */}
         {permissionRoles.viewBids.includes(userData.role) && (
           <div className="mb-3">
-            <label className="form-label">投标者</label>
+            <label className="form-label">{localize('bidders')}</label>
             <ul>
               {tenderDetails.bids.map((bid, index) => (
                 <li key={index}>
-                  供应商: {bid.bidder.username} - 提交时间: {new Date(bid.submittedAt).toLocaleString('en-GB', {
+                  {localize('supplier')}: {bid.bidder.username} - {localize('submittedAt')}: {new Date(bid.submittedAt).toLocaleString('en-GB', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
@@ -158,7 +167,7 @@ const ViewTender = () => {
         {canSubmitBid() && (
           <div className="mt-3">
             <button className="btn btn-primary" onClick={handleBidSubmit}>
-              提交投标
+              {localize('submitBid')}
             </button>
           </div>
         )}

@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
-import { bidStatusMap } from "../utils/english-to-chinese-map";
 import { useFetchTender } from "../hooks/use-fetch-tender";
 import { permissionRoles } from '../utils/permissions';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ViewBids = () => {
   const { id } = useParams(); // Get tender id from URL
@@ -14,6 +14,7 @@ const ViewBids = () => {
   const { userData, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
   const navigate = useNavigate(); // Use navigate for bid redirection
+  const { localize } = useLocalize(); // Use localization hook
 
   // Function to handle selecting a winning bid
   const handleSelectWinningBid = async (bidId) => {
@@ -27,14 +28,14 @@ const ViewBids = () => {
       });
 
       if (!response.ok) {
-        throw new Error('无法选择中标投标。');
+        throw new Error(localize('unableToSelectWinningBid'));
       }
 
-      alert('中标投标已成功选择！');
+      alert(localize('winningBidSelected'));
       window.location.reload(); // Reload the page to reflect the change
     } catch (err) {
       console.error(err);
-      alert('选择中标投标失败。');
+      alert(localize('failedToSelectWinningBid'));
     }
   };
 
@@ -48,11 +49,11 @@ const ViewBids = () => {
         });
 
         if (response.status === 403) {
-          throw new Error('您无权查看投标，因为投标尚未公开。');
+          throw new Error(localize('noPermissionToViewBids'));
         }
 
         if (!response.ok) {
-          throw new Error('无法获取投标。');
+          throw new Error(localize('unableToFetchBids'));
         }
 
         const data = await response.json();
@@ -63,23 +64,23 @@ const ViewBids = () => {
     };
 
     fetchBids();
-  }, [id, user]);
+  }, [id, user, localize]);
 
   if (error || tenderError || userError) {
     return <div className="alert alert-danger">{error}</div>;
   }
 
   if (!userData || !bids || tenderLoading) {
-    return <div>下载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   const canSelectWinningBid = permissionRoles.selectWinningBid.includes(userData.role) && !tender.winningBid;
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">投标列表</h1>
+      <h1 className="mb-4">{localize('bidList')}</h1>
       {bids.length === 0 ? (
-        <div className="alert alert-info">没有投标。</div>
+        <div className="alert alert-info">{localize('noBids')}</div>
       ) : (
         <div className="row">
           {bids.map((bid) => (
@@ -91,14 +92,14 @@ const ViewBids = () => {
             >
               <div className="card">
                 <div className="card-header">
-                  <strong>供应商: {bid.bidder.username}</strong>
+                  <strong>{localize('supplier')}: {bid.bidder.username}</strong>
                 </div>
                 <div className="card-body">
-                  <h5 className="card-title">投标金额: {bid.amount}</h5>
-                  <p className="card-text">投标信息: {bid.content || '无'}</p>
+                  <h5 className="card-title">{localize('bidAmount')}: {bid.amount}</h5>
+                  <p className="card-text">{localize('bidContent')}: {bid.content || localize('none')}</p>
                   <p className="card-text">
-                    <strong>状态:</strong>{' '}
-                    {bidStatusMap[bid.status]}
+                    <strong>{localize('status')}:</strong>{' '}
+                    {localize(bid.status)}
                   </p>
 
                   {/* Show select winning bid button only for users with permission */}
@@ -110,12 +111,12 @@ const ViewBids = () => {
                         handleSelectWinningBid(bid._id);
                       }}
                     >
-                      选择为中标
+                      {localize('selectAsWinningBid')}
                     </button>
                   )}
                 </div>
                 <div className="card-footer text-muted">
-                  提交时间: {new Date(bid.submittedAt).toLocaleString()}
+                  {localize('submittedAt')}: {new Date(bid.submittedAt).toLocaleString()}
                 </div>
               </div>
             </div>

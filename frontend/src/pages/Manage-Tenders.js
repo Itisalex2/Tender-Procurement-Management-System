@@ -4,7 +4,7 @@ import useFetchTenders from '../hooks/use-fetch-tenders';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { permissionRoles, permissionStatus } from '../utils/permissions';
-import { statusMap } from '../utils/english-to-chinese-map';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ManageTenders = () => {
   const navigate = useNavigate();
@@ -14,10 +14,11 @@ const ManageTenders = () => {
   const { tenders, loading, error, setTenders } = useFetchTenders(statusFilter); // Fetch tenders based on filter
   const [selectedTender, setSelectedTender] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const { localize } = useLocalize(); // Use localization hook
 
   const handleDeleteTender = async (e, tenderId) => {
     e.stopPropagation();
-    if (window.confirm('您确定要删除这个招标吗？')) {
+    if (window.confirm(localize('confirmDeleteTender'))) {
       try {
         const response = await fetch(`/api/tender/${tenderId}`, {
           method: 'DELETE',
@@ -28,7 +29,7 @@ const ManageTenders = () => {
         if (response.ok) {
           setTenders(tenders.filter(tender => tender._id !== tenderId));
         } else {
-          throw new Error('Failed to delete tender');
+          throw new Error(localize('failedToDeleteTender'));
         }
       } catch (err) {
         console.error(err.message);
@@ -51,10 +52,10 @@ const ManageTenders = () => {
         const updatedTender = await response.json();
         setTenders(tenders.map(tender => (tender._id === tenderId ? updatedTender : tender)));
       } else {
-        throw new Error('Failed to confirm bid viewing');
+        throw new Error(localize('failedToConfirmBidViewing'));
       }
     } catch (error) {
-      console.error('Error confirming bid viewing:', error);
+      console.error(localize('errorConfirmingBidViewing'), error);
     }
   };
 
@@ -74,39 +75,39 @@ const ManageTenders = () => {
     );
   });
 
-  if (loading || !userData) return <div>下载中...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading || !userData) return <div>{localize('loading')}</div>;
+  if (error) return <div>{localize('error')}: {error}</div>;
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">招标管理</h1>
+      <h1 className="mb-4">{localize('manageTenders')}</h1>
 
       {/* Status filter dropdown */}
       <div className="mb-4 d-flex gap-3">
         <div>
-          <label className="form-label">筛选招标状态</label>
+          <label className="form-label">{localize('filterTenderStatus')}</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="form-select"
             style={{ width: '200px' }}
           >
-            <option value="all">所有状态</option>
-            <option value="Open">开放</option>
-            <option value="Closed">关闭</option>
-            <option value="ClosedAndCanSeeBids">关闭可查看投标</option>
-            <option value="Awarded">已授予</option>
-            <option value="Failed">流标</option> {/* New "Failed" option */}
+            <option value="all">{localize('allStatus')}</option>
+            <option value="Open">{localize('Open')}</option>
+            <option value="Closed">{localize('Closed')}</option>
+            <option value="ClosedAndCanSeeBids">{localize('ClosedAndCanSeeBids')}</option>
+            <option value="Awarded">{localize('Awarded')}</option>
+            <option value="Failed">{localize('Failed')}</option>
           </select>
         </div>
 
         {/* Search bar */}
         <div>
-          <label className="form-label">搜索关键字</label>
+          <label className="form-label">{localize('searchKeyword')}</label>
           <input
             type="text"
             className="form-control"
-            placeholder="搜索标题或描述..."
+            placeholder={localize('searchPlaceholder')}
             value={searchQuery}
             onChange={handleSearch}
             style={{ width: '300px' }}
@@ -115,18 +116,18 @@ const ManageTenders = () => {
       </div>
 
       {filteredTenders.length === 0 ? (
-        <div>无招标项目</div>
+        <div>{localize('noTenders')}</div>
       ) : (
         <table className="table table-striped">
           <thead>
             <tr>
-              <th>标题</th>
-              <th>描述</th>
-              <th>发布日期</th>
-              <th>截止日期</th>
-              <th>联系</th>
-              <th>状态</th>
-              <th>操作</th>
+              <th>{localize('title')}</th>
+              <th>{localize('description')}</th>
+              <th>{localize('issueDate')}</th>
+              <th>{localize('closingDate')}</th>
+              <th>{localize('contact')}</th>
+              <th>{localize('status')}</th>
+              <th>{localize('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -142,36 +143,36 @@ const ManageTenders = () => {
                     {tender.contactInfo.email} <br />
                     {tender.contactInfo.phone}
                   </td>
-                  <td>{statusMap[tender.status]}</td>
+                  <td>{localize(tender.status)}</td>
                   <td>
                     <div className="d-flex flex-wrap gap-2">
                       {permissionRoles.editTender.includes(userData.role) && permissionStatus.editTender.includes(tender.status) && (
                         <>
                           <button className="btn btn-primary" onClick={() => handleEditTender(tender._id)}>
-                            编辑
+                            {localize('edit')}
                           </button>
                         </>
                       )}
                       {permissionRoles.deleteTender.includes(userData.role) && (
                         <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
-                          删除
-                        </button>)
-                      }
+                          {localize('delete')}
+                        </button>
+                      )}
                       {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (
                         <button
                           className="btn btn-warning"
                           onClick={() => handleConfirmToSeeBids(tender._id)}
                           disabled={hasUserApproved(tender)}
                         >
-                          {hasUserApproved(tender) ? '已确认' : '确认查看投标'}
+                          {hasUserApproved(tender) ? localize('alreadyConfirmed') : localize('confirmToSeeBids')}
                         </button>
                       )}
                       <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tender._id}`)}>
-                        查看招标
+                        {localize('viewTender')}
                       </button>
                       {permissionStatus.viewBids.includes(tender.status) && (
                         <button className="btn btn-info" onClick={() => handleViewBids(tender._id)}>
-                          查看投标
+                          {localize('viewBids')}
                         </button>
                       )}
                     </div>
@@ -183,15 +184,15 @@ const ManageTenders = () => {
                     <td colSpan="7">
                       <div className="card mb-4">
                         <div className="card-body">
-                          <p><strong>描述:</strong> {tender.description}</p>
-                          <p><strong>其他要求:</strong> {tender.otherRequirements}</p>
-                          <p><strong>联系:</strong> {tender.contactInfo.name}, {tender.contactInfo.email}, {tender.contactInfo.phone}</p>
-                          <p><strong>状态:</strong> {statusMap[tender.status]}</p>
-                          <p><strong>目标用户:</strong></p>
+                          <p><strong>{localize('description')}:</strong> {tender.description}</p>
+                          <p><strong>{localize('otherRequirements')}:</strong> {tender.otherRequirements}</p>
+                          <p><strong>{localize('contact')}:</strong> {tender.contactInfo.name}, {tender.contactInfo.email}, {tender.contactInfo.phone}</p>
+                          <p><strong>{localize('status')}:</strong> {localize(tender.status)}</p>
+                          <p><strong>{localize('targetedUsers')}:</strong></p>
                           <ul>
                             {tender.targetedUsers.map(user => <li key={user._id}>{user.username}</li>)}
                           </ul>
-                          <p><strong>投标者:</strong></p>
+                          <p><strong>{localize('bidders')}:</strong></p>
                           <ul>
                             {tender.bids.map(bid => (
                               <li key={bid._id}>
@@ -206,13 +207,13 @@ const ManageTenders = () => {
                               </li>
                             ))}
                           </ul>
-                          <p><strong>采购组成员:</strong></p>
+                          <p><strong>{localize('procurementGroupMembers')}:</strong></p>
                           <ul>
                             {tender.procurementGroup.map(user => <li key={user._id}>{user.username}</li>)}
                           </ul>
                           {tender.relatedFiles?.length > 0 && (
                             <>
-                              <p><strong>相关文件:</strong></p>
+                              <p><strong>{localize('relatedFiles')}:</strong></p>
                               <ul>
                                 {tender.relatedFiles.map((file, index) => (
                                   <li key={index}>
@@ -233,13 +234,13 @@ const ManageTenders = () => {
                                 onClick={() => handleConfirmToSeeBids(tender._id)}
                                 disabled={hasUserApproved(tender)}
                               >
-                                {hasUserApproved(tender) ? '已确认' : '确认查看投标'}
+                                {hasUserApproved(tender) ? localize('alreadyConfirmed') : localize('confirmToSeeBids')}
                               </button>
                             </div>
                           )}
 
                           <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tender._id}`)}>
-                            查看招标
+                            {localize('viewTender')}
                           </button>
 
                           {/* View Bids button when status is ClosedAndCanSeeBids */}
@@ -249,7 +250,7 @@ const ManageTenders = () => {
                                 className="btn btn-info"
                                 onClick={() => handleViewBids(tender._id)}
                               >
-                                查看投标
+                                {localize('viewBids')}
                               </button>
                             </div>
                           )}

@@ -1,11 +1,14 @@
 import React from 'react';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChooseRole = true }) => {
+  const { localize } = useLocalize(); // Use localization hook
+
   return (
     <form onSubmit={handleAddUser} className="mb-4">
-      <h3>添加新用户</h3>
+      <h3>{localize('addNewUser')}</h3>
       <div className="mb-3">
-        <label className="form-label">用户名</label>
+        <label className="form-label">{localize('username')}</label>
         <input
           type="text"
           className="form-control"
@@ -15,7 +18,7 @@ const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChoose
         />
       </div>
       <div className="mb-3">
-        <label className="form-label">邮件地址</label>
+        <label className="form-label">{localize('emailAddress')}</label>
         <input
           type="email"
           className="form-control"
@@ -25,7 +28,7 @@ const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChoose
         />
       </div>
       <div className="mb-3">
-        <label className="form-label">密码</label>
+        <label className="form-label">{localize('password')}</label>
         <input
           type="password"
           className="form-control"
@@ -35,7 +38,7 @@ const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChoose
         />
       </div>
       <div className="mb-3">
-        <label className="form-label">电话号码</label>
+        <label className="form-label">{localize('phoneNumber')}</label>
         <input
           type="text"
           className="form-control"
@@ -48,16 +51,16 @@ const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChoose
       {/* Conditionally allow role selection, or hardcode it to "tenderer" */}
       {canChooseRole ? (
         <div className="mb-3">
-          <label className="form-label">角色</label>
+          <label className="form-label">{localize('role')}</label>
           <select
             value={newUser.role}
             onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
             className="form-select"
           >
-            <option value="admin">管理员</option>
-            <option value="tenderer">供应商</option>
-            <option value="tenderProcurementGroup">招标管理组</option>
-            <option value="secretary">招标秘书</option>
+            <option value="admin">{localize('admin')}</option>
+            <option value="tenderer">{localize('tenderer')}</option>
+            <option value="tenderProcurementGroup">{localize('tenderProcurementGroup')}</option>
+            <option value="secretary">{localize('secretary')}</option>
           </select>
         </div>
       ) : (
@@ -69,7 +72,7 @@ const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChoose
       )}
 
       <button type="submit" className="btn btn-primary" disabled={addingUser}>
-        {addingUser ? '添加中...' : '添加用户'}
+        {addingUser ? localize('addingUser') : localize('addUser')}
       </button>
     </form>
   );

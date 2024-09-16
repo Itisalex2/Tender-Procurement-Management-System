@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
+import useLocalize from '../hooks/use-localize'; // Import the localization hook
 
 const AddTenderer = () => {
   const { user: authUser } = useAuthContext();
+  const { localize } = useLocalize(); // Use the localize hook for translations
   const [newUser, setNewUser] = useState({
     username: '',
     email: '',
@@ -49,7 +51,7 @@ const AddTenderer = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to add tenderer');
+        throw new Error(data.error || localize('failureMessage'));
       }
 
       // Reset form after successful user creation
@@ -60,9 +62,9 @@ const AddTenderer = () => {
         number: '',
         role: 'tenderer',
       });
-      alert('Tenderer created successfully!');
+      alert(localize('successMessage'));
     } catch (err) {
-      alert('Failed to add tenderer: ' + err.message);
+      alert(`${localize('failureMessage')}: ${err.message}`);
     } finally {
       setAddingUser(false);
     }
@@ -70,10 +72,10 @@ const AddTenderer = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">创建供应商(密码随机生成)</h1>
+      <h1 className="mb-4">{localize('addTendererTitle')}</h1>
       <form onSubmit={handleAddUser} className="mb-4">
         <div className="mb-3">
-          <label className="form-label">企业名</label>
+          <label className="form-label">{localize('usernameLabel')}</label>
           <input
             type="text"
             className="form-control"
@@ -83,7 +85,7 @@ const AddTenderer = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">邮件地址</label>
+          <label className="form-label">{localize('emailLabel')}</label>
           <input
             type="email"
             className="form-control"
@@ -93,7 +95,7 @@ const AddTenderer = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">电话号码</label>
+          <label className="form-label">{localize('phoneLabel')}</label>
           <input
             type="text"
             className="form-control"
@@ -104,7 +106,7 @@ const AddTenderer = () => {
         </div>
 
         <button type="submit" className="btn btn-primary" disabled={addingUser}>
-          {addingUser ? '添加中...' : '添加供应商'}
+          {addingUser ? localize('submittingButton') : localize('submitButton')}
         </button>
       </form>
     </div>

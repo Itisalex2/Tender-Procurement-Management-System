@@ -4,9 +4,8 @@ import { useParams } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import BidEvaluations from '../components/Bid-Evaluations';
-import { bidStatusMap } from '../utils/english-to-chinese-map';
 import { permissionRoles } from '../utils/permissions';
-
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ViewBid = () => {
   const { tenderId, bidId } = useParams();
@@ -15,6 +14,7 @@ const ViewBid = () => {
   const [bid, setBid] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { localize } = useLocalize(); // Use localization hook
 
   useEffect(() => {
     const fetchBid = async () => {
@@ -26,7 +26,7 @@ const ViewBid = () => {
         });
 
         if (!response.ok) {
-          throw new Error('无法获取投标。');
+          throw new Error(localize('unableToFetchBid'));
         }
 
         const data = await response.json();
@@ -37,7 +37,7 @@ const ViewBid = () => {
     };
 
     fetchBid();
-  }, [tenderId, bidId, user]);
+  }, [tenderId, bidId, user, localize]);
 
   const handleEvaluationAdded = (newEvaluation) => {
     setBid((prevBid) => ({
@@ -51,49 +51,59 @@ const ViewBid = () => {
   }
 
   if (userLoading || !bid) {
-    return <div>加载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   const isBidder = bid.bidder._id === userData._id; // Check if the user is the bidder
   const canViewPage = isBidder || permissionRoles.viewBids.includes(userData.role);
-  const canViewEvaluations = !isBidder && permissionRoles.viewAndEditBidEvaluations.includes(userData.role); // Non-bidders can view evaluations
+  const canViewEvaluations =
+    !isBidder && permissionRoles.viewAndEditBidEvaluations.includes(userData.role); // Non-bidders can view evaluations
 
   if (!canViewPage) {
-    return (
-      <div>您没有权限看见这个投标</div>
-    );
+    return <div>{localize('noPermissionToViewBid')}</div>;
   }
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">投标详情</h1>
+      <h1 className="mb-4">{localize('bidDetails')}</h1>
       <div className="card">
         <div className="card-header">
-          <strong>供应商: {bid.bidder.username}</strong>
+          <strong>
+            {localize('supplier')}: {bid.bidder.username}
+          </strong>
         </div>
         <div className="card-body">
-          <h5 className="card-title">投标金额: {bid.amount}</h5>
-          <p className="card-text">投标信息: {bid.content || '无'}</p>
-          <p className="card-text">状态: {bidStatusMap[bid.status]}</p>
+          <h5 className="card-title">
+            {localize('bidAmount')}: {bid.amount}
+          </h5>
+          <p className="card-text">
+            {localize('bidContent')}: {bid.content || localize('none')}
+          </p>
+          <p className="card-text">
+            {localize('status')}: {localize(bid.status)}
+          </p>
 
           {/* Render files if any are present, otherwise show a message */}
           {bid.files && bid.files.length > 0 ? (
             <div>
-              <h5 className="card-title">投标文件:</h5>
+              <h5 className="card-title">{localize('bidFiles')}:</h5>
               <ul className="list-group">
                 {bid.files.map((file, index) => (
                   <li key={index} className="list-group-item">
-                    <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
-                      {file.fileName} - 上传时间: {new Date(file.dateUploaded).toLocaleString()}
+                    <a
+                      href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {file.fileName} - {localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
           ) : (
-            <p className="card-text">无投标文件</p>
+            <p className="card-text">{localize('noBidFiles')}</p>
           )}
-
 
           {/* Only show evaluations if the user is not the bidder and has permission */}
           {canViewEvaluations && (
@@ -109,12 +119,12 @@ const ViewBid = () => {
 
           <div className="mt-4">
             <button className="btn btn-secondary" onClick={() => navigate(`/tender/${tenderId}`)}>
-              查看招标
+              {localize('viewTender')}
             </button>
           </div>
         </div>
         <div className="card-footer text-muted">
-          提交时间: {new Date(bid.submittedAt).toLocaleString()}
+          {localize('submittedAt')}: {new Date(bid.submittedAt).toLocaleString()}
         </div>
       </div>
     </div>

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from './use-auth-context';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const useFetchAllUsers = (roles = '') => {
   const { user } = useAuthContext();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { localize } = useLocalize(); // Use localization
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -21,7 +23,7 @@ const useFetchAllUsers = (roles = '') => {
 
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch users');
+          throw new Error(data.error || localize('failedToFetchUsers'));
         }
 
         setUsers(data);
@@ -33,7 +35,7 @@ const useFetchAllUsers = (roles = '') => {
     };
 
     fetchUsers();
-  }, [user.token, roles]);
+  }, [user.token, roles, localize]);
 
   return { users, loading, error };
 };

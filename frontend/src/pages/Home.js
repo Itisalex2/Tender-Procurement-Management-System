@@ -1,11 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFetchTenders from '../hooks/use-fetch-tenders';
-import { statusMap } from '../utils/english-to-chinese-map';
+import useLocalize from '../hooks/use-localize'; // Import the localization hook
 
 const Home = () => {
   const { tenders, loading, error } = useFetchTenders('Open'); // Fetch open tenders
   const navigate = useNavigate();
+  const { localize } = useLocalize(); // Use localization hook
 
   const handleRowClick = (tenderId) => {
     // Navigate to the new ViewTender page with the tenderId
@@ -13,25 +14,25 @@ const Home = () => {
   };
 
   if (loading) {
-    return <div>下载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (error) {
-    return <div>错误: {error}</div>;
+    return <div>{localize('fetchError', error)}</div>;
   }
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">招标列表</h1>
+      <h1 className="mb-4">{localize('tenderList')}</h1>
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>标题</th>
-            <th>描述</th>
-            <th>发布日期</th>
-            <th>截止日期</th>
-            <th>状态</th>
-            <th>相关文件</th>
+            <th>{localize('title')}</th>
+            <th>{localize('description')}</th>
+            <th>{localize('issueDate')}</th>
+            <th>{localize('closingDate')}</th>
+            <th>{localize('status')}</th>
+            <th>{localize('relatedFiles')}</th>
           </tr>
         </thead>
         <tbody>
@@ -41,7 +42,7 @@ const Home = () => {
               <td>{tender.description}</td>
               <td>{new Date(tender.issueDate).toLocaleString()}</td>
               <td>{new Date(tender.closingDate).toLocaleString()}</td>
-              <td>{statusMap[tender.status]}</td>
+              <td>{localize(tender.status)}</td>
               <td>
                 {tender.relatedFiles && tender.relatedFiles.length > 0 ? (
                   <ul>
@@ -55,13 +56,13 @@ const Home = () => {
                           {file.fileName}
                         </a>
                         {file.dateUploaded && (
-                          <span> - 上传时间: {new Date(file.dateUploaded).toLocaleString()}</span>
+                          <span> - {localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}</span>
                         )}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  '无相关文件'
+                  localize('noFiles')
                 )}
               </td>
             </tr>

@@ -6,6 +6,7 @@ import { useFetchTender } from '../hooks/use-fetch-tender';
 import { permissionRoles } from '../utils/permissions';
 import useUpdateUser from '../hooks/use-update-user';
 import FileUpload from '../components/File-Upload'; // Import the FileUpload component
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const SubmitBid = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const SubmitBid = () => {
   const { userData, loading: userLoading, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
   const { updateUserById } = useUpdateUser();
+  const { localize } = useLocalize(); // Use localization
 
   const [amount, setAmount] = useState('');
   const [content, setContent] = useState('');
@@ -33,7 +35,7 @@ const SubmitBid = () => {
     e.preventDefault();
 
     if (!hasPermissionToSubmitBid()) {
-      setErrorMsg('您没有权限提交投标。');
+      setErrorMsg(localize('noPermissionToSubmitBid'));
       return;
     }
 
@@ -56,7 +58,7 @@ const SubmitBid = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || '提交投标失败');
+        throw new Error(data.error || localize('submitBidFailed'));
       }
 
       const data = await response.json();
@@ -78,28 +80,26 @@ const SubmitBid = () => {
   };
 
   if (userLoading || tenderLoading) {
-    return <div>加载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (userError || tenderError) {
-    return <div>错误: {userError || tenderError}</div>;
+    return <div>{localize('error')}: {userError || tenderError}</div>;
   }
-
-  console.log(userData);
 
   // Check if userData.tendererDetails is null, meaning the user has not updated their details
   if (!userData.tendererDetails) {
     return (
       <div className="container mt-5">
-        <h1>提交投标</h1>
+        <h1>{localize('submitBid')}</h1>
         <div className="alert alert-warning">
-          您还未更新您的企业资料。请先更新您的企业信息以提交投标。
+          {localize('updateCompanyInfoToBid')}
         </div>
         <button
           className="btn btn-primary"
           onClick={() => navigate('/settings')}
         >
-          更新企业资料
+          {localize('updateCompanyInfo')}
         </button>
       </div>
     );
@@ -107,14 +107,15 @@ const SubmitBid = () => {
 
   return (
     <div className="container mt-5">
-      <h1>提交投标 - {tender.title}</h1>
+      <h1>{localize('submitBid')} - {tender.title}</h1>
 
-      {success && <div className="alert alert-success">投标提交成功！</div>}
+      {success && <div className="alert alert-success">{localize('bidSubmittedSuccess')}</div>}
       {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
 
       <form onSubmit={handleSubmitBid} encType="multipart/form-data">
         <div className="mb-3">
-          <label htmlFor="amount" className="form-label">投标金额
+          <label htmlFor="amount" className="form-label">
+            {localize('bidAmount')}
             <span className="text-danger">*</span>
           </label>
           <input
@@ -128,7 +129,7 @@ const SubmitBid = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="content" className="form-label">附加信息</label>
+          <label htmlFor="content" className="form-label">{localize('additionalInformation')}</label>
           <textarea
             className="form-control"
             id="content"
@@ -139,7 +140,7 @@ const SubmitBid = () => {
 
         <FileUpload onFilesChange={handleFilesChange} />
 
-        <button type="submit" className="btn btn-primary">提交投标</button>
+        <button type="submit" className="btn btn-primary">{localize('submitBid')}</button>
       </form>
     </div>
   );

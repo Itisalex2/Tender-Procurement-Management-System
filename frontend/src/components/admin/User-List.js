@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
+import useLocalize from '../../hooks/use-localize'; // Import localization hook
 
-const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilter, setRoleFilter }) => {
+const UserList = ({
+  filteredUsers,
+  handleUserUpdate,
+  handleDeleteUser,
+  roleFilter,
+  setRoleFilter,
+}) => {
   const [editedFields, setEditedFields] = useState({});
+  const { localize } = useLocalize(); // Use localization hook
 
   const handleInputChange = (userId, field, value) => {
     setEditedFields((prev) => ({
@@ -12,7 +20,7 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
 
   const handleSaveAll = () => {
     // Ask for confirmation once before saving all changes
-    const confirmChange = window.confirm('您确定要保存所有更改吗?');
+    const confirmChange = window.confirm(localize('confirmSaveAllChanges'));
     if (!confirmChange) return;
 
     // Iterate through edited fields and update each user
@@ -29,18 +37,20 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
     <>
       {/* Role filter dropdown */}
       <div className="mb-4">
-        <label className="form-label">筛选用户角色</label>
+        <label className="form-label">{localize('filterUserRole')}</label>
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           className="form-select"
           style={{ width: '150px' }}
         >
-          <option value="all">所有角色</option>
-          <option value="admin">管理员</option>
-          <option value="tenderer">供应商</option>
-          <option value="tenderProcurementGroup">招标管理组</option>
-          <option value="secretary">招标秘书</option>
+          <option value="all">{localize('allRoles')}</option>
+          <option value="admin">{localize('admin')}</option>
+          <option value="tenderer">{localize('tenderer')}</option>
+          <option value="tenderProcurementGroup">
+            {localize('tenderProcurementGroup')}
+          </option>
+          <option value="secretary">{localize('secretary')}</option>
         </select>
       </div>
 
@@ -48,12 +58,12 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>用户名</th>
-            <th>电子邮件</th>
-            <th>电话号码</th>
-            <th>密码</th>
-            <th>角色</th>
-            <th>操作</th>
+            <th>{localize('username')}</th>
+            <th>{localize('email')}</th>
+            <th>{localize('phoneNumber')}</th>
+            <th>{localize('password')}</th>
+            <th>{localize('role')}</th>
+            <th>{localize('actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -65,7 +75,9 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
                   type="email"
                   className="form-control"
                   value={editedFields[user._id]?.email || user.email} // Use value instead of defaultValue
-                  onChange={(e) => handleInputChange(user._id, 'email', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(user._id, 'email', e.target.value)
+                  }
                 />
               </td>
               <td>
@@ -73,27 +85,35 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
                   type="text"
                   className="form-control"
                   value={editedFields[user._id]?.number || user.number} // Use value instead of defaultValue
-                  onChange={(e) => handleInputChange(user._id, 'number', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(user._id, 'number', e.target.value)
+                  }
                 />
               </td>
               <td>
                 <input
                   type="password"
                   className="form-control"
-                  placeholder="更新密码"
-                  onChange={(e) => handleInputChange(user._id, 'password', e.target.value)}
+                  placeholder={localize('updatePassword')}
+                  onChange={(e) =>
+                    handleInputChange(user._id, 'password', e.target.value)
+                  }
                 />
               </td>
               <td>
                 <select
                   value={editedFields[user._id]?.role || user.role} // Use value instead of defaultValue
-                  onChange={(e) => handleInputChange(user._id, 'role', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(user._id, 'role', e.target.value)
+                  }
                   className="form-select"
                 >
-                  <option value="admin">管理员</option>
-                  <option value="tenderer">供应商</option>
-                  <option value="tenderProcurementGroup">招标管理组</option>
-                  <option value="secretary">招标秘书</option>
+                  <option value="admin">{localize('admin')}</option>
+                  <option value="tenderer">{localize('tenderer')}</option>
+                  <option value="tenderProcurementGroup">
+                    {localize('tenderProcurementGroup')}
+                  </option>
+                  <option value="secretary">{localize('secretary')}</option>
                 </select>
               </td>
               <td>
@@ -101,7 +121,7 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
                   className="btn btn-danger"
                   onClick={() => handleDeleteUser(user._id)}
                 >
-                  删除用户
+                  {localize('deleteUser')}
                 </button>
               </td>
             </tr>
@@ -116,7 +136,7 @@ const UserList = ({ filteredUsers, handleUserUpdate, handleDeleteUser, roleFilte
           onClick={handleSaveAll}
           disabled={Object.keys(editedFields).length === 0} // Disable if no changes made
         >
-          保存所有更改
+          {localize('saveAllChanges')}
         </button>
       </div>
     </>

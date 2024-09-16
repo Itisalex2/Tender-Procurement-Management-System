@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFetchMails from '../hooks/use-fetch-mails';
 import { useAuthContext } from '../hooks/use-auth-context';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const Mail = () => {
   const { mails, loading, error, refetchMails } = useFetchMails(false, true);
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { localize } = useLocalize(); // Use localization hook
   const [expandedMail, setExpandedMail] = useState(null); // State to track expanded mail
   const [selectedMails, setSelectedMails] = useState([]); // Track selected emails
   const [selectAll, setSelectAll] = useState(false); // State for select all checkbox
-
 
   const handleMarkAsRead = async (mailIds) => {
     try {
@@ -23,11 +24,10 @@ const Mail = () => {
         body: JSON.stringify({ mailIds, read: true }),
       });
       refetchMails(); // Refresh the mail list after marking as read
-      // Reset selections after marking as read
       setSelectedMails([]);
       setSelectAll(false);
     } catch (err) {
-      console.error('Error marking mail as read:', err);
+      console.error(localize('errorMarkingMail'), err);
     }
   };
 
@@ -41,12 +41,11 @@ const Mail = () => {
         },
         body: JSON.stringify({ mailIds }),
       });
-      refetchMails(); // Refresh the mail list after deleting
-      // Reset selections after marking as read
+      refetchMails();
       setSelectedMails([]);
       setSelectAll(false);
     } catch (err) {
-      console.error('Error deleting mails:', err);
+      console.error(localize('errorDeletingMail'), err);
     }
   };
 
@@ -58,17 +57,15 @@ const Mail = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ mailIds, read: false }), // Mark mails as unread
+        body: JSON.stringify({ mailIds, read: false }),
       });
-      refetchMails(); // Refresh the mail list after marking as unread
-      // Reset selections after marking as read
+      refetchMails();
       setSelectedMails([]);
       setSelectAll(false);
     } catch (err) {
-      console.error('Error marking mail as unread:', err);
+      console.error(localize('errorMarkingUnread'), err);
     }
   };
-
 
   const handleMarkAllAsRead = async () => {
     handleMarkAsRead(selectedMails);
@@ -84,11 +81,9 @@ const Mail = () => {
   };
 
   const handleNavigateBidType = async (relatedItem, mailId) => {
-    // Mark the mail as read
     handleMarkAsRead([mailId]);
 
     try {
-      // Fetch tender data before navigating
       const response = await fetch(`/api/bid/${relatedItem}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -96,20 +91,18 @@ const Mail = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch tender.');
+        throw new Error(localize('errorFetchingTender'));
       }
 
       const bid = await response.json();
-
-      // Navigate to the bid page once the tender is loaded
       navigate(`/tender/${bid.tender}/bid/${bid._id}`);
     } catch (err) {
-      console.error('Error fetching tender:', err);
+      console.error(localize('errorFetchingTender'), err);
     }
   };
 
   const toggleMailContent = (mailId) => {
-    setExpandedMail(expandedMail === mailId ? null : mailId); // Toggle mail content
+    setExpandedMail(expandedMail === mailId ? null : mailId);
   };
 
   const toggleSelectMail = (mailId) => {
@@ -122,15 +115,15 @@ const Mail = () => {
 
   const toggleSelectAll = () => {
     if (selectAll) {
-      setSelectedMails([]); // Deselect all
+      setSelectedMails([]);
     } else {
-      setSelectedMails(mails.map((mail) => mail._id)); // Select all mails
+      setSelectedMails(mails.map((mail) => mail._id));
     }
     setSelectAll(!selectAll);
   };
 
   if (loading) {
-    return <div className="text-center my-5">下载中...</div>;
+    return <div className="text-center my-5">{localize('loading')}</div>;
   }
 
   if (error) {
@@ -139,7 +132,7 @@ const Mail = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">邮件</h2>
+      <h2 className="mb-4">{localize('mails')}</h2>
 
       <div className="mb-4">
         <input
@@ -147,32 +140,32 @@ const Mail = () => {
           checked={selectAll}
           onChange={toggleSelectAll}
         />{' '}
-        全选
+        {localize('selectAll')}
         <button
           className="btn btn-secondary mx-2"
           onClick={handleMarkAllAsRead}
           disabled={selectedMails.length === 0}
         >
-          标记已读
+          {localize('markAsRead')}
         </button>
         <button
           className="btn btn-secondary mx-2"
           onClick={() => handleMarkAsUnread(selectedMails)}
           disabled={selectedMails.length === 0}
         >
-          标记未读
+          {localize('markAsUnread')}
         </button>
         <button
           className="btn btn-danger"
           onClick={handleDeleteSelectedMails}
           disabled={selectedMails.length === 0}
         >
-          删除
+          {localize('delete')}
         </button>
       </div>
 
       {mails.length === 0 ? (
-        <div className="alert alert-info">无邮件</div>
+        <div className="alert alert-info">{localize('noMails')}</div>
       ) : (
         <div className="list-group">
           {mails.map((mail) => (
@@ -197,7 +190,7 @@ const Mail = () => {
                   }}
                   onClick={() => toggleMailContent(mail._id)}
                 >
-                  <h6 className="mb-0">主题：{mail.subject}</h6>
+                  <h6 className="mb-0">{localize('subject')}: {mail.subject}</h6>
                 </div>
                 <div
                   className="mail-sender text-muted"
@@ -209,7 +202,7 @@ const Mail = () => {
                   }}
                   onClick={() => toggleMailContent(mail._id)}
                 >
-                  来源: {mail.sender.username}
+                  {localize('sender')}: {mail.sender.username}
                 </div>
                 <div
                   className="mail-snippet text-muted"
@@ -230,13 +223,13 @@ const Mail = () => {
 
               {expandedMail === mail._id && (
                 <div>
-                  <p>内容: {mail.content}</p>
+                  <p>{localize('content')}: {mail.content}</p>
                   {mail.type === 'tender' && mail.relatedItem && (
                     <button
                       className="btn btn-primary mt-3"
                       onClick={() => handleNavigateTenderType(mail.relatedItem, mail._id)}
                     >
-                      查看招标
+                      {localize('viewTender')}
                     </button>
                   )}
                   {mail.type === 'bid' && mail.relatedItem && (
@@ -244,7 +237,7 @@ const Mail = () => {
                       className="btn btn-primary mt-3"
                       onClick={() => handleNavigateBidType(mail.relatedItem, mail._id)}
                     >
-                      查看投标
+                      {localize('viewBid')}
                     </button>
                   )}
                 </div>

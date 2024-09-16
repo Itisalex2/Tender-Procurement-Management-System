@@ -11,7 +11,7 @@ import Settings from './pages/Settings';
 import PageNotFound from './pages/Page-Not-Found';
 import AdminSettings from './pages/Admin-Settings';
 import CreateTender from './pages/Create-Tender';
-import ManageTenders from './pages/Manage-Tendors';
+import ManageTenders from './pages/Manage-Tenders';
 import EditTender from './pages/Edit-Tender';
 import SubmitBid from './pages/Submit-Bid';
 import ViewBids from './pages/View-Bids';

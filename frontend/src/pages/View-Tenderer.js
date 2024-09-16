@@ -2,30 +2,31 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import useFetchUserById from '../hooks/use-fetch-user-by-id';
 import useUpdateUser from '../hooks/use-update-user';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ViewTenderer = () => {
   const { id } = useParams(); // Get the tenderer ID from the route parameters
   const { userData, loading, error, setUserData } = useFetchUserById(id); // Added setUserData to update comments in real-time
   const { updateUserById, isLoading: isSubmitting, error: submitError } = useUpdateUser(); // Hook for updating user
+  const { localize } = useLocalize(); // Use localization hook
 
   const [newComment, setNewComment] = useState(''); // State to track new comment
 
   if (loading) {
-    return <div>加载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (error) {
-    return <div className="alert alert-danger">无法加载供应商: {error}</div>;
+    return <div className="alert alert-danger">{localize('unableToLoadTenderer')}: {error}</div>;
   }
 
   if (!userData) {
-    return <div className="alert alert-warning">未找到供应商详情。</div>;
+    return <div className="alert alert-warning">{localize('tendererDetailsNotFound')}</div>;
   }
 
   if (userData.role !== 'tenderer') {
-    return <div className="alert alert-danger">无法查看非供应商用户。</div>;
+    return <div className="alert alert-danger">{localize('cannotViewNonTenderer')}</div>;
   }
-
 
   const {
     username,
@@ -52,7 +53,7 @@ const ViewTenderer = () => {
 
     const updatedTendererDetails = {
       ...tendererDetails,
-      newComment: commentData // Add the new comment
+      newComment: commentData, // Add the new comment
     };
 
     const updatedUserData = { tendererDetails: updatedTendererDetails };
@@ -64,7 +65,13 @@ const ViewTenderer = () => {
         ...prevUserData,
         tendererDetails: {
           ...prevUserData.tendererDetails,
-          comments: [...prevUserData.tendererDetails.comments, { ...commentData, commenter: { _id: userData._id, username: userData.username } }],
+          comments: [
+            ...prevUserData.tendererDetails.comments,
+            {
+              ...commentData,
+              commenter: { _id: userData._id, username: userData.username },
+            },
+          ],
         },
       }));
     }
@@ -93,24 +100,24 @@ const ViewTenderer = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">供应商详情</h1>
+      <h1 className="mb-4">{localize('tendererDetails')}</h1>
       <div className="card p-4 shadow-sm">
         <h2>{username}</h2>
 
         {/* Display basic details */}
         <div className="mb-3">
-          <strong>电邮</strong> {email || '未提供'}
+          <strong>{localize('email')}</strong> {email || localize('notProvided')}
         </div>
 
         <div className="mb-3">
-          <strong>电话</strong> {number || '未提供'}
+          <strong>{localize('phone')}</strong> {number || localize('notProvided')}
         </div>
 
         {/* Display Bids */}
         <div className="mt-3">
-          <h5>投标</h5>
+          <h5>{localize('bids')}</h5>
           {bids.length === 0 ? (
-            <p>暂无投标。</p>
+            <p>{localize('noBids')}</p>
           ) : (
             <ul className="list-group">
               {bids.map((bid) => (
@@ -120,7 +127,7 @@ const ViewTenderer = () => {
                     style={{ textDecoration: 'none', outline: 'none' }}
                     onMouseDown={(e) => e.preventDefault()}
                   >
-                    <strong>标:</strong> {bid.tender?.title || '未提供'}
+                    <strong>{localize('tender')}:</strong> {bid.tender?.title || localize('notProvided')}
                   </Link>
                 </li>
               ))}
@@ -128,38 +135,40 @@ const ViewTenderer = () => {
           )}
         </div>
 
-        {!tendererDetails && <strong>未交企业资料，无法评论</strong>}
+        {!tendererDetails && <strong>{localize('noCompanyDetailsCannotComment')}</strong>}
 
         {tendererDetails && (
           <>
             <div className="mb-3">
-              <strong>企业类型:</strong> {tendererDetails.businessType || '未提供'}
+              <strong>{localize('businessType')}:</strong> {tendererDetails.businessType || localize('notProvided')}
             </div>
 
             <div className="mb-3">
-              <strong>法定代表人:</strong> {tendererDetails.legalRepresentative || '未提供'}
+              <strong>{localize('legalRepresentative')}:</strong> {tendererDetails.legalRepresentative || localize('notProvided')}
             </div>
 
             <div className="mb-3">
-              <strong>成立日期:</strong> {tendererDetails.dateOfEstablishment
+              <strong>{localize('dateOfEstablishment')}:</strong>{' '}
+              {tendererDetails.dateOfEstablishment
                 ? new Date(tendererDetails.dateOfEstablishment).toLocaleDateString()
-                : '未提供'}
+                : localize('notProvided')}
             </div>
 
             <div className="mb-3">
-              <strong>国家:</strong> {tendererDetails.country || '未提供'}
+              <strong>{localize('country')}:</strong> {tendererDetails.country || localize('notProvided')}
             </div>
 
             <div className="mb-3">
-              <strong>办公地址:</strong> {tendererDetails.officeAddress || '未提供'}
+              <strong>{localize('officeAddress')}:</strong> {tendererDetails.officeAddress || localize('notProvided')}
             </div>
 
             <div className="mb-3">
-              <strong>统一社会信用代码:</strong> {tendererDetails.unifiedSocialCreditCode || '未提供'}
+              <strong>{localize('unifiedSocialCreditCode')}:</strong> {tendererDetails.unifiedSocialCreditCode || localize('notProvided')}
             </div>
 
             <div className="mb-3">
-              <strong>验证状态:</strong> {tendererDetails.verified ? '已验证' : '未验证'}
+              <strong>{localize('verificationStatus')}:</strong>{' '}
+              {tendererDetails.verified ? localize('verified') : localize('nonVerified')}
             </div>
 
             {/* Button to toggle verification status */}
@@ -168,40 +177,52 @@ const ViewTenderer = () => {
               className={`btn ${tendererDetails.verified ? 'btn-danger' : 'btn-success'}`}
               style={{ width: '130px', display: 'inline-block' }} // Set a fixed width and use inline-block
             >
-              {isSubmitting ? '处理中...' : tendererDetails.verified ? '取消验证' : '验证供应商'}
+              {isSubmitting
+                ? localize('processing')
+                : tendererDetails.verified
+                  ? localize('unverifyTenderer')
+                  : localize('verifyTenderer')}
             </button>
-
 
             {/* Download Links for Files */}
             {tendererDetails.businessLicense && (
               <div className="mb-3">
-                <strong>营业执照:</strong>
-                <a href={`${backendUrl}/uploads/${tendererDetails.businessLicense}`} target="_blank" rel="noopener noreferrer">
-                  下载
+                <strong>{localize('businessLicense')}:</strong>{' '}
+                <a
+                  href={`${backendUrl}/uploads/${tendererDetails.businessLicense}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {localize('download')}
                 </a>
               </div>
             )}
 
             {tendererDetails.legalRepresentativeBusinessCard && (
               <div className="mb-3">
-                <strong>法人名片:</strong>
-                <a href={`${backendUrl}/uploads/${tendererDetails.legalRepresentativeBusinessCard}`} target="_blank" rel="noopener noreferrer">
-                  下载
+                <strong>{localize('legalRepresentativeBusinessCard')}:</strong>{' '}
+                <a
+                  href={`${backendUrl}/uploads/${tendererDetails.legalRepresentativeBusinessCard}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {localize('download')}
                 </a>
               </div>
             )}
 
             {/* Display Comments */}
             <div className="mt-5">
-              <h3>评论</h3>
+              <h3>{localize('comments')}</h3>
               {tendererDetails.comments.length === 0 ? (
-                <p>暂无评论。</p>
+                <p>{localize('noComments')}</p>
               ) : (
                 <ul className="list-group">
                   {tendererDetails.comments.map((comment) => (
                     <li key={comment._id} className="list-group-item">
                       <p>
-                        <strong>{comment.commenter?.username || '未知用户'}</strong> ({new Date(comment.timestamp).toLocaleString()})
+                        <strong>{comment.commenter?.username || localize('unknownUser')}</strong> (
+                        {new Date(comment.timestamp).toLocaleString()})
                       </p>
                       <p>{comment.comment}</p>
                     </li>
@@ -212,7 +233,9 @@ const ViewTenderer = () => {
               {/* Add Comment Form */}
               <form onSubmit={handleCommentSubmit} className="mt-3">
                 <div className="mb-3">
-                  <label htmlFor="newComment" className="form-label">添加评论</label>
+                  <label htmlFor="newComment" className="form-label">
+                    {localize('addComment')}
+                  </label>
                   <textarea
                     id="newComment"
                     className="form-control"
@@ -224,7 +247,7 @@ const ViewTenderer = () => {
                 </div>
                 {submitError && <div className="alert alert-danger">{submitError}</div>}
                 <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                  {isSubmitting ? '提交中...' : '提交评论'}
+                  {isSubmitting ? localize('submitting') : localize('submitComment')}
                 </button>
               </form>
             </div>

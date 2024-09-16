@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
   const [businessLicense, setBusinessLicense] = useState(null);
@@ -16,33 +17,45 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
   const maxSize = 5 * 1024 * 1024; // 5MB limit
 
   const [errorMessage, setErrorMessage] = useState(''); // State for error messages
+  const { localize } = useLocalize(); // Use localization
 
   useEffect(() => {
     if (tendererDetails) {
       setBusinessType(tendererDetails.businessType || '');
       setLegalRepresentative(tendererDetails.legalRepresentative || '');
-      setDateOfEstablishment(tendererDetails.dateOfEstablishment ? tendererDetails.dateOfEstablishment.split('T')[0] : '');
+      setDateOfEstablishment(
+        tendererDetails.dateOfEstablishment
+          ? tendererDetails.dateOfEstablishment.split('T')[0]
+          : ''
+      );
       setCountry(tendererDetails.country || '');
       setOfficeAddress(tendererDetails.officeAddress || '');
       setUnifiedSocialCreditCode(tendererDetails.unifiedSocialCreditCode || '');
 
       // Set URLs for existing files
-      setBusinessLicenseUrl(tendererDetails.businessLicense ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${tendererDetails.businessLicense}` : '');
-      setLegalRepresentativeBusinessCardUrl(tendererDetails.legalRepresentativeBusinessCard ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${tendererDetails.legalRepresentativeBusinessCard}` : '');
+      setBusinessLicenseUrl(
+        tendererDetails.businessLicense
+          ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${tendererDetails.businessLicense}`
+          : ''
+      );
+      setLegalRepresentativeBusinessCardUrl(
+        tendererDetails.legalRepresentativeBusinessCard
+          ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${tendererDetails.legalRepresentativeBusinessCard}`
+          : ''
+      );
     }
   }, [tendererDetails]);
 
   const handleImageChange = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
-
       if (!fileTypes.includes(file.type)) {
-        setErrorMessage('只允许上传 JPG, PNG 或 PDF 文件。');
+        setErrorMessage(localize('allowedFileTypes'));
         return;
       }
 
       if (file.size > maxSize) {
-        setErrorMessage('文件大小不能超过 2MB。');
+        setErrorMessage(localize('fileSizeLimit'));
         return;
       }
 
@@ -61,7 +74,8 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
 
     // Append files with the same field name 'relatedFiles'
     if (businessLicense) formData.append('relatedFiles', businessLicense);
-    if (legalRepresentativeBusinessCard) formData.append('relatedFiles', legalRepresentativeBusinessCard);
+    if (legalRepresentativeBusinessCard)
+      formData.append('relatedFiles', legalRepresentativeBusinessCard);
 
     // Append other form fields
     formData.append('businessType', businessType);
@@ -77,12 +91,12 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
-        body: formData,  // Send the form data (including files)
+        body: formData, // Send the form data (including files)
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update tenderer details');
+        throw new Error(data.error || localize('failedToUpdateDetails'));
       }
 
       onSave(); // Optional callback to trigger after successful save
@@ -93,7 +107,6 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
     }
   };
 
-
   return (
     <div>
       {/* Display error message */}
@@ -102,7 +115,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Business License */}
       <div className="mb-3">
         <label htmlFor="businessLicense" className="form-label">
-          营业执照 (jpg, png, pdf) 5MB 上限 <span className="text-danger">*</span>
+          {localize('businessLicenseLabel')} <span className="text-danger">*</span>
         </label>
         <input
           type="file"
@@ -114,7 +127,10 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         {/* Show existing file with a download link if present */}
         {businessLicenseUrl && (
           <p className="mt-2">
-            当前文件: <a href={businessLicenseUrl} target="_blank" rel="noopener noreferrer">下载营业执照</a>
+            {localize('currentFile')}:{' '}
+            <a href={businessLicenseUrl} target="_blank" rel="noopener noreferrer">
+              {localize('downloadBusinessLicense')}
+            </a>
           </p>
         )}
       </div>
@@ -122,7 +138,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Business Type */}
       <div className="mb-3">
         <label htmlFor="businessType" className="form-label">
-          企业类型 <span className="text-danger">*</span>
+          {localize('businessType')} <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -137,7 +153,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Legal Representative */}
       <div className="mb-3">
         <label htmlFor="legalRepresentative" className="form-label">
-          法定代表人 <span className="text-danger">*</span>
+          {localize('legalRepresentative')} <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -152,7 +168,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Date of Establishment */}
       <div className="mb-3">
         <label htmlFor="dateOfEstablishment" className="form-label">
-          成立日期 <span className="text-danger">*</span>
+          {localize('dateOfEstablishment')} <span className="text-danger">*</span>
         </label>
         <input
           type="date"
@@ -167,7 +183,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Country */}
       <div className="mb-3">
         <label htmlFor="country" className="form-label">
-          国家 <span className="text-danger">*</span>
+          {localize('country')} <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -182,7 +198,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Office Address */}
       <div className="mb-3">
         <label htmlFor="officeAddress" className="form-label">
-          办公地址 <span className="text-danger">*</span>
+          {localize('officeAddress')} <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -197,7 +213,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Legal Representative Business Card */}
       <div className="mb-3">
         <label htmlFor="legalRepresentativeBusinessCard" className="form-label">
-          法人名片 (jpg, png, pdf) 5MB 上限<span className="text-danger">*</span>
+          {localize('legalRepBusinessCardLabel')} <span className="text-danger">*</span>
         </label>
         <input
           type="file"
@@ -209,7 +225,10 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         {/* Show existing file with a download link if present */}
         {legalRepresentativeBusinessCardUrl && (
           <p className="mt-2">
-            当前文件: <a href={legalRepresentativeBusinessCardUrl} target="_blank" rel="noopener noreferrer">下载法人名片</a>
+            {localize('currentFile')}:{' '}
+            <a href={legalRepresentativeBusinessCardUrl} target="_blank" rel="noopener noreferrer">
+              {localize('downloadLegalRepBusinessCard')}
+            </a>
           </p>
         )}
       </div>
@@ -217,7 +236,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Unified Social Credit Code */}
       <div className="mb-3">
         <label htmlFor="unifiedSocialCreditCode" className="form-label">
-          统一社会信用代码 <span className="text-danger">*</span>
+          {localize('unifiedSocialCreditCode')} <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -229,7 +248,9 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         />
       </div>
 
-      <button className="btn btn-primary" onClick={handleSave}>保存企业详情</button>
+      <button className="btn btn-primary" onClick={handleSave}>
+        {localize('saveCompanyDetails')}
+      </button>
     </div>
   );
 };

@@ -1,10 +1,13 @@
+import useLocalize from '../hooks/use-localize';
+
 const PageNotFound = () => {
+    const { localize } = useLocalize();
+
     return (
         <div className="PageNotFound">
-            <h1>404 Error: page not found</h1>
+            <h1>{localize('pageNotFound')}</h1>
         </div>
+    );
+};
 
-    )
-}
-
-export default PageNotFound
+export default PageNotFound;

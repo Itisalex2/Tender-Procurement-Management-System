@@ -5,11 +5,13 @@ import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import { useFetchTender } from '../hooks/use-fetch-tender';
 import { permissionRoles } from '../utils/permissions';
 import FileUpload from '../components/File-Upload'; // Import the FileUpload component
+import useLocalize from '../hooks/use-localize'; // Import the localization hook
 
 const EditTender = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { localize } = useLocalize(); // Use localization hook
 
   const [formData, setFormData] = useState({
     title: '',
@@ -144,7 +146,7 @@ const EditTender = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update tender');
+        throw new Error(localize('updateTenderError'));
       }
 
       navigate('/manage-tenders');
@@ -154,20 +156,20 @@ const EditTender = () => {
   };
 
   if (loading || usersLoading || procurementLoading) {
-    return <div>下载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (error || usersError || procurementError) {
-    return <div>Error: {error || usersError || procurementError}</div>;
+    return <div>{localize('fetchError', error || usersError || procurementError)}</div>;
   }
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">编辑招标</h1>
+      <h1 className="mb-4">{localize('editTender')}</h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">标题
-            <span className="text-danger">*</span>
+          <label htmlFor="title" className="form-label">
+            {localize('title')} <span className="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -181,7 +183,7 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="description" className="form-label">描述</label>
+          <label htmlFor="description" className="form-label">{localize('description')}</label>
           <textarea
             className="form-control"
             id="description"
@@ -192,8 +194,8 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="issueDate" className="form-label">发布日期
-            <span className="text-danger">*</span>
+          <label htmlFor="issueDate" className="form-label">
+            {localize('issueDate')} <span className="text-danger">*</span>
           </label>
           <input
             type="datetime-local"
@@ -207,8 +209,8 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="closingDate" className="form-label">截止日期
-            <span className="text-danger">*</span>
+          <label htmlFor="closingDate" className="form-label">
+            {localize('closingDate')} <span className="text-danger">*</span>
           </label>
           <input
             type="datetime-local"
@@ -222,8 +224,8 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactInfo.name" className="form-label">联系人姓名
-            <span className="text-danger">*</span>
+          <label htmlFor="contactInfo.name" className="form-label">
+            {localize('contactName')} <span className="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -237,7 +239,7 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactInfo.email" className="form-label">联系人邮箱</label>
+          <label htmlFor="contactInfo.email" className="form-label">{localize('contactEmail')}</label>
           <input
             type="email"
             className="form-control"
@@ -249,8 +251,8 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactInfo.phone" className="form-label">联系人电话
-            <span className="text-danger">*</span>
+          <label htmlFor="contactInfo.phone" className="form-label">
+            {localize('contactPhone')} <span className="text-danger">*</span>
           </label>
           <input
             type="tel"
@@ -264,7 +266,7 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="otherRequirements" className="form-label">其他要求</label>
+          <label htmlFor="otherRequirements" className="form-label">{localize('otherRequirements')}</label>
           <textarea
             className="form-control"
             id="otherRequirements"
@@ -275,7 +277,7 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">现有文件</label>
+          <label className="form-label">{localize('existingFiles')}</label>
           <ul>
             {formData.relatedFiles.map((file, index) => (
               <li key={index}>
@@ -287,10 +289,10 @@ const EditTender = () => {
                   {file.fileName}
                 </a>
                 {file.dateUploaded && (
-                  <span> - 上传时间: {new Date(file.dateUploaded).toLocaleString()}</span>
+                  <span> - {localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}</span>
                 )}
                 {file.uploadedBy && (
-                  <span> - 上传者: {file.uploadedBy.username}</span>
+                  <span> - {localize('uploadedBy')}: {file.uploadedBy.username}</span>
                 )}
               </li>
             ))}
@@ -301,7 +303,7 @@ const EditTender = () => {
         <FileUpload onFilesChange={handleFilesChange} />
 
         <div className="mb-3">
-          <label htmlFor="targetedUsers" className="form-label">选择目标用户</label>
+          <label htmlFor="targetedUsers" className="form-label">{localize('selectTargetedUsers')}</label>
           {users.map((user) => (
             <div key={user._id}>
               <input
@@ -316,8 +318,8 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员
-            <span className="text-danger">*</span>
+          <label htmlFor="procurementGroup" className="form-label">
+            {localize('selectProcurementGroup')} <span className="text-danger">*</span>
           </label>
           {procurementUsers.map((user) => (
             <div key={user._id}>
@@ -332,7 +334,7 @@ const EditTender = () => {
           ))}
         </div>
 
-        <button type="submit" className="btn btn-primary">更新招标</button>
+        <button type="submit" className="btn btn-primary">{localize('updateTender')}</button>
       </form>
     </div>
   );

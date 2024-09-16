@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { permissionRoles } from '../utils/permissions';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const Chatbox = ({
   tenderDetails,
@@ -15,6 +16,7 @@ const Chatbox = ({
   const [chatError, setChatError] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [isSending, setIsSending] = useState(false); // State for handling message sending
+  const { localize } = useLocalize(); // Use localization hook
 
   const handleSelectConversation = (conversation) => {
     setSelectedConversation(conversation);
@@ -59,7 +61,7 @@ const Chatbox = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || '发送消息失败');
+        throw new Error(errorData.error || localize('failedToSendMessage'));
       }
 
       const newMessage = await response.json();
@@ -72,8 +74,6 @@ const Chatbox = ({
         content: messageContent,
         relatedItem: tender._id,
       };
-
-
 
       if (userData.role === 'tenderer') {
         await Promise.all(
@@ -109,7 +109,7 @@ const Chatbox = ({
         }}
         onClick={() => setIsChatOpen(!isChatOpen)}
       >
-        {isChatOpen ? '关闭招标答疑' : '打开招标答疑'}
+        {isChatOpen ? localize('closeChat') : localize('openChat')}
       </button>
 
       {isChatOpen && (
@@ -129,7 +129,7 @@ const Chatbox = ({
         >
           {canViewAllConversations() ? (
             <div>
-              <h2>选择会话</h2>
+              <h2>{localize('selectConversation')}</h2>
               <ul>
                 {tenderDetails.conversations.map((conversation) => (
                   <li key={conversation._id} onClick={() => handleSelectConversation(conversation)}>
@@ -139,7 +139,9 @@ const Chatbox = ({
               </ul>
               {selectedConversation && (
                 <>
-                  <h3>会话与: {selectedConversation.user.username}</h3>
+                  <h3>
+                    {localize('conversationWith')}: {selectedConversation.user.username}
+                  </h3>
                   <div className="chat-box border p-3" style={{ maxHeight: '350px', overflowY: 'auto' }}>
                     {chatMessages.length > 0 ? (
                       chatMessages.map((msg, index) => (
@@ -151,7 +153,7 @@ const Chatbox = ({
                         </div>
                       ))
                     ) : (
-                      <p>暂无讨论</p>
+                      <p>{localize('noDiscussions')}</p>
                     )}
                   </div>
                 </>
@@ -161,7 +163,7 @@ const Chatbox = ({
                   <div className="mb-3">
                     <textarea
                       className="form-control"
-                      placeholder="输入您的解答..."
+                      placeholder={localize('enterYourAnswer')}
                       value={messageContent}
                       onChange={(e) => setMessageContent(e.target.value)}
                       rows="3"
@@ -172,14 +174,14 @@ const Chatbox = ({
                     className="btn btn-primary"
                     disabled={isSending} // Disable button while sending
                   >
-                    {isSending ? '发送中...' : '发送'}
+                    {isSending ? localize('sending') : localize('send')}
                   </button>
                 </form>
               )}
             </div>
           ) : (
             <div>
-              <h2>问题与讨论</h2>
+              <h2>{localize('questionsAndDiscussions')}</h2>
               <div className="chat-box border p-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {chatMessages.length > 0 ? (
                   chatMessages.map((msg, index) => (
@@ -191,14 +193,14 @@ const Chatbox = ({
                     </div>
                   ))
                 ) : (
-                  <p>暂无讨论</p>
+                  <p>{localize('noDiscussions')}</p>
                 )}
               </div>
               <form onSubmit={handleSendMessage} className="mt-3">
                 <div className="mb-3">
                   <textarea
                     className="form-control"
-                    placeholder="输入您的问题..."
+                    placeholder={localize('enterYourQuestion')}
                     value={messageContent}
                     onChange={(e) => setMessageContent(e.target.value)}
                     rows="3"
@@ -209,7 +211,7 @@ const Chatbox = ({
                   className="btn btn-primary"
                   disabled={isSending} // Disable button while sending
                 >
-                  {isSending ? '发送中...' : '发送'}
+                  {isSending ? localize('sending') : localize('send')}
                 </button>
               </form>
             </div>

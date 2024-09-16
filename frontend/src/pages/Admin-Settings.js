@@ -2,16 +2,18 @@ import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
 import UserList from '../components/admin/User-List';
 import AddUserForm from '../components/Add-User-Form';
+import useLocalize from '../hooks/use-localize';
 
 const AdminSettings = () => {
   const { user: authUser } = useAuthContext();
+  const { localize } = useLocalize();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [addingUser, setAddingUser] = useState(false);
   const [showAddUserForm, setShowAddUserForm] = useState(false);
-  const [roleFilter, setRoleFilter] = useState('all'); // State for filtering users by role
+  const [roleFilter, setRoleFilter] = useState('all');
 
   // Form state for adding a new user
   const [newUser, setNewUser] = useState({
@@ -35,7 +37,7 @@ const AdminSettings = () => {
 
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch users');
+          throw new Error(data.error || localize('error'));
         }
 
         setUsers(data);
@@ -47,7 +49,7 @@ const AdminSettings = () => {
     };
 
     fetchUsers();
-  }, [authUser]);
+  }, [authUser, localize]);
 
   const handleUserUpdate = async (userId, updatedFields) => {
     try {
@@ -62,7 +64,7 @@ const AdminSettings = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update user');
+        throw new Error(data.error || localize('failedToUpdateUser'));
       }
 
       // Update the local users state with the updated information
@@ -70,14 +72,13 @@ const AdminSettings = () => {
         prevUsers.map((user) => (user._id === userId ? { ...user, ...data } : user))
       );
     } catch (error) {
-      alert('Failed to update user: ' + error.message);
+      alert(localize('failedToUpdateUser') + ': ' + error.message);
     }
   };
 
-
   // Confirm before deleting user
   const handleDeleteUser = async (userId) => {
-    const confirmDelete = window.confirm('您确定要删除这位用户吗?这个操作无法撤销。');
+    const confirmDelete = window.confirm(localize('confirmDelete'));
     if (!confirmDelete) return;
 
     try {
@@ -90,12 +91,12 @@ const AdminSettings = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete user');
+        throw new Error(localize('failedToDeleteUser'));
       }
 
       setUsers(users.filter((user) => user._id !== userId));
     } catch (error) {
-      alert('Failed to delete user: ' + error.message);
+      alert(localize('failedToDeleteUser') + ': ' + error.message);
     }
   };
 
@@ -116,7 +117,7 @@ const AdminSettings = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to add user');
+        throw new Error(localize('failedToAddUser'));
       }
 
       // Update users list
@@ -129,7 +130,7 @@ const AdminSettings = () => {
         role: 'tenderer',
       });
     } catch (err) {
-      alert('Failed to add user: ' + err.message);
+      alert(localize('failedToAddUser') + ': ' + err.message);
     } finally {
       setAddingUser(false);
     }
@@ -142,23 +143,23 @@ const AdminSettings = () => {
   });
 
   if (loading) {
-    return <div>下载中...</div>;
+    return <div>{localize('fetchingUsers')}</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>{localize('error')}: {error}</div>;
   }
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">管理用户</h1>
+      <h1 className="mb-4">{localize('manageUsers')}</h1>
 
       {/* Button to toggle the add user form */}
       <button
         className="btn btn-success mb-3"
         onClick={() => setShowAddUserForm((prev) => !prev)}
       >
-        {showAddUserForm ? '取消添加用户' : '添加用户'}
+        {showAddUserForm ? localize('cancelAddUser') : localize('addUser')}
       </button>
 
       {/* Conditionally render the form */}

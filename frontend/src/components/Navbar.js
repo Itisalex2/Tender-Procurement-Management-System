@@ -5,17 +5,18 @@ import { useLogout } from '../hooks/use-logout';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchMails from '../hooks/use-fetch-mails';
-import { roleMap } from '../utils/english-to-chinese-map';
 import { permissionRoles } from '../utils/permissions';
+import useLocalize from '../hooks/use-localize';
 import '../css-components/navbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const { user: authUser } = useAuthContext();
+  const { user: authUser, language, changeLanguage } = useAuthContext();
   const { userData, loading, error } = useFetchUser();
   const [profileOpen, setProfileOpen] = useState(false);
   const { mails, loading: mailLoading } = useFetchMails(true, false);
+  const { localize } = useLocalize(); // Use localize hook
 
   const hasPermission = (permission) => {
     return userData && permissionRoles[permission]?.includes(userData.role);
@@ -36,11 +37,29 @@ const Navbar = () => {
     setProfileOpen(false); // Close dropdown after navigation
   };
 
+  // Handle language change
+  const handleLanguageChange = (newLanguage) => {
+    changeLanguage(newLanguage);
+  };
+
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-light bg-mediumgray">
-        <div className="container">
-          <Link className="navbar-brand" to="/">招采系统</Link>
+        <div className="container d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
+            {/* System Title */}
+            <Link className="navbar-brand" to="/">{localize('procurementManagement')}</Link>
+
+            {/* Language Switcher */}
+            <button
+              className="btn btn-link nav-link"
+              onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
+              style={{ color: '#000000', paddingLeft: '0', paddingRight: '0', marginLeft: '10px', marginTop: '2px' }}
+            >
+              {language === 'en' ? 'English' : '中文'}
+            </button>
+          </div>
+
           <button
             className="navbar-toggler"
             type="button"
@@ -52,20 +71,23 @@ const Navbar = () => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
+
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               {/* Show navigation options if the user is authenticated */}
               {authUser && (
                 <div className="d-flex align-items-center">
                   <li className="nav-item me-3">
-                    <button className="btn btn-link nav-link" onClick={() => handleNavigation('/')}>主页</button>
+                    <button className="btn btn-link nav-link" onClick={() => handleNavigation('/')}>
+                      {localize('home')}
+                    </button>
                   </li>
 
                   {/* Core Actions: Create Tender, Manage Tenders, View Own Bids */}
                   {hasPermission('createTender') && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/create-tender')}>
-                        创建招标
+                        {localize('createTender')}
                       </button>
                     </li>
                   )}
@@ -73,7 +95,7 @@ const Navbar = () => {
                   {hasPermission('manageTenders') && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/manage-tenders')}>
-                        招标管理
+                        {localize('manageTenders')}
                       </button>
                     </li>
                   )}
@@ -81,7 +103,7 @@ const Navbar = () => {
                   {hasPermission('viewOwnBids') && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/view-own-bids')}>
-                        查看我的投标
+                        {localize('viewOwnBids')}
                       </button>
                     </li>
                   )}
@@ -90,7 +112,7 @@ const Navbar = () => {
                   {hasPermission('viewTenderers') && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/manage-tenderers')}>
-                        供应商库
+                        {localize('tenderersDatabase')}
                       </button>
                     </li>
                   )}
@@ -99,7 +121,7 @@ const Navbar = () => {
                   {hasPermission('modifyBackend') && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/admin-settings')}>
-                        后台管理
+                        {localize('adminSettings')}
                       </button>
                     </li>
                   )}
@@ -108,7 +130,7 @@ const Navbar = () => {
                   {userData && permissionRoles.onlyAddTenderers.includes(userData.role) && (
                     <li className="nav-item me-3">
                       <button className="btn btn-link nav-link" onClick={() => handleNavigation('/add-tenderer')}>
-                        创建供应商
+                        {localize('createTenderer')}
                       </button>
                     </li>
                   )}
@@ -144,11 +166,12 @@ const Navbar = () => {
                             </li>
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item" onClick={() => handleNavigation('/settings')}>
-                              <i className="bi bi-gear me-2"></i>设置
+                              <i className="bi bi-gear me-2"></i>{localize('settings')}
                             </li>
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item text-danger" onClick={handleLogoutClick}>
-                              <i className="bi bi-box-arrow-right me-2"></i>退出</li>
+                              <i className="bi bi-box-arrow-right me-2"></i>{localize('logout')}
+                            </li>
                           </>
                         ) : error ? (
                           <li className="dropdown-item text-center text-danger">
@@ -158,15 +181,15 @@ const Navbar = () => {
                           <>
                             <li className="dropdown-item text-center">
                               <strong>{userData.username}</strong>
-                              <p>{roleMap[userData.role]}</p>
+                              <p>{localize(userData.role)}</p>
                             </li>
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item" onClick={() => handleNavigation('/settings')}>
-                              <i className="bi bi-gear me-2"></i>设置
+                              <i className="bi bi-gear me-2"></i>{localize('settings')}
                             </li>
                             <li><hr className="dropdown-divider" /></li>
                             <li className="dropdown-item text-danger" onClick={handleLogoutClick}>
-                              <i className="bi bi-box-arrow-right me-2"></i>退出
+                              <i className="bi bi-box-arrow-right me-2"></i>{localize('logout')}
                             </li>
                           </>
                         )}
@@ -180,10 +203,14 @@ const Navbar = () => {
               {!authUser && (
                 <div className="d-flex">
                   <li className="nav-item">
-                    <button className="btn btn-link nav-link" onClick={() => navigate('/signup')}>供应商报名</button>
+                    <button className="btn btn-link nav-link" onClick={() => navigate('/signup')}>
+                      {localize('signup')}
+                    </button>
                   </li>
                   <li className="nav-item">
-                    <button className="btn btn-link nav-link" onClick={() => navigate('/login')}>登录</button>
+                    <button className="btn btn-link nav-link" onClick={() => navigate('/login')}>
+                      {localize('login')}
+                    </button>
                   </li>
                 </div>
               )}
@@ -193,8 +220,6 @@ const Navbar = () => {
       </nav>
     </header>
   );
-
-
 };
 
 export default Navbar;

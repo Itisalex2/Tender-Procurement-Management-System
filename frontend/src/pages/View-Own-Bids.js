@@ -1,12 +1,13 @@
 import useFetchUser from '../hooks/use-fetch-user';
 import { Link } from 'react-router-dom';
-import { bidStatusMap } from '../utils/english-to-chinese-map';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ViewOwnBids = () => {
   const { userData, loading, error } = useFetchUser({ includeBids: true }); // Fetch user data along with bids
+  const { localize } = useLocalize(); // Use localization hook
 
   if (loading) {
-    return <div>加载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (error) {
@@ -14,12 +15,12 @@ const ViewOwnBids = () => {
   }
 
   if (!userData.bids || userData.bids.length === 0) {
-    return <div>您没有提交任何投标。</div>;
+    return <div>{localize('noBidsSubmitted')}</div>;
   }
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">我的投标</h1>
+      <h1 className="mb-4">{localize('myBids')}</h1>
       <div className="row">
         {userData.bids.slice().reverse().map((bid) => {
           // Ensure we return JSX when `bid` and `bid.tender` exist
@@ -32,12 +33,20 @@ const ViewOwnBids = () => {
                       <h4 className="mb-0">{bid.tender.title}</h4> {/* Large title */}
                     </div>
                     <div className="card-body">
-                      <h5 className="card-title">金额: {bid.amount}</h5>
-                      <p className="card-text">状态: {bidStatusMap[bid.status]}</p>
-                      {bid.content && <p className="card-text">投标信息: {bid.content}</p>}
+                      <h5 className="card-title">
+                        {localize('amount')}: {bid.amount}
+                      </h5>
+                      <p className="card-text">
+                        {localize('status')}: {localize(bid.status)}
+                      </p>
+                      {bid.content && (
+                        <p className="card-text">
+                          {localize('bidInformation')}: {bid.content}
+                        </p>
+                      )}
                     </div>
                     <div className="card-footer text-muted">
-                      提交时间: {new Date(bid.submittedAt).toLocaleString()}
+                      {localize('submittedAt')}: {new Date(bid.submittedAt).toLocaleString()}
                     </div>
                   </div>
                 </Link>
@@ -50,7 +59,6 @@ const ViewOwnBids = () => {
       </div>
     </div>
   );
-
 };
 
 export default ViewOwnBids;

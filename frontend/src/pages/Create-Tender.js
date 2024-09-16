@@ -4,10 +4,12 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import { permissionRoles } from '../utils/permissions';
 import FileUpload from '../components/File-Upload';
+import useLocalize from '../hooks/use-localize'; // Import the custom hook for localization
 
 const CreateTender = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { localize } = useLocalize(); // Use the localization hook
 
   const targetedUserRoles = permissionRoles.includeInTenderTargetedUsers.join(',');
   const procurementGroupRoles = permissionRoles.confirmAllowViewBids.join(',');
@@ -84,7 +86,7 @@ const CreateTender = () => {
       // Check if the response is not OK
       if (!response.ok) {
         const errorResponse = await response.json(); // Wait for the JSON response
-        throw new Error(errorResponse.error || '没有成功创建招标');
+        throw new Error(errorResponse.error || localize('createTenderError'));
       }
 
       setSuccess(true);
@@ -104,14 +106,14 @@ const CreateTender = () => {
     );
   };
 
-  if (usersLoading || procurementGroupLoading) return <div>下载中...</div>;
-  if (usersError || procurementGroupError) return <div>Error fetching users: {usersError || procurementGroupError}</div>;
+  if (usersLoading || procurementGroupLoading) return <div>{localize('loading')}</div>;
+  if (usersError || procurementGroupError) return <div>{localize('fetchUsersError', usersError || procurementGroupError)}</div>;
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">创建招标</h1>
+      <h1 className="mb-4">{localize('createTender')}</h1>
       {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">招标创建成功！</div>}
+      {success && <div className="alert alert-success">{localize('tenderCreated')}</div>}
 
       {/* Confirmation Modal */}
       {showConfirm && (
@@ -119,20 +121,20 @@ const CreateTender = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">确认创建招标</h5>
+                <h5 className="modal-title">{localize('confirmCreateTender')}</h5>
                 <button type="button" className="close" onClick={() => setShowConfirm(false)}>
                   <span>&times;</span>
                 </button>
               </div>
               <div className="modal-body">
-                <p>您确定要创建这个招标吗？</p>
+                <p>{localize('confirmCreateTenderBody')}</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowConfirm(false)}>
-                  取消
+                  {localize('cancel')}
                 </button>
                 <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                  确认
+                  {localize('confirm')}
                 </button>
               </div>
             </div>
@@ -142,7 +144,9 @@ const CreateTender = () => {
 
       <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">标题 <span className="text-danger">*</span></label>
+          <label htmlFor="title" className="form-label">
+            {localize('title')} <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -154,7 +158,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="description" className="form-label">描述 </label>
+          <label htmlFor="description" className="form-label">{localize('description')}</label>
           <textarea
             className="form-control"
             id="description"
@@ -164,7 +168,9 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="issueDate" className="form-label">发布日期 <span className="text-danger">*</span></label>
+          <label htmlFor="issueDate" className="form-label">
+            {localize('issueDate')} <span className="text-danger">*</span>
+          </label>
           <input
             type="datetime-local"
             className="form-control"
@@ -176,7 +182,9 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="closingDate" className="form-label">截止日期 <span className="text-danger">*</span></label>
+          <label htmlFor="closingDate" className="form-label">
+            {localize('closingDate')} <span className="text-danger">*</span>
+          </label>
           <input
             type="datetime-local"
             className="form-control"
@@ -188,7 +196,9 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactName" className="form-label">联系人姓名 <span className="text-danger">*</span></label>
+          <label htmlFor="contactName" className="form-label">
+            {localize('contactName')} <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -200,7 +210,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactEmail" className="form-label">联系人邮箱</label>
+          <label htmlFor="contactEmail" className="form-label">{localize('contactEmail')}</label>
           <input
             type="email"
             className="form-control"
@@ -211,7 +221,9 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactPhone" className="form-label">联系人电话 <span className="text-danger">*</span></label>
+          <label htmlFor="contactPhone" className="form-label">
+            {localize('contactPhone')} <span className="text-danger">*</span>
+          </label>
           <input
             type="tel"
             className="form-control"
@@ -223,7 +235,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="otherRequirements" className="form-label">其他要求</label>
+          <label htmlFor="otherRequirements" className="form-label">{localize('otherRequirements')}</label>
           <textarea
             className="form-control"
             id="otherRequirements"
@@ -233,7 +245,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="targetedUsers" className="form-label">选择目标用户</label>
+          <label htmlFor="targetedUsers" className="form-label">{localize('selectTargetedUsers')}</label>
           {targetedUsersList.map((user) => (
             <div key={user._id}>
               <input
@@ -241,7 +253,6 @@ const CreateTender = () => {
                 value={user._id}
                 checked={targetedUsers.includes(user._id)}
                 onChange={() => handleUserCheckboxChange(user._id, setTargetedUsers)}
-                required
               />
               <label>{user.username}</label>
             </div>
@@ -249,7 +260,9 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员 <span className="text-danger">*</span></label>
+          <label htmlFor="procurementGroup" className="form-label">
+            {localize('selectProcurementGroup')} <span className="text-danger">*</span>
+          </label>
           {procurementGroupList.map((user) => (
             <div key={user._id}>
               <input
@@ -266,7 +279,7 @@ const CreateTender = () => {
         <FileUpload onFilesChange={handleFilesChange} />
 
         <button type="button" className="btn btn-primary" onClick={handleConfirm}>
-          创建招标
+          {localize('createTender')}
         </button>
       </form>
     </div>

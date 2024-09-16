@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import useFetchTenderers from '../hooks/use-fetch-tenderers';
+import useLocalize from '../hooks/use-localize'; // Import localization hook
 
 const ManageTenderers = () => {
+  const { localize } = useLocalize(); // Use localization hook
   const [verifiedFilter, setVerifiedFilter] = useState(null); // null = all, true = verified, false = non-verified
   const [searchQuery, setSearchQuery] = useState(''); // State to track the search query
 
@@ -20,23 +22,23 @@ const ManageTenderers = () => {
   );
 
   if (loading) {
-    return <div>加载中...</div>;
+    return <div>{localize('loading')}</div>;
   }
 
   if (error) {
-    return <div className="alert alert-danger">无法获取供应商列表: {error}</div>;
+    return <div className="alert alert-danger">{localize('unableToFetchTenderers')}: {error}</div>;
   }
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">供应商库</h1>
+      <h1 className="mb-4">{localize('tenderersDatabase')}</h1>
 
       {/* Search Bar */}
       <div className="mb-4">
         <input
           type="text"
           className="form-control"
-          placeholder="搜索企业名称..."
+          placeholder={localize('searchCompany')}
           value={searchQuery}
           onChange={handleSearchChange}
         />
@@ -48,19 +50,19 @@ const ManageTenderers = () => {
           className={`btn ${verifiedFilter === null ? 'btn-primary' : 'btn-outline-primary'} mx-2`}
           onClick={() => handleFilterChange(null)}
         >
-          全部
+          {localize('all')}
         </button>
         <button
           className={`btn ${verifiedFilter === true ? 'btn-primary' : 'btn-outline-primary'} mx-2`}
           onClick={() => handleFilterChange(true)}
         >
-          已验证
+          {localize('verified')}
         </button>
         <button
           className={`btn ${verifiedFilter === false ? 'btn-primary' : 'btn-outline-primary'} mx-2`}
           onClick={() => handleFilterChange(false)}
         >
-          未验证
+          {localize('nonVerified')}
         </button>
       </div>
 
@@ -68,26 +70,26 @@ const ManageTenderers = () => {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>企业名称</th>
-            <th>企业类型</th>
-            <th>法定代表人</th>
-            <th>国家</th>
-            <th>状态</th>
-            <th>操作</th>
+            <th>{localize('companyName')}</th>
+            <th>{localize('businessType')}</th>
+            <th>{localize('legalRepresentative')}</th>
+            <th>{localize('country')}</th>
+            <th>{localize('status')}</th>
+            <th>{localize('actions')}</th>
           </tr>
         </thead>
         <tbody>
           {filteredTenderers.length > 0 ? (
             filteredTenderers.map((tenderer) => (
               <tr key={tenderer._id}>
-                <td>{tenderer.username || '未提供'}</td>
-                <td>{tenderer.tendererDetails?.businessType || '未提供'}</td>
-                <td>{tenderer.tendererDetails?.legalRepresentative || '未提供'}</td>
-                <td>{tenderer.tendererDetails?.country || '未提供'}</td>
-                <td>{tenderer.tendererDetails?.verified ? '已验证' : '未验证'}</td>
+                <td>{tenderer.username || localize('notProvided')}</td>
+                <td>{tenderer.tendererDetails?.businessType || localize('notProvided')}</td>
+                <td>{tenderer.tendererDetails?.legalRepresentative || localize('notProvided')}</td>
+                <td>{tenderer.tendererDetails?.country || localize('notProvided')}</td>
+                <td>{tenderer.tendererDetails?.verified ? localize('verified') : localize('nonVerified')}</td>
                 <td>
                   <a href={`/tenderer/${tenderer._id}`} className="btn btn-primary">
-                    查看详情
+                    {localize('viewDetails')}
                   </a>
                 </td>
               </tr>
@@ -95,7 +97,7 @@ const ManageTenderers = () => {
           ) : (
             <tr>
               <td colSpan="6" className="text-center">
-                未找到符合条件的供应商
+                {localize('noTenderersFound')}
               </td>
             </tr>
           )}
