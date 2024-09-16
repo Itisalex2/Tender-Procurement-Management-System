@@ -81,8 +81,10 @@ const CreateTender = () => {
         body: formData,
       });
 
+      // Check if the response is not OK
       if (!response.ok) {
-        throw new Error('Failed to create tender');
+        const errorResponse = await response.json(); // Wait for the JSON response
+        throw new Error(errorResponse.error || '没有成功创建招标');
       }
 
       setSuccess(true);
@@ -140,7 +142,7 @@ const CreateTender = () => {
 
       <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">标题</label>
+          <label htmlFor="title" className="form-label">标题 <span className="text-danger">*</span></label>
           <input
             type="text"
             className="form-control"
@@ -152,7 +154,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="description" className="form-label">描述</label>
+          <label htmlFor="description" className="form-label">描述 </label>
           <textarea
             className="form-control"
             id="description"
@@ -162,7 +164,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="issueDate" className="form-label">发布日期</label>
+          <label htmlFor="issueDate" className="form-label">发布日期 <span className="text-danger">*</span></label>
           <input
             type="datetime-local"
             className="form-control"
@@ -174,7 +176,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="closingDate" className="form-label">截止日期</label>
+          <label htmlFor="closingDate" className="form-label">截止日期 <span className="text-danger">*</span></label>
           <input
             type="datetime-local"
             className="form-control"
@@ -186,7 +188,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactName" className="form-label">联系人姓名</label>
+          <label htmlFor="contactName" className="form-label">联系人姓名 <span className="text-danger">*</span></label>
           <input
             type="text"
             className="form-control"
@@ -205,18 +207,18 @@ const CreateTender = () => {
             id="contactEmail"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
-            required
           />
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactPhone" className="form-label">联系人电话</label>
+          <label htmlFor="contactPhone" className="form-label">联系人电话 <span className="text-danger">*</span></label>
           <input
             type="tel"
             className="form-control"
             id="contactPhone"
             value={contactPhone}
             onChange={(e) => setContactPhone(e.target.value)}
+            required
           />
         </div>
 
@@ -239,6 +241,7 @@ const CreateTender = () => {
                 value={user._id}
                 checked={targetedUsers.includes(user._id)}
                 onChange={() => handleUserCheckboxChange(user._id, setTargetedUsers)}
+                required
               />
               <label>{user.username}</label>
             </div>
@@ -246,7 +249,7 @@ const CreateTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员</label>
+          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员 <span className="text-danger">*</span></label>
           {procurementGroupList.map((user) => (
             <div key={user._id}>
               <input

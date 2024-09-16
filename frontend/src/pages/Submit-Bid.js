@@ -114,7 +114,9 @@ const SubmitBid = () => {
 
       <form onSubmit={handleSubmitBid} encType="multipart/form-data">
         <div className="mb-3">
-          <label htmlFor="amount" className="form-label">投标金额</label>
+          <label htmlFor="amount" className="form-label">投标金额
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="number"
             className="form-control"
@@ -126,7 +128,7 @@ const SubmitBid = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="content" className="form-label">附加信息（可选）</label>
+          <label htmlFor="content" className="form-label">附加信息</label>
           <textarea
             className="form-control"
             id="content"
@@ -135,7 +137,7 @@ const SubmitBid = () => {
           ></textarea>
         </div>
 
-        <FileUpload onFilesChange={handleFilesChange} />
+        <FileUpload onFilesChange={handleFilesChange} required={true} />
 
         <button type="submit" className="btn btn-primary">提交投标</button>
       </form>

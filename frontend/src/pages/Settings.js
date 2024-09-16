@@ -85,6 +85,7 @@ const Settings = () => {
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
                 {userData.role === 'tenderer' ? '企业名' : '用户名'}
+                <span className="text-danger">*</span>
               </label>
               <input
                 type="text"
@@ -93,22 +94,26 @@ const Settings = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 readOnly={submitting}
+                required
               />
             </div>
 
             <div className="mb-3">
-              <label htmlFor="role" className="form-label">角色</label>
+              <label htmlFor="role" className="form-label">角色
+                <span className="text-danger">*</span></label>
               <input
                 type="text"
                 className="form-control"
                 id="role"
                 value={roleMap[userData?.role] || ''} // Get role from userData
                 readOnly
+                required
               />
             </div>
 
             <div className="mb-3">
-              <label htmlFor="email" className="form-label">邮件地址</label>
+              <label htmlFor="email" className="form-label">邮件地址
+              </label>
               <input
                 type="email"
                 className="form-control"
@@ -120,7 +125,9 @@ const Settings = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="number" className="form-label">电话号码</label>
+              <label htmlFor="number" className="form-label">电话号码
+                <span className="text-danger">*</span>
+              </label>
               <input
                 type="number"
                 className="form-control"
@@ -128,6 +135,7 @@ const Settings = () => {
                 value={number}
                 onChange={(e) => setNumber(e.target.value)}
                 readOnly={submitting}
+                required
               />
             </div>
 

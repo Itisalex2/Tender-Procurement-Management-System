@@ -166,7 +166,9 @@ const EditTender = () => {
       <h1 className="mb-4">编辑招标</h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">标题</label>
+          <label htmlFor="title" className="form-label">标题
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -190,7 +192,9 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="issueDate" className="form-label">发布日期</label>
+          <label htmlFor="issueDate" className="form-label">发布日期
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="datetime-local"
             className="form-control"
@@ -203,7 +207,9 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="closingDate" className="form-label">截止日期</label>
+          <label htmlFor="closingDate" className="form-label">截止日期
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="datetime-local"
             className="form-control"
@@ -216,7 +222,9 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactInfo.name" className="form-label">联系人姓名</label>
+          <label htmlFor="contactInfo.name" className="form-label">联系人姓名
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -237,12 +245,13 @@ const EditTender = () => {
             name="contactInfo.email"
             value={formData.contactInfo.email}
             onChange={handleInputChange}
-            required
           />
         </div>
 
         <div className="mb-3">
-          <label htmlFor="contactInfo.phone" className="form-label">联系人电话</label>
+          <label htmlFor="contactInfo.phone" className="form-label">联系人电话
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="tel"
             className="form-control"
@@ -250,6 +259,7 @@ const EditTender = () => {
             name="contactInfo.phone"
             value={formData.contactInfo.phone}
             onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -306,7 +316,9 @@ const EditTender = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员</label>
+          <label htmlFor="procurementGroup" className="form-label">选择招标小组成员
+            <span className="text-danger">*</span>
+          </label>
           {procurementUsers.map((user) => (
             <div key={user._id}>
               <input
