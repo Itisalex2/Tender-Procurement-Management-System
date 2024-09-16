@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const FileUpload = ({ onFilesChange, required = false }) => {
+const FileUpload = ({ onFilesChange }) => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [fileInputs, setFileInputs] = useState([0]);
 
@@ -23,16 +23,13 @@ const FileUpload = ({ onFilesChange, required = false }) => {
 
   return (
     <div className="mb-3">
-      <label className="form-label">相关文件{required &&
-        (<span className="text-danger">*</span>)}
-      </label>
+      <label className="form-label">相关文件</label>
       {fileInputs.map((inputIndex) => (
         <div key={inputIndex} className="mb-2">
           <input
             type="file"
             className="form-control"
             onChange={(e) => handleFileChange(e, inputIndex)}
-            required={required}
           />
           {relatedFiles[inputIndex] && <p>选择了: {relatedFiles[inputIndex].name}</p>}
         </div>

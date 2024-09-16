@@ -12,7 +12,12 @@ const startCronJobs = () => {
       const tendersToClose = await Tender.find({ status: 'Open', closingDate: { $lt: now } });
 
       for (const tender of tendersToClose) {
-        tender.status = 'Closed';
+        if (tender.bids.length === 0) {
+          tender.status = 'Failed';  // Set status to 'Failed' if there are no bids
+        } else {
+          tender.status = 'Closed';  // Otherwise, set status to 'Closed'
+        }
+
         await tender.save();
       }
 

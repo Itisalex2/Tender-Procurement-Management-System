@@ -9,7 +9,8 @@ const statusMap = {
   Open: '开放',
   Closed: '关闭',
   ClosedAndCanSeeBids: '关闭并可查看投标',
-  Awarded: '已授予'
+  Awarded: '已授予',
+  Failed: '流标'
 }
 
 const bidStatusMap = {

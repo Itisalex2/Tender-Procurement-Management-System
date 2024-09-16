@@ -17,7 +17,7 @@ const tenderSchema = new mongoose.Schema({
     dateUploaded: { type: Date, default: Date.now },
     uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   }],
-  status: { type: String, enum: ['Open', 'Closed', 'ClosedAndCanSeeBids', 'Awarded'], default: 'Open' },
+  status: { type: String, enum: ['Open', 'Closed', 'ClosedAndCanSeeBids', 'Awarded', 'Failed'], default: 'Open' },
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }],
   targetedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }], // Users that are able to see the tender
   conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', default: [] }], // Conversations related to the tender

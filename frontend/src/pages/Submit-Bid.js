@@ -137,7 +137,7 @@ const SubmitBid = () => {
           ></textarea>
         </div>
 
-        <FileUpload onFilesChange={handleFilesChange} required={true} />
+        <FileUpload onFilesChange={handleFilesChange} />
 
         <button type="submit" className="btn btn-primary">提交投标</button>
       </form>

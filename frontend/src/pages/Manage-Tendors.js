@@ -13,6 +13,7 @@ const ManageTenders = () => {
   const [statusFilter, setStatusFilter] = useState('all'); // Default filter status is 'all'
   const { tenders, loading, error, setTenders } = useFetchTenders(statusFilter); // Fetch tenders based on filter
   const [selectedTender, setSelectedTender] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDeleteTender = async (e, tenderId) => {
     e.stopPropagation();
@@ -63,6 +64,16 @@ const ManageTenders = () => {
 
   const hasUserApproved = (tender) => userData && tender.procurementGroupApprovals.includes(userData._id);
 
+  const handleSearch = (e) => setSearchQuery(e.target.value.toLowerCase());
+
+  // Filter tenders based on search query (title or description)
+  const filteredTenders = tenders.filter((tender) => {
+    return (
+      tender.title.toLowerCase().includes(searchQuery) ||
+      tender.description.toLowerCase().includes(searchQuery)
+    );
+  });
+
   if (loading || !userData) return <div>下载中...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -71,23 +82,39 @@ const ManageTenders = () => {
       <h1 className="mb-4">招标管理</h1>
 
       {/* Status filter dropdown */}
-      <div className="mb-4">
-        <label className="form-label">筛选招标状态</label>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="form-select"
-          style={{ width: '200px' }}
-        >
-          <option value="all">所有状态</option>
-          <option value="Open">开放</option>
-          <option value="Closed">关闭</option>
-          <option value="ClosedAndCanSeeBids">关闭可查看投标</option>
-          <option value="Awarded">已授予</option>
-        </select>
+      <div className="mb-4 d-flex gap-3">
+        <div>
+          <label className="form-label">筛选招标状态</label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="form-select"
+            style={{ width: '200px' }}
+          >
+            <option value="all">所有状态</option>
+            <option value="Open">开放</option>
+            <option value="Closed">关闭</option>
+            <option value="ClosedAndCanSeeBids">关闭可查看投标</option>
+            <option value="Awarded">已授予</option>
+            <option value="Failed">流标</option> {/* New "Failed" option */}
+          </select>
+        </div>
+
+        {/* Search bar */}
+        <div>
+          <label className="form-label">搜索关键字</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="搜索标题或描述..."
+            value={searchQuery}
+            onChange={handleSearch}
+            style={{ width: '300px' }}
+          />
+        </div>
       </div>
 
-      {tenders.length === 0 ? (
+      {filteredTenders.length === 0 ? (
         <div>无招标项目</div>
       ) : (
         <table className="table table-striped">
@@ -103,7 +130,7 @@ const ManageTenders = () => {
             </tr>
           </thead>
           <tbody>
-            {tenders.slice().reverse().map(tender => (
+            {filteredTenders.slice().reverse().map(tender => (
               <React.Fragment key={tender._id}>
                 <tr onClick={() => toggleTenderDetails(tender._id)} style={{ cursor: 'pointer' }}>
                   <td>{tender.title}</td>
@@ -149,7 +176,6 @@ const ManageTenders = () => {
                       )}
                     </div>
                   </td>
-
                 </tr>
 
                 {selectedTender === tender._id && (
