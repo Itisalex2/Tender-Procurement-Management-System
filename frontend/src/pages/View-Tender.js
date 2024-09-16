@@ -66,8 +66,6 @@ const ViewTender = () => {
     return <div>Error: {error || userError}</div>;
   }
 
-  console.log(tenderDetails);
-
   return (
     <div className="container mt-5" style={{ display: 'flex', flexDirection: 'row' }}>
       <div className="view-tender-content" style={{ flex: 1 }}>

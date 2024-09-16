@@ -2,20 +2,20 @@ const mongoose = require('mongoose');
 
 const tenderSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  description: { type: String },
+  description: { type: String, default: '' },
   issueDate: { type: Date, required: true },
   closingDate: { type: Date, required: true },
   contactInfo: {
     name: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String },
+    email: { type: String, default: '' },
+    phone: { type: String, required: true },
   },
-  otherRequirements: { type: String }, // Additional requirements for the tender
+  otherRequirements: { type: String, default: '' }, // Additional requirements for the tender
   relatedFiles: [{
-    fileName: { type: String },
-    fileUrl: { type: String },
+    fileName: { type: String, required: true },
+    fileUrl: { type: String, required: true },
     dateUploaded: { type: Date, default: Date.now },
-    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   }],
   status: { type: String, enum: ['Open', 'Closed', 'ClosedAndCanSeeBids', 'Awarded'], default: 'Open' },
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }],

@@ -10,7 +10,6 @@ const useFetchTenders = (status = 'all') => { // Fetch all the tenders
   useEffect(() => {
     const fetchTenders = async () => {
       try {
-        console.log(status);
         const response = await fetch(`/api/tender?status=${status}`, {
           method: 'GET',
           headers: {

@@ -85,6 +85,26 @@ const SubmitBid = () => {
     return <div>错误: {userError || tenderError}</div>;
   }
 
+  console.log(userData);
+
+  // Check if userData.tendererDetails is null, meaning the user has not updated their details
+  if (!userData.tendererDetails) {
+    return (
+      <div className="container mt-5">
+        <h1>提交投标</h1>
+        <div className="alert alert-warning">
+          您还未更新您的企业资料。请先更新您的企业信息以提交投标。
+        </div>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate('/settings')}
+        >
+          更新企业资料
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="container mt-5">
       <h1>提交投标 - {tender.title}</h1>

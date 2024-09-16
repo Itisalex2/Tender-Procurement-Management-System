@@ -22,6 +22,11 @@ const ViewTenderer = () => {
     return <div className="alert alert-warning">未找到供应商详情。</div>;
   }
 
+  if (userData.role !== 'tenderer') {
+    return <div className="alert alert-danger">无法查看非供应商用户。</div>;
+  }
+
+
   const {
     username,
     email,
