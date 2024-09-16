@@ -302,7 +302,6 @@ const updateUserById = async (req, res) => {
 
 const updateTendererDetails = async (req, res) => {
   try {
-    console.log("Updating Tenderer Details!");
 
     // Retrieve the files from the request
     const files = req.files;

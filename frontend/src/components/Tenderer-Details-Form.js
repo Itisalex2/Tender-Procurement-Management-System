@@ -11,6 +11,11 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
   const [legalRepresentativeBusinessCard, setLegalRepresentativeBusinessCard] = useState(null);
   const [legalRepresentativeBusinessCardUrl, setLegalRepresentativeBusinessCardUrl] = useState(''); // URL for existing file
   const [unifiedSocialCreditCode, setUnifiedSocialCreditCode] = useState('');
+  // Validate file type and size
+  const fileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+  const maxSize = 5 * 1024 * 1024; // 5MB limit
+
+  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
 
   useEffect(() => {
     if (tendererDetails) {
@@ -30,11 +35,28 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
   const handleImageChange = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
+
+      if (!fileTypes.includes(file.type)) {
+        setErrorMessage('只允许上传 JPG, PNG 或 PDF 文件。');
+        return;
+      }
+
+      if (file.size > maxSize) {
+        setErrorMessage('文件大小不能超过 2MB。');
+        return;
+      }
+
       setImage(file);
+      setErrorMessage(''); // Clear error if file is valid
     }
   };
 
   const handleSave = async () => {
+    // Check if there is an error message (e.g., from file validation)
+    if (errorMessage) {
+      return; // Prevent form submission if there is an error
+    }
+
     const formData = new FormData();
 
     // Append files with the same field name 'relatedFiles'
@@ -64,17 +86,23 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       }
 
       onSave(); // Optional callback to trigger after successful save
+      setErrorMessage(''); // Clear error message on success
     } catch (error) {
+      setErrorMessage(error.message);
       console.error('Error saving tenderer details:', error.message);
     }
   };
 
+
   return (
     <div>
+      {/* Display error message */}
+      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+
       {/* Business License */}
       <div className="mb-3">
         <label htmlFor="businessLicense" className="form-label">
-          营业执照 <span className="text-danger">*</span>
+          营业执照 (jpg, png, pdf) 5MB 上限 <span className="text-danger">*</span>
         </label>
         <input
           type="file"
@@ -169,7 +197,7 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       {/* Legal Representative Business Card */}
       <div className="mb-3">
         <label htmlFor="legalRepresentativeBusinessCard" className="form-label">
-          法人名片 <span className="text-danger">*</span>
+          法人名片 (jpg, png, pdf) 5MB 上限<span className="text-danger">*</span>
         </label>
         <input
           type="file"
