@@ -49,33 +49,31 @@ const AdminSettings = () => {
     fetchUsers();
   }, [authUser]);
 
-  // Confirm before changing role
-  const handleRoleChange = async (userId, newRole) => {
-    const confirmChange = window.confirm('您确定要更改这位用户的角色吗?');
-    if (!confirmChange) return;
-
+  const handleUserUpdate = async (userId, updatedFields) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/role`, {
+      const response = await fetch(`/api/admin/users/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${authUser.token}`,
         },
-        body: JSON.stringify({ role: newRole }),
+        body: JSON.stringify(updatedFields),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update role');
+        throw new Error(data.error || 'Failed to update user');
       }
 
+      // Update the local users state with the updated information
       setUsers((prevUsers) =>
-        prevUsers.map((user) => (user._id === userId ? { ...user, role: data.role } : user
-        )));
+        prevUsers.map((user) => (user._id === userId ? { ...user, ...data } : user))
+      );
     } catch (error) {
-      alert('Failed to update user role: ' + error.message);
+      alert('Failed to update user: ' + error.message);
     }
   };
+
 
   // Confirm before deleting user
   const handleDeleteUser = async (userId) => {
@@ -177,7 +175,7 @@ const AdminSettings = () => {
       <UserList
         users={users}
         filteredUsers={filteredUsers}
-        handleRoleChange={handleRoleChange}
+        handleUserUpdate={handleUserUpdate}
         handleDeleteUser={handleDeleteUser}
         roleFilter={roleFilter}
         setRoleFilter={setRoleFilter}

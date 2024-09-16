@@ -1,5 +1,6 @@
 const User = require('../models/user-model');
 const roles = require('../../frontend/src/utils/roles')
+const bcrypt = require('bcrypt');
 
 // Get all users (admin only)
 const getAllUsers = async (req, res) => {
@@ -11,32 +12,52 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Update a user's role
-const updateUserRole = async (req, res) => {
+const updateUser = async (req, res) => {
   const { userId } = req.params;
-  const { role } = req.body;
+  const { email, password, number, role } = req.body;
 
   try {
-    const validRoles = roles;
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ error: 'Invalid role' });
-    }
+    const user = await User.findById(userId);
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { role },
-      { new: true }
-    );
-
-    if (!updatedUser) {
+    if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.status(200).json(updatedUser);
+    // Update email if provided
+    if (email) {
+      user.email = email;
+    }
+
+    // Update password if provided (hash it first)
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      user.password = hashedPassword;
+    }
+
+    // Update number if provided
+    if (number) {
+      user.number = number;
+    }
+
+    // Update role if provided
+    if (role) {
+      const validRoles = roles;
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({ error: 'Invalid role' });
+      }
+      user.role = role;
+    }
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update user role' });
+    res.status(500).json({ error: 'Failed to update user' });
   }
 };
+
 
 const deleteUser = async (req, res) => {
   const { userId } = req.params;
@@ -82,4 +103,4 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, updateUserRole, deleteUser, getUserById, createUser };
+module.exports = { getAllUsers, updateUser, deleteUser, getUserById, createUser };
