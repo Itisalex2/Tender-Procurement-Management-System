@@ -1,8 +1,16 @@
 const zh = {
+  // Role
   admin: '管理员',
   tenderer: '供应商',
   tenderProcurementGroup: '招标管理组',
   secretary: '招标秘书',
+
+  // Bid status:
+  won: '中标',
+  lost: '为中标',
+  pending: '审核中',
+
+  // Navbar translations
   procurementManagement: '招采管理',
   home: '首页',
   viewOwnBids: '查看我的投标',
@@ -16,6 +24,7 @@ const zh = {
   login: '登录',
   signup: '报名',
 
+  // AddTenderer page translations
   addTendererTitle: '创建供应商(密码随机生成)',
   usernameLabel: '企业名',
   emailLabel: '邮件地址',
@@ -25,6 +34,7 @@ const zh = {
   successMessage: '供应商创建成功！',
   failureMessage: '添加供应商失败',
 
+  // AdminSettings page translations
   manageUsers: '管理用户',
   addUser: '添加用户',
   cancelAddUser: '取消添加用户',
@@ -35,6 +45,7 @@ const zh = {
   failedToUpdateUser: '更新用户失败',
   failedToDeleteUser: '删除用户失败',
 
+  // CreateTender page translations
   createTenderError: '没有成功创建招标',
   tenderCreated: '招标创建成功！',
   confirmCreateTender: '确认创建招标',
@@ -54,6 +65,7 @@ const zh = {
   loading: '加载中...',
   fetchUsersError: '获取用户时出错: {0}',
 
+  // EditTender page translations
   editTender: '编辑招标',
   updateTender: '更新招标',
   updateTenderError: '更新招标失败',
@@ -62,11 +74,13 @@ const zh = {
   uploadedBy: '上传者',
   fetchError: '错误: {0}',
 
+  // Home page translations
   tenderList: '招标列表',
   status: '状态',
   relatedFiles: '相关文件',
   noFiles: '无相关文件',
 
+  // Inbox page translations
   mails: '邮件',
   selectAll: '全选',
   markAsRead: '标记已读',
@@ -82,6 +96,7 @@ const zh = {
   errorDeletingMail: '删除邮件时出错',
   errorFetchingTender: '获取招标信息时出错',
 
+  // Login page translations
   email: '邮件',
   password: '密码',
   phoneNumber: '电话号码',
@@ -95,6 +110,7 @@ const zh = {
   useEmailLogin: '使用邮件登录',
   usePhoneLogin: '使用电话号码登录',
 
+  // ManageTenderers page translations
   unableToFetchTenderers: '无法获取供应商列表',
   searchCompany: '搜索企业名称...',
   all: '全部',
@@ -109,6 +125,7 @@ const zh = {
   viewDetails: '查看详情',
   noTenderersFound: '未找到符合条件的供应商',
 
+  // ManageTenders page translations
   filterTenderStatus: '筛选招标状态',
   allStatus: '所有状态',
   Open: '开放',
@@ -132,8 +149,10 @@ const zh = {
   failedToConfirmBidViewing: '确认查看投标失败',
   errorConfirmingBidViewing: '确认查看投标时出错：',
 
+  // PageNotFound page translations
   pageNotFound: '404错误：页面未找到',
 
+  // Settings page translations
   failedToUpdateSettings: '更新设置失败',
   personalSettings: '个人设置',
   basicInformation: '基本信息',
@@ -146,9 +165,11 @@ const zh = {
   companyDetails: '企业详情',
   companyDetailsSavedSuccess: '企业详情已保存成功!',
 
+  // SignUp page translations
   supplierSignup: '供应商报名',
   supplierName: '供应商名',
 
+  // SubmitBid page translations
   noPermissionToSubmitBid: '您没有权限提交投标。',
   submitBidFailed: '提交投标失败',
   submitBid: '提交投标',
@@ -159,6 +180,7 @@ const zh = {
   bidAmount: '投标金额',
   additionalInformation: '附加信息',
 
+  // ViewBid page translations
   unableToFetchBid: '无法获取投标。',
   noPermissionToViewBid: '您没有权限查看这个投标。',
   bidDetails: '投标详情',
@@ -169,6 +191,7 @@ const zh = {
   noBidFiles: '无投标文件',
   submittedAt: '提交时间',
 
+  // ViewBids page translations
   unableToSelectWinningBid: '无法选择中标投标。',
   winningBidSelected: '中标投标已成功选择！',
   failedToSelectWinningBid: '选择中标投标失败。',
@@ -178,12 +201,16 @@ const zh = {
   noBids: '没有投标。',
   selectAsWinningBid: '选择为中标',
 
+  // ViewOwnBids page translations
   noBidsSubmitted: '您没有提交任何投标。',
   myBids: '我的投标',
   amount: '金额',
   bidInformation: '投标信息',
 
+  // ViewTender page translations
   uploadedAt: '上传时间',
+
+  // ViewTenderer page translations
   unableToLoadTenderer: '无法加载供应商',
   tendererDetailsNotFound: '未找到供应商详情。',
   cannotViewNonTenderer: '无法查看非供应商用户。',
@@ -201,14 +228,18 @@ const zh = {
   businessLicense: '营业执照',
   legalRepresentativeBusinessCard: '法人名片',
   download: '下载',
+  comments: '评论',
+  noComments: '无评论',
   unknownUser: '未知用户',
   addComment: '添加评论',
   submitting: '提交中...',
   submitComment: '提交评论',
 
+  // AddUserForm translations
   addNewUser: '添加新用户',
   addingUser: '添加中...',
 
+  // Bid-Evaluations translations
   unableToSubmitEvaluation: '无法提交评估',
   evaluationSubmittedSuccessfully: '评估成功提交！',
   evaluations: '评估',
@@ -219,6 +250,7 @@ const zh = {
   addEvaluation: '添加评估',
   submitEvaluation: '提交评估',
 
+  // Chatbox translations
   closeChat: '关闭招标答疑',
   openChat: '打开招标答疑',
   selectConversation: '选择会话',
@@ -231,11 +263,13 @@ const zh = {
   enterYourQuestion: '输入您的问题...',
   failedToSendMessage: '发送消息失败',
 
+  // File-Upload translations
   invalidFileType:
     '文件类型不符合。只接受 JPEG、PNG、PDF、DOC、DOCX、XLS、XLSX、PPT、PPTX、TXT、RTF、ZIP、RAR、DWG 和 DXF。',
   fileTooLarge: '文件超过 1GB。',
   selected: '选择了',
 
+  // Tenderer-Details-Form translations
   allowedFileTypes: '只允许上传 JPG、PNG 或 PDF 文件。',
   fileSizeLimit: '文件大小不能超过 5MB。',
   failedToUpdateDetails: '更新企业详情失败',
@@ -246,6 +280,7 @@ const zh = {
   downloadLegalRepBusinessCard: '下载法人名片',
   saveCompanyDetails: '保存企业详情',
 
+  // User-List translations
   confirmSaveAllChanges: '您确定要保存所有更改吗?',
   filterUserRole: '筛选用户角色',
   allRoles: '所有角色',
@@ -253,6 +288,7 @@ const zh = {
   deleteUser: '删除用户',
   saveAllChanges: '保存所有更改',
 
+  // use-fetch-all-users translations
   failedToFetchUsers: '无法获取用户',
 };
 

@@ -292,5 +292,4 @@ const en = {
   failedToFetchUsers: 'Failed to fetch users',
 };
 
-
 export default en;
