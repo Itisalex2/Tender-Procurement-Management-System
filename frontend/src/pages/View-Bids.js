@@ -4,7 +4,7 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useFetchTender } from "../hooks/use-fetch-tender";
 import { permissionRoles } from '../utils/permissions';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const ViewBids = () => {
   const { id } = useParams(); // Get tender id from URL
@@ -13,8 +13,8 @@ const ViewBids = () => {
   const { user } = useAuthContext();
   const { userData, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
-  const navigate = useNavigate(); // Use navigate for bid redirection
-  const { localize } = useLocalize(); // Use localization hook
+  const navigate = useNavigate();
+  const { localize } = useLocalize();
 
   // Function to handle selecting a winning bid
   const handleSelectWinningBid = async (bidId) => {

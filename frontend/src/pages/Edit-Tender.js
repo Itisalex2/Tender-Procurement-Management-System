@@ -11,7 +11,7 @@ import DownloadLink from '../components/Download-Link';
 const EditTender = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   const [formData, setFormData] = useState({
     title: '',

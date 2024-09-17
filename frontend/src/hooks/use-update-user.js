@@ -27,7 +27,7 @@ const useUpdateUser = () => {
       }
 
       setIsLoading(false);
-      return data; // Return updated user data
+      return data;
     } catch (err) {
       setIsLoading(false);
       setError(err.message);

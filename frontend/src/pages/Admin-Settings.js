@@ -14,7 +14,7 @@ const AdminSettings = () => {
   const [addingUser, setAddingUser] = useState(false);
   const [showAddUserForm, setShowAddUserForm] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
-  const [searchKeyword, setSearchKeyword] = useState(''); // Search keyword state
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   const [newUser, setNewUser] = useState({
     username: '',

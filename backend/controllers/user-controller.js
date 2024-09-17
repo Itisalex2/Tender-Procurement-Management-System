@@ -25,7 +25,7 @@ const userLogin = async (req, res) => {
       token
     });
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(400).json({ error: error.message });
   }
 };
@@ -36,7 +36,7 @@ const userLogout = async (req, res) => {
     EventLog.recordLogout(req.user._id);
     res.status(200).json({ message: 'logged out!' })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(400).json({ error: error.message });
   }
 };
@@ -52,6 +52,7 @@ const userSignup = async (req, res) => {
       token
     });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -65,6 +66,7 @@ const userDownloadFile = async (req, res) => {
 
     res.status(200).json({ message: 'Download logged' });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -108,6 +110,7 @@ const userSettings = async (req, res) => {
 
     res.status(200).json(response); // Respond with updated fields
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -142,6 +145,7 @@ const getUserInfo = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -160,6 +164,7 @@ const getAllUsers = async (req, res) => {
 
     res.status(200).json(users);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to fetch users' });
   }
 };
@@ -322,7 +327,7 @@ const updateUserById = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -334,7 +339,7 @@ const updateTendererDetails = async (req, res) => {
     // Retrieve the files from the request
     const files = req.files;
 
-    // Extract file paths (assuming order is maintained)
+    // Extract file paths 
     const businessLicense = files[0] ? files[0].filename : null;
     const legalRepresentativeBusinessCard = files[1] ? files[1].filename : null;
 
@@ -437,6 +442,7 @@ const getTenderers = async (req, res) => {
 
     res.status(200).json(tenderers);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to fetch tenderers' });
   }
 };

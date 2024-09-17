@@ -5,8 +5,8 @@ import useFetchUser from '../hooks/use-fetch-user';
 import { useFetchTender } from '../hooks/use-fetch-tender';
 import { permissionRoles } from '../utils/permissions';
 import useUpdateUser from '../hooks/use-update-user';
-import FileUpload from '../components/File-Upload'; // Import the FileUpload component
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import FileUpload from '../components/File-Upload';
+import useLocalize from '../hooks/use-localize';
 
 const SubmitBid = () => {
   const { id } = useParams();
@@ -15,11 +15,11 @@ const SubmitBid = () => {
   const { userData, loading: userLoading, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
   const { updateUserById } = useUpdateUser();
-  const { localize } = useLocalize(); // Use localization
+  const { localize } = useLocalize();
 
   const [amount, setAmount] = useState('');
   const [content, setContent] = useState('');
-  const [files, setFiles] = useState([]); // Files state
+  const [files, setFiles] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState(false);
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
 
 const DownloadLink = ({ file }) => {
-  const { user } = useAuthContext(); // Extract the user from the auth context
+  const { user } = useAuthContext();
 
   const handleDownload = async (file) => {
     try {

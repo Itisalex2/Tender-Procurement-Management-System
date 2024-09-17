@@ -10,7 +10,7 @@ export const useSignup = () => {
     const signup = async (username, email, password, number) => {
         setError(null)
 
-        const response = await fetch('/api/user/signup', { // check if login is valid
+        const response = await fetch('/api/user/signup', {
             method: 'POST',
             body: JSON.stringify({ username, email, password, number }),
             headers: {
@@ -18,7 +18,7 @@ export const useSignup = () => {
             }
         })
 
-        const json = await response.json() // get back response
+        const json = await response.json()
 
         if (!response.ok) {
             setError(localize(json.error))

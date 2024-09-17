@@ -7,7 +7,6 @@ export const useLogout = () => {
 
     const logout = async () => {
         try {
-            // Call the logout API to record the event
             const response = await fetch('/api/user/logout', {
                 method: 'POST',
                 headers: {

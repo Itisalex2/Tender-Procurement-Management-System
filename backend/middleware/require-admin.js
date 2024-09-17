@@ -1,7 +1,7 @@
 const User = require('../models/user-model');
 
 const requireAdmin = async (req, res, next) => {
-  const { user } = req; // Assuming the user is added to req by an authentication middleware
+  const { user } = req;
 
   if (!user) {
     return res.status(401).json({ error: 'Not authenticated' });

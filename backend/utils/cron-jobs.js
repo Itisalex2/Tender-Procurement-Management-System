@@ -1,6 +1,6 @@
 const cron = require('node-cron');
-const Tender = require('../models/tender-model');  // Import Tender model
-const VerificationCode = require('../models/verification-code-model');  // Import VerificationCode model
+const Tender = require('../models/tender-model');
+const VerificationCode = require('../models/verification-code-model');
 
 // Read cron schedule from the .env file
 const cronSchedule = process.env.CRON_SCHEDULE || '* * * * *';  // Default to every minute if not set

@@ -1,8 +1,8 @@
 import React from 'react';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChooseRole = true }) => {
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   return (
     <form onSubmit={handleAddUser} className="mb-4">

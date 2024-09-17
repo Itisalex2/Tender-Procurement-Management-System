@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFetchMails from '../hooks/use-fetch-mails';
 import { useAuthContext } from '../hooks/use-auth-context';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const Mail = () => {
   const { mails, loading, error, refetchMails } = useFetchMails(false, true);
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
   const [expandedMail, setExpandedMail] = useState(null); // State to track expanded mail
   const [selectedMails, setSelectedMails] = useState([]); // Track selected emails
   const [selectAll, setSelectAll] = useState(false); // State for select all checkbox

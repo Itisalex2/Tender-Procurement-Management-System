@@ -4,21 +4,21 @@ import DownloadLink from '../components/Download-Link';
 
 const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
   const [businessLicense, setBusinessLicense] = useState(null);
-  const [businessLicenseUrl, setBusinessLicenseUrl] = useState(''); // URL for existing file
+  const [businessLicenseUrl, setBusinessLicenseUrl] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [legalRepresentative, setLegalRepresentative] = useState('');
   const [dateOfEstablishment, setDateOfEstablishment] = useState('');
   const [country, setCountry] = useState('');
   const [officeAddress, setOfficeAddress] = useState('');
   const [legalRepresentativeBusinessCard, setLegalRepresentativeBusinessCard] = useState(null);
-  const [legalRepresentativeBusinessCardUrl, setLegalRepresentativeBusinessCardUrl] = useState(''); // URL for existing file
+  const [legalRepresentativeBusinessCardUrl, setLegalRepresentativeBusinessCardUrl] = useState('');
   const [unifiedSocialCreditCode, setUnifiedSocialCreditCode] = useState('');
   // Validate file type and size
   const fileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
   const maxSize = 5 * 1024 * 1024; // 5MB limit
 
-  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
-  const { localize } = useLocalize(); // Use localization
+  const [errorMessage, setErrorMessage] = useState('');
+  const { localize } = useLocalize();
 
   useEffect(() => {
     if (tendererDetails) {

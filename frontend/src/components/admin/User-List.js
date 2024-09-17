@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useLocalize from '../../hooks/use-localize'; // Import localization hook
+import useLocalize from '../../hooks/use-localize';
 
 const UserList = ({
   filteredUsers,
@@ -9,7 +9,7 @@ const UserList = ({
   setRoleFilter,
 }) => {
   const [editedFields, setEditedFields] = useState({});
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   const handleInputChange = (userId, field, value) => {
     setEditedFields((prev) => ({

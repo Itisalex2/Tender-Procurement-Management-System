@@ -3,7 +3,7 @@ import useFetchTenderers from '../hooks/use-fetch-tenderers';
 import useLocalize from '../hooks/use-localize';
 
 const ManageTenderers = () => {
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
   const [verifiedFilter, setVerifiedFilter] = useState(null); // null = all, true = verified, false = non-verified
   const [searchQuery, setSearchQuery] = useState(''); // State to track the search query
 

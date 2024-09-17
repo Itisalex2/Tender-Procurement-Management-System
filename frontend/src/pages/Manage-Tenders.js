@@ -12,10 +12,10 @@ const ManageTenders = () => {
   const { user } = useAuthContext();
   const { userData } = useFetchUser();
   const [statusFilter, setStatusFilter] = useState('all'); // Default filter status is 'all'
-  const { tenders, loading, error, setTenders } = useFetchTenders(statusFilter); // Fetch tenders based on filter
+  const { tenders, loading, error, setTenders } = useFetchTenders(statusFilter);
   const [selectedTender, setSelectedTender] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   const handleDeleteTender = async (e, tenderId) => {
     e.stopPropagation();

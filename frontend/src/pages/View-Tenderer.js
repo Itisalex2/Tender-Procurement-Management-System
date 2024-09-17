@@ -6,9 +6,9 @@ import useLocalize from '../hooks/use-localize';
 import DownloadLink from '../components/Download-Link';
 
 const ViewTenderer = () => {
-  const { id } = useParams(); // Get the tenderer ID from the route parameters
+  const { id } = useParams();
   const { userData, loading, error, setUserData } = useFetchUserById(id); // Added setUserData to update comments in real-time
-  const { updateUserById, isLoading: isSubmitting, error: submitError } = useUpdateUser(); // Hook for updating user
+  const { updateUserById, isLoading: isSubmitting, error: submitError } = useUpdateUser();
   const { localize } = useLocalize();
 
   const [newComment, setNewComment] = useState(''); // State to track new comment

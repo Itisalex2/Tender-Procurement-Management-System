@@ -6,11 +6,10 @@ const getUserMails = async (req, res) => {
   const { unreadOnly, reverse } = req.query;
 
   try {
-    // Construct the query object
     let query = {};
 
     if (unreadOnly === 'true') {
-      query = { read: false }; // Filter for unread mails only
+      query = { read: false };
     }
 
     // Find the user and populate their inbox with all fields of the mail document and the sender's username

@@ -10,7 +10,7 @@ import validatePhoneNumber from '../utils/validate-phone-number';
 const CreateTender = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { localize } = useLocalize(); // Use the localization hook
+  const { localize } = useLocalize();
 
   const targetedUserRoles = permissionRoles.includeInTenderTargetedUsers.join(',');
   const procurementGroupRoles = permissionRoles.confirmAllowViewBids.join(',');
@@ -92,7 +92,7 @@ const CreateTender = () => {
 
       // Check if the response is not OK
       if (!response.ok) {
-        const errorResponse = await response.json(); // Wait for the JSON response
+        const errorResponse = await response.json();
         throw new Error(errorResponse.error || localize('createTenderError'));
       }
 

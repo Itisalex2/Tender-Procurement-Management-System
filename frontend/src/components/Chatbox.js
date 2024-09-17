@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { permissionRoles } from '../utils/permissions';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const Chatbox = ({
   tenderDetails,
@@ -15,8 +15,8 @@ const Chatbox = ({
   const [chatMessages, setChatMessages] = useState([]);
   const [chatError, setChatError] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(true);
-  const [isSending, setIsSending] = useState(false); // State for handling message sending
-  const { localize } = useLocalize(); // Use localization hook
+  const [isSending, setIsSending] = useState(false);
+  const { localize } = useLocalize();
 
   const handleSelectConversation = (conversation) => {
     setSelectedConversation(conversation);

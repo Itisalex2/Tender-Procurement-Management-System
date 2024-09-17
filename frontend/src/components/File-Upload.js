@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const FileUpload = ({ onFilesChange, setError }) => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [fileInputs, setFileInputs] = useState([0]);
-  const [errorMessage, setErrorMessage] = useState(''); // Error message state
-  const { localize } = useLocalize(); // Use localization
+  const [errorMessage, setErrorMessage] = useState('');
+  const { localize } = useLocalize();
 
   const handleFileChange = (e, index) => {
     const file = e.target.files[0];

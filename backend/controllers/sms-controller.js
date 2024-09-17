@@ -9,7 +9,7 @@ const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' });
 };
 
-// Initialize the client with your accessKeyId and secret
+// Initialize the client with the accessKeyId and secret
 const client = new Core({
   accessKeyId: process.env.SMS_ACCESS_KEY_ID,
   accessKeySecret: process.env.SMS_ACCESS_KEY_SECRET,
@@ -28,7 +28,7 @@ async function sendSMSHelper(phoneNumber, signName, templateCode, templateParam)
 
   const requestOption = {
     method: 'POST',
-    timeout: 10000  // Increase timeout to 10 seconds
+    timeout: 10000
   };
 
   try {
@@ -60,6 +60,7 @@ const sendSMS = async (req, res) => {
     const response = await sendSMSHelper(phoneNumber, signName, templateCode, templateParam);
     res.status(200).json({ success: true, message: 'Verification code sent successfully!', data: response });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false, message: 'Error sending SMS', error: error.message });
   }
 };
@@ -95,7 +96,7 @@ const verifyCode = async (req, res) => {
     return res.status(200).json({ success: true, token });
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(500).json({ success: false, message: 'Verification failed', error: error.message });
   }
 };

@@ -27,7 +27,7 @@ const useFetchTenderers = ({ verified = null } = {}) => {
         const response = await fetch(`/api/user/getTenderers${queryString}`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
+            Authorization: `Bearer ${authUser.token}`,
           },
         });
 
@@ -36,7 +36,7 @@ const useFetchTenderers = ({ verified = null } = {}) => {
         }
 
         const data = await response.json();
-        setTenderers(data); // Set the tenderers data in state
+        setTenderers(data);
       } catch (err) {
         setError(err.message);
       } finally {

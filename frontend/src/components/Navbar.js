@@ -16,7 +16,7 @@ const Navbar = () => {
   const { userData, loading, error } = useFetchUser();
   const [profileOpen, setProfileOpen] = useState(false);
   const { mails, loading: mailLoading } = useFetchMails(true, false);
-  const { localize } = useLocalize(); // Use localize hook
+  const { localize } = useLocalize();
 
   const hasPermission = (permission) => {
     return userData && permissionRoles[permission]?.includes(userData.role);

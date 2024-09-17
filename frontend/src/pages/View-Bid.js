@@ -15,7 +15,7 @@ const ViewBid = () => {
   const [bid, setBid] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   useEffect(() => {
     const fetchBid = async () => {

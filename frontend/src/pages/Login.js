@@ -75,13 +75,13 @@ const Login = () => {
 
       if (response.ok) {
         localStorage.setItem('user', JSON.stringify(json));
-        setSmsMessage(localize('loginSuccess')); // Localized message
+        setSmsMessage(localize('loginSuccess'));
         window.location.reload();
       } else {
-        setSmsError(json.message || localize('loginFailed')); // Localized error message
+        setSmsError(json.message || localize('loginFailed'));
       }
     } catch (error) {
-      setSmsError(localize('loginFailed')); // Localized error message
+      setSmsError(localize('loginFailed'));
     }
   };
 

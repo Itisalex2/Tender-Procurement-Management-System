@@ -20,7 +20,7 @@ const requireAuth = async (req, res, next) => {
     next(); // Proceed to the next middleware or route handler
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(401).json({ error: 'Request is not authorized' });
   }
 };

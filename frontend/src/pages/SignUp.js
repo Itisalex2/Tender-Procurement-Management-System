@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSignup } from '../hooks/use-signup';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import 'bootstrap/dist/css/bootstrap.min.css';
+import useLocalize from '../hooks/use-localize';
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
@@ -9,7 +9,7 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [number, setNumber] = useState('');
   const { signup, error } = useSignup();
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page refresh on form submission

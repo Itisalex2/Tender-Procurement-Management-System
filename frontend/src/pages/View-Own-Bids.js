@@ -1,10 +1,10 @@
 import useFetchUser from '../hooks/use-fetch-user';
 import { Link } from 'react-router-dom';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const ViewOwnBids = () => {
-  const { userData, loading, error } = useFetchUser({ includeBids: true }); // Fetch user data along with bids
-  const { localize } = useLocalize(); // Use localization hook
+  const { userData, loading, error } = useFetchUser({ includeBids: true });
+  const { localize } = useLocalize();
 
   if (loading) {
     return <div>{localize('loading')}</div>;
@@ -30,7 +30,7 @@ const ViewOwnBids = () => {
                 <Link to={`/tender/${bid.tender._id}/bid/${bid._id}`} className="text-decoration-none">
                   <div className="card h-100">
                     <div className="card-header">
-                      <h4 className="mb-0">{bid.tender.title}</h4> {/* Large title */}
+                      <h4 className="mb-0">{bid.tender.title}</h4>
                     </div>
                     <div className="card-body">
                       <h5 className="card-title">

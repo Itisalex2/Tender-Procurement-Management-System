@@ -9,7 +9,7 @@ export const useLogin = () => {
 
     const login = async (email, password) => {
         setError(null); // Reset error state before login attempt
-        let success = false; // Define success flag
+        let success = false;
 
         try {
             const response = await fetch('/api/user/login', {
@@ -31,7 +31,7 @@ export const useLogin = () => {
                 // Update the auth context
                 dispatch({ type: 'LOGIN', payload: json });
 
-                success = true; // Set success flag to true
+                success = true;
             }
         } catch (err) {
             setError("An unexpected error occurred.");

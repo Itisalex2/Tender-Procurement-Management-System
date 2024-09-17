@@ -25,7 +25,7 @@ const useFetchUser = ({ includeBids = false, includeTendererDetails = false } = 
         const response = await fetch(`/api/user/me${queryString}`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
+            Authorization: `Bearer ${authUser.token}`,
           },
         });
 
@@ -34,7 +34,7 @@ const useFetchUser = ({ includeBids = false, includeTendererDetails = false } = 
         }
 
         const data = await response.json();
-        setUserData(data); // Set the user data in state
+        setUserData(data);
       } catch (err) {
         setError(err.message);
       } finally {

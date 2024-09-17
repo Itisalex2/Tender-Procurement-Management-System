@@ -19,7 +19,7 @@ const useFetchUserById = (userId) => {
         const response = await fetch(`/api/user/${userId}`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${authUser.token}`, // Pass token in headers for authentication
+            Authorization: `Bearer ${authUser.token}`,
           },
         });
 
@@ -28,7 +28,7 @@ const useFetchUserById = (userId) => {
         }
 
         const data = await response.json();
-        setUserData(data); // Set the user data in state
+        setUserData(data);
       } catch (err) {
         setError(err.message);
       } finally {

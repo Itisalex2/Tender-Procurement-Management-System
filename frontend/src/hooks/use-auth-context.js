@@ -1,10 +1,10 @@
 import { AuthContext } from '../context/auth-context'
 import { useContext } from "react"
 
-export const useAuthContext = () => { // create a hook
-    const context = useContext(AuthContext) // returns the value of this context
+export const useAuthContext = () => {
+    const context = useContext(AuthContext)
 
-    if (!context) { // if this hook is used wrongly, throw an error
+    if (!context) {
         throw Error('useAuthContext must be used inside an AuthContextProvider')
     }
 

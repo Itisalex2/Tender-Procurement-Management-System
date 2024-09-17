@@ -5,12 +5,11 @@ import useLocalize from '../hooks/use-localize';
 import DownloadLink from '../components/Download-Link';
 
 const Home = () => {
-  const { tenders, loading, error } = useFetchTenders('Open'); // Fetch open tenders
+  const { tenders, loading, error } = useFetchTenders('Open');
   const navigate = useNavigate();
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   const handleRowClick = (tenderId) => {
-    // Navigate to the new ViewTender page with the tenderId
     navigate(`/tender/${tenderId}`);
   };
 

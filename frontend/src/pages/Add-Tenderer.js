@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
-import useLocalize from '../hooks/use-localize'; // Import the localization hook
+import useLocalize from '../hooks/use-localize';
 
 const AddTenderer = () => {
   const { user: authUser } = useAuthContext();
-  const { localize } = useLocalize(); // Use the localize hook for translations
+  const { localize } = useLocalize();
   const [newUser, setNewUser] = useState({
     username: '',
     email: '',

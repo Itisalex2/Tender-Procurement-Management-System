@@ -1,6 +1,5 @@
 import { createContext, useReducer, useEffect, useState } from 'react';
 
-// Create the context
 export const AuthContext = createContext();
 
 // Reducer function to manage auth and language state

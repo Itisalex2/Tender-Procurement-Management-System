@@ -8,7 +8,7 @@ const BidEvaluations = ({ user, evaluations, bidId, tenderId, canAddEvaluations,
   const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const { localize } = useLocalize(); // Use localization
+  const { localize } = useLocalize();
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);

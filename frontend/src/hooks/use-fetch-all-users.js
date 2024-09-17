@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from './use-auth-context';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const useFetchAllUsers = (roles = '') => {
   const { user } = useAuthContext();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { localize } = useLocalize(); // Use localization
+  const { localize } = useLocalize();
 
   useEffect(() => {
     const fetchUsers = async () => {

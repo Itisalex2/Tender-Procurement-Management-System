@@ -43,6 +43,7 @@ const createTender = async (req, res) => {
 
     res.status(201).json({ message: 'Tender created successfully', tender: newTender });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -129,6 +130,7 @@ const updateTenderById = async (req, res) => {
 
     res.status(200).json({ message: 'Tender updated successfully', tender: updatedTender });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -219,6 +221,7 @@ const deleteTenderById = async (req, res) => {
 
     res.status(200).json({ message: 'Tender and related files deleted successfully' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to delete tender' });
   }
 };
