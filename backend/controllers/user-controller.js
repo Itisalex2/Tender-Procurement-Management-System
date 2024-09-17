@@ -6,6 +6,7 @@ const validator = require('validator');
 const Mail = require('../models/mail-model');
 const roles = require('../../frontend/src/utils/roles');
 const TendererDetails = require('../models/tenderer-details-model'); // Import the TendererDetails model
+const EventLog = require('../models/event-log-model');
 
 // Helper function to create a token
 const createToken = (_id) => {
@@ -19,13 +20,27 @@ const userLogin = async (req, res) => {
     const user = await User.login(email, password);
 
     const token = createToken(user._id); // create token
+    EventLog.recordLogin(user._id);
     res.status(200).json({
       token
     });
   } catch (error) {
+    console.log(error)
     res.status(400).json({ error: error.message });
   }
 };
+
+// User logout
+const userLogout = async (req, res) => {
+  try {
+    EventLog.recordLogout(req.user._id);
+    res.status(200).json({ message: 'logged out!' })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: error.message });
+  }
+};
+
 
 // User signup
 const userSignup = async (req, res) => {
@@ -36,6 +51,19 @@ const userSignup = async (req, res) => {
     res.status(200).json({
       token
     });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const userDownloadFile = async (req, res) => {
+  try {
+    const { fileName } = req.body;
+
+    // Log the download event in the database
+    await EventLog.recordDownload(req.user._id, fileName);
+
+    res.status(200).json({ message: 'Download logged' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -353,8 +381,15 @@ const updateTendererDetails = async (req, res) => {
       // If tendererDetails exists, update the existing document
       tendererDetails = await TendererDetails.findById(user.tendererDetails._id);
 
-      tendererDetails.businessLicense = businessLicense || tendererDetails.businessLicense;  // Only update if new file is provided
-      tendererDetails.legalRepresentativeBusinessCard = legalRepresentativeBusinessCard || tendererDetails.legalRepresentativeBusinessCard;  // Only update if new file is provided
+      // Update only if not null
+      if (businessLicense) {
+        tendererDetails.businessLicense = `/uploads/${businessLicense}`
+      }
+
+      if (legalRepresentativeBusinessCard) {
+        tendererDetails.legalRepresentativeBusinessCard = `/uploads/${legalRepresentativeBusinessCard}`
+      }
+
       tendererDetails.businessType = businessType;
       tendererDetails.legalRepresentative = legalRepresentative;
       tendererDetails.dateOfEstablishment = dateOfEstablishment;
@@ -406,4 +441,4 @@ const getTenderers = async (req, res) => {
   }
 };
 
-module.exports = { userSignup, userLogin, userSettings, getUserInfo, getAllUsers, getUserById, updateUserById, updateTendererDetails, getTenderers };
+module.exports = { userSignup, userLogin, userLogout, userDownloadFile, userSettings, getUserInfo, getAllUsers, getUserById, updateUserById, updateTendererDetails, getTenderers };

@@ -6,14 +6,15 @@ import useUpdateUser from '../hooks/use-update-user';
 import useFetchUser from '../hooks/use-fetch-user';
 import { permissionRoles } from '../utils/permissions';
 import Chatbox from '../components/Chatbox';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const ViewTender = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { updateUserById } = useUpdateUser();
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
   const [tenderDetails, setTenderDetails] = useState({
     title: '',
     description: '',
@@ -122,13 +123,7 @@ const ViewTender = () => {
           <ul>
             {tenderDetails.relatedFiles.map((file, index) => (
               <li key={index}>
-                <a
-                  href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {file.fileName}
-                </a>
+                <DownloadLink file={file} />
                 {file.dateUploaded && (
                   <span>
                     {' '}

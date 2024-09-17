@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import useFetchUserById from '../hooks/use-fetch-user-by-id';
 import useUpdateUser from '../hooks/use-update-user';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const ViewTenderer = () => {
   const { id } = useParams(); // Get the tenderer ID from the route parameters
   const { userData, loading, error, setUserData } = useFetchUserById(id); // Added setUserData to update comments in real-time
   const { updateUserById, isLoading: isSubmitting, error: submitError } = useUpdateUser(); // Hook for updating user
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
 
   const [newComment, setNewComment] = useState(''); // State to track new comment
 
@@ -35,8 +36,6 @@ const ViewTenderer = () => {
     bids = [], // Default to an empty array if no bids
     tendererDetails,
   } = userData;
-
-  const backendUrl = process.env.REACT_APP_BACKEND_URL; // Fetch backend URL from environment variables
 
   // Handle comment submission
   const handleCommentSubmit = async (e) => {
@@ -188,26 +187,14 @@ const ViewTenderer = () => {
             {tendererDetails.businessLicense && (
               <div className="mb-3">
                 <strong>{localize('businessLicense')}:</strong>{' '}
-                <a
-                  href={`${backendUrl}/uploads/${tendererDetails.businessLicense}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {localize('download')}
-                </a>
+                <DownloadLink file={{ fileName: localize('download'), fileUrl: tendererDetails.businessLicense }} />
               </div>
             )}
 
             {tendererDetails.legalRepresentativeBusinessCard && (
               <div className="mb-3">
                 <strong>{localize('legalRepresentativeBusinessCard')}:</strong>{' '}
-                <a
-                  href={`${backendUrl}/uploads/${tendererDetails.legalRepresentativeBusinessCard}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {localize('download')}
-                </a>
+                <DownloadLink file={{ fileName: localize('download'), fileUrl: tendererDetails.legalRepresentativeBusinessCard }} />
               </div>
             )}
 

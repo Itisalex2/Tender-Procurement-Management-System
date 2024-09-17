@@ -4,8 +4,9 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import { useFetchTender } from '../hooks/use-fetch-tender';
 import { permissionRoles } from '../utils/permissions';
-import FileUpload from '../components/File-Upload'; // Import the FileUpload component
-import useLocalize from '../hooks/use-localize'; // Import the localization hook
+import FileUpload from '../components/File-Upload';
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const EditTender = () => {
   const { id } = useParams();
@@ -292,13 +293,9 @@ const EditTender = () => {
           <ul>
             {formData.relatedFiles.map((file, index) => (
               <li key={index}>
-                <a
-                  href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {file.fileName}
-                </a>
+                <DownloadLink
+                  file={file}
+                />
                 {file.dateUploaded && (
                   <span> - {localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}</span>
                 )}

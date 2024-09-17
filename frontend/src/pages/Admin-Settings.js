@@ -159,6 +159,7 @@ const AdminSettings = () => {
         value={searchKeyword}
         onChange={(e) => setSearchKeyword(e.target.value)}
         autoComplete="off"
+        name="search"
       />
 
       {/* Button to toggle the add user form */}

@@ -4,7 +4,8 @@ import useFetchTenders from '../hooks/use-fetch-tenders';
 import useFetchUser from '../hooks/use-fetch-user';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { permissionRoles, permissionStatus } from '../utils/permissions';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const ManageTenders = () => {
   const navigate = useNavigate();
@@ -217,9 +218,7 @@ const ManageTenders = () => {
                               <ul>
                                 {tender.relatedFiles.map((file, index) => (
                                   <li key={index}>
-                                    <a href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`} target="_blank" rel="noopener noreferrer">
-                                      {file.fileName}
-                                    </a>
+                                    <DownloadLink file={file} />
                                   </li>
                                 ))}
                               </ul>

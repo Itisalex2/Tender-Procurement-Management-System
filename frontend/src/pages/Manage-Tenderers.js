@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useFetchTenderers from '../hooks/use-fetch-tenderers';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
 
 const ManageTenderers = () => {
   const { localize } = useLocalize(); // Use localization hook

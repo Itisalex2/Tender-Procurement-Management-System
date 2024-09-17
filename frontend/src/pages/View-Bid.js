@@ -5,7 +5,8 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import BidEvaluations from '../components/Bid-Evaluations';
 import { permissionRoles } from '../utils/permissions';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const ViewBid = () => {
   const { tenderId, bidId } = useParams();
@@ -90,13 +91,8 @@ const ViewBid = () => {
               <ul className="list-group">
                 {bid.files.map((file, index) => (
                   <li key={index} className="list-group-item">
-                    <a
-                      href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {file.fileName} - {localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}
-                    </a>
+                    <DownloadLink file={file} />
+                    {'  ' + localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}
                   </li>
                 ))}
               </ul>

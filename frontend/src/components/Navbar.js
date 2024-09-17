@@ -22,8 +22,8 @@ const Navbar = () => {
     return userData && permissionRoles[permission]?.includes(userData.role);
   };
 
-  const handleLogoutClick = () => {
-    logout();
+  const handleLogoutClick = async () => {
+    await logout();
     navigate('/');
     setProfileOpen(false); // Close dropdown after logout
   };

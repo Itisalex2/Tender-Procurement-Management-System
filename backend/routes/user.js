@@ -4,7 +4,7 @@ const upload = require('../utils/multer');
 
 // controller functions
 
-const { userSignup, userLogin, userSettings, getUserInfo, getAllUsers, getUserById, updateUserById, updateTendererDetails, getTenderers } = require('../controllers/user-controller')
+const { userSignup, userLogin, userLogout, userDownloadFile, userSettings, getUserInfo, getAllUsers, getUserById, updateUserById, updateTendererDetails, getTenderers } = require('../controllers/user-controller')
 
 const router = express.Router()
 
@@ -12,6 +12,9 @@ router.post('/login', userLogin)   // login route
 router.post('/signup', userSignup) // signup route
 
 router.use(requireAuth) // require authentication for the routes below
+
+router.post('/logout', userLogout)   // logout route. Does nothing but records the data into the event log
+router.post('/download-file', userDownloadFile) // Record that the user has downloaded a file
 
 router.patch('/settings', userSettings) // settings route
 router.patch('/tenderer-details', upload.array('relatedFiles', 2), updateTendererDetails) // settings route

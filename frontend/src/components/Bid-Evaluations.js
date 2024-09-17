@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const BidEvaluations = ({ user, evaluations, bidId, tenderId, canAddEvaluations, onEvaluationAdded }) => {
   const [score, setScore] = useState('');
@@ -73,13 +74,7 @@ const BidEvaluations = ({ user, evaluations, bidId, tenderId, canAddEvaluations,
                       <ul className="list-group">
                         {evaluation.relatedFiles.map((file, fileIndex) => (
                           <li key={fileIndex} className="list-group-item">
-                            <a
-                              href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {file.fileName}
-                            </a>
+                            <DownloadLink file={file} />
                           </li>
                         ))}
                       </ul>

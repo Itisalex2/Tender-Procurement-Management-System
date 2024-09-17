@@ -115,6 +115,9 @@ const zh = {
   emailPasswordIncorrect: '邮件或密码不正确',
   allFieldsRequired: '所有字段必须填写',
 
+  // Logout translations
+  failedToLogout: '登出失败:',
+
   // ManageTenderers page translations
   unableToFetchTenderers: '无法获取供应商列表',
   searchCompany: '搜索企业名称...',

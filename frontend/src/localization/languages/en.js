@@ -115,6 +115,9 @@ const en = {
   emailPasswordIncorrect: 'Email or password is incorrect',
   allFieldsRequired: 'All fields are required',
 
+  // Logout translations
+  failedToLogout: 'Failed to log out:',
+
   // ManageTenderers page translations
   unableToFetchTenderers: 'Unable to fetch tenderers',
   searchCompany: 'Search by company name...',

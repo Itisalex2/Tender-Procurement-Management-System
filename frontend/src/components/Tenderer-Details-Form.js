@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import useLocalize from '../hooks/use-localize'; // Import localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
   const [businessLicense, setBusinessLicense] = useState(null);
@@ -35,12 +36,12 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
       // Set URLs for existing files
       setBusinessLicenseUrl(
         tendererDetails.businessLicense
-          ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${tendererDetails.businessLicense}`
+          ? `${tendererDetails.businessLicense}`
           : ''
       );
       setLegalRepresentativeBusinessCardUrl(
         tendererDetails.legalRepresentativeBusinessCard
-          ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${tendererDetails.legalRepresentativeBusinessCard}`
+          ? `${tendererDetails.legalRepresentativeBusinessCard}`
           : ''
       );
     }
@@ -128,9 +129,9 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         {businessLicenseUrl && (
           <p className="mt-2">
             {localize('currentFile')}:{' '}
-            <a href={businessLicenseUrl} target="_blank" rel="noopener noreferrer">
-              {localize('downloadBusinessLicense')}
-            </a>
+            <DownloadLink
+              file={{ fileUrl: businessLicenseUrl, fileName: localize('downloadBusinessLicense') }}
+            />
           </p>
         )}
       </div>
@@ -226,9 +227,9 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         {legalRepresentativeBusinessCardUrl && (
           <p className="mt-2">
             {localize('currentFile')}:{' '}
-            <a href={legalRepresentativeBusinessCardUrl} target="_blank" rel="noopener noreferrer">
-              {localize('downloadLegalRepBusinessCard')}
-            </a>
+            <DownloadLink
+              file={{ fileUrl: legalRepresentativeBusinessCardUrl, fileName: localize('downloadLegalRepBusinessCard') }}
+            />
           </p>
         )}
       </div>

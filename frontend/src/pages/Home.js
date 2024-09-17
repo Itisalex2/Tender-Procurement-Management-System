@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFetchTenders from '../hooks/use-fetch-tenders';
-import useLocalize from '../hooks/use-localize'; // Import the localization hook
+import useLocalize from '../hooks/use-localize';
+import DownloadLink from '../components/Download-Link';
 
 const Home = () => {
   const { tenders, loading, error } = useFetchTenders('Open'); // Fetch open tenders
@@ -48,13 +49,9 @@ const Home = () => {
                   <ul>
                     {tender.relatedFiles.map((file, index) => (
                       <li key={index}>
-                        <a
-                          href={`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {file.fileName}
-                        </a>
+                        <DownloadLink
+                          file={file}
+                        />
                         {file.dateUploaded && (
                           <span> - {localize('uploadedOn')}: {new Date(file.dateUploaded).toLocaleString()}</span>
                         )}
