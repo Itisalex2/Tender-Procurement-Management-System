@@ -34,6 +34,10 @@ const SubmitBid = () => {
   const handleSubmitBid = async (e) => {
     e.preventDefault();
 
+    if (errorMsg) {
+      return;
+    }
+
     if (!hasPermissionToSubmitBid()) {
       setErrorMsg(localize('noPermissionToSubmitBid'));
       return;
@@ -138,7 +142,7 @@ const SubmitBid = () => {
           ></textarea>
         </div>
 
-        <FileUpload onFilesChange={handleFilesChange} />
+        <FileUpload onFilesChange={handleFilesChange} setError={setErrorMsg} />
 
         <button type="submit" className="btn btn-primary">{localize('submitBid')}</button>
       </form>

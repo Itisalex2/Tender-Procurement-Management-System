@@ -8,7 +8,7 @@ const tenderSchema = new mongoose.Schema({
   contactInfo: {
     name: { type: String, required: true },
     email: { type: String, default: '' },
-    phone: { type: String, required: true },
+    phone: { type: Number, required: true },
   },
   otherRequirements: { type: String, default: '' }, // Additional requirements for the tender
   relatedFiles: [{

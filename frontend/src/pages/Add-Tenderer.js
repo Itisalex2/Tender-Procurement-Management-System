@@ -64,7 +64,7 @@ const AddTenderer = () => {
       });
       alert(localize('successMessage'));
     } catch (err) {
-      alert(`${localize('failureMessage')}: ${err.message}`);
+      alert(`${localize('failureMessage')}: ${localize(err.message)}`);
     } finally {
       setAddingUser(false);
     }
@@ -75,7 +75,9 @@ const AddTenderer = () => {
       <h1 className="mb-4">{localize('addTendererTitle')}</h1>
       <form onSubmit={handleAddUser} className="mb-4">
         <div className="mb-3">
-          <label className="form-label">{localize('usernameLabel')}</label>
+          <label className="form-label">{localize('usernameLabel')}
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -85,7 +87,9 @@ const AddTenderer = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">{localize('emailLabel')}</label>
+          <label className="form-label">{localize('emailLabel')}
+            <span className="text-danger">*</span>
+          </label>
           <input
             type="email"
             className="form-control"
@@ -95,9 +99,11 @@ const AddTenderer = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">{localize('phoneLabel')}</label>
+          <label className="form-label">{localize('phoneLabel')}
+            <span className="text-danger">*</span>
+          </label>
           <input
-            type="text"
+            type="tel"
             className="form-control"
             value={newUser.number}
             onChange={(e) => setNewUser({ ...newUser, number: e.target.value })}

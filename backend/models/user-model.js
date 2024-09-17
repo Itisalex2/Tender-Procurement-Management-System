@@ -30,22 +30,22 @@ const userSchema = new Schema({
 userSchema.statics.signup = async function (username, email, password, number, role = 'tenderer') {
   // validation
   if (!username || !email || !password || !number || !role) {
-    throw Error('所有字段必须填写');
+    throw Error('allFieldsRequired');
   }
 
   // Email validation and existence check
   if (!validator.isEmail(email)) {
-    throw Error('邮件地址不符合要求');
+    throw Error('incorrectEmailFormat');
   }
 
   const exists = await this.findOne({ email });
   if (exists) {
-    throw Error('邮件地址已存在');
+    throw Error('emailAlreadyExists');
   }
 
   // Password strength check & hashing + salting
   if (!validator.isStrongPassword(password)) {
-    throw Error('密码不符合要求');
+    throw Error('passwordNotStrongEnough');
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -60,18 +60,18 @@ userSchema.statics.signup = async function (username, email, password, number, r
 // static login method
 userSchema.statics.login = async function (email, password) {
   if (!email || !password) {
-    throw Error('所有字段必须填写');
+    throw Error('allFieldsRequired');
   }
 
   // Check if the email exists and password matches
   const user = await this.findOne({ email });
   if (!user) {
-    throw Error('邮件地址/密码不正确');
+    throw Error('emailPasswordIncorrect');
   }
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
-    throw Error('邮件地址/密码不正确');
+    throw Error('emailPasswordIncorrect');
   }
 
   return user;

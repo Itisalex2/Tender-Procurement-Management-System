@@ -132,7 +132,7 @@ const Settings = () => {
                 <span className="text-danger">*</span>
               </label>
               <input
-                type="number"
+                type="tel"
                 className="form-control"
                 id="number"
                 value={number}

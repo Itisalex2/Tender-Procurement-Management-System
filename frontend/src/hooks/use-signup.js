@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { useAuthContext } from "../hooks/use-auth-context"
+import useLocalize from "./use-localize"
 
 export const useSignup = () => {
     const [error, setError] = useState(null)
     const { dispatch } = useAuthContext()
+    const { localize } = useLocalize()
 
     const signup = async (username, email, password, number) => {
         setError(null)
@@ -19,7 +21,7 @@ export const useSignup = () => {
         const json = await response.json() // get back response
 
         if (!response.ok) {
-            setError(json.error)
+            setError(localize(json.error))
         }
 
         if (response.ok) {

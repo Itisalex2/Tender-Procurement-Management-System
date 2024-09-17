@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import { useFetchTender } from '../hooks/use-fetch-tender';
@@ -9,7 +9,6 @@ import useLocalize from '../hooks/use-localize'; // Import the localization hook
 
 const EditTender = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuthContext();
   const { localize } = useLocalize(); // Use localization hook
 
@@ -30,6 +29,8 @@ const EditTender = () => {
   });
 
   const [newFiles, setNewFiles] = useState([]);
+  const [formError, setFormError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Use the permissions list to get the roles for targeted users
   const roles = permissionRoles.includeInTenderTargetedUsers.join(',');
@@ -146,11 +147,14 @@ const EditTender = () => {
       });
 
       if (!response.ok) {
-        throw new Error(localize('updateTenderError'));
+        const data = await response.json();
+        setFormError(data.error);
+        return;
       }
 
-      navigate('/manage-tenders');
+      setSuccessMessage(localize('tenderUpdatedSuccess'));
     } catch (err) {
+      setFormError(err.message);
       console.error(err);
     }
   };
@@ -166,6 +170,13 @@ const EditTender = () => {
   return (
     <div className="container mt-5">
       <h1 className="mb-4">{localize('editTender')}</h1>
+
+      {/* Display error message if there's an error */}
+      {formError && <div className="alert alert-danger">{formError}</div>}
+
+      {/* Display success message if form was submitted successfully */}
+      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-3">
           <label htmlFor="title" className="form-label">

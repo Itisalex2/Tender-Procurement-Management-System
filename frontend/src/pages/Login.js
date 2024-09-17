@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useLogin } from "../hooks/use-login";
 import { useNavigate } from "react-router-dom";
-import useLocalize from "../hooks/use-localize"; // Import localization hook
+import useLocalize from "../hooks/use-localize";
 
 const Login = () => {
-  const { localize } = useLocalize(); // Use localization hook
+  const { localize } = useLocalize();
   const { login, error } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,8 +20,13 @@ const Login = () => {
   // Handles regular email/password login
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, password);
-    navigate('/'); // Redirect after successful login
+
+    const success = await login(email, password);
+
+    // Navigate only if the login was successful
+    if (success) {
+      navigate('/');
+    }
   };
 
   // Handle sending SMS verification code

@@ -64,11 +64,13 @@ const zh = {
   selectProcurementGroup: '选择招标小组成员',
   loading: '加载中...',
   fetchUsersError: '获取用户时出错: {0}',
+  invalidPhoneNumber: '电话号码格式不正确',
 
   // EditTender page translations
   editTender: '编辑招标',
   updateTender: '更新招标',
   updateTenderError: '更新招标失败',
+  tenderUpdatedSuccess: '招标更新成功！',
   existingFiles: '现有文件',
   uploadedOn: '上传时间',
   uploadedBy: '上传者',
@@ -109,6 +111,8 @@ const zh = {
   sendVerificationError: '没有发出验证码',
   useEmailLogin: '使用邮件登录',
   usePhoneLogin: '使用电话号码登录',
+  emailPasswordIncorrect: '邮件或密码不正确',
+  allFieldsRequired: '所有字段必须填写',
 
   // ManageTenderers page translations
   unableToFetchTenderers: '无法获取供应商列表',
@@ -168,6 +172,9 @@ const zh = {
   // SignUp page translations
   supplierSignup: '供应商报名',
   supplierName: '供应商名',
+  incorrectEmailFormat: '邮件格式不正确',
+  emailAlreadyExists: '邮件地址已存在',
+  passwordNotStrongEnough: '密码不符合要求. 请至少包含一个大写字母，一个小写字母，一个数字和一个特殊字符。',
 
   // SubmitBid page translations
   noPermissionToSubmitBid: '您没有权限提交投标。',
@@ -179,6 +186,7 @@ const zh = {
   bidSubmittedSuccess: '投标提交成功！',
   bidAmount: '投标金额',
   additionalInformation: '附加信息',
+  cannotSubmitBid: '无法提交投标',
 
   // ViewBid page translations
   unableToFetchBid: '无法获取投标。',

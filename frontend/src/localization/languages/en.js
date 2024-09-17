@@ -64,11 +64,13 @@ const en = {
   selectProcurementGroup: 'Select Procurement Group',
   loading: 'Loading...',
   fetchUsersError: 'Error fetching users: {0}',
+  invalidPhoneNumber: 'Invalid phone number',
 
   // EditTender page translations
   editTender: 'Edit Tender',
   updateTender: 'Update Tender',
   updateTenderError: 'Failed to update tender',
+  tenderUpdatedSuccess: 'Tender updated successfully!',
   existingFiles: 'Existing Files',
   uploadedOn: 'Uploaded On',
   uploadedBy: 'Uploaded By',
@@ -109,6 +111,8 @@ const en = {
   sendVerificationError: 'Failed to send verification code',
   useEmailLogin: 'Use Email Login',
   usePhoneLogin: 'Use Phone Login',
+  emailPasswordIncorrect: 'Email or password is incorrect',
+  allFieldsRequired: 'All fields are required',
 
   // ManageTenderers page translations
   unableToFetchTenderers: 'Unable to fetch tenderers',
@@ -168,6 +172,9 @@ const en = {
   // SignUp page translations
   supplierSignup: 'Supplier Signup',
   supplierName: 'Supplier Name',
+  incorrectEmailFormat: 'Incorrect email format',
+  emailAlreadyExists: 'Email already exists',
+  passwordNotStrongEnough: 'Password is not strong enough. Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters.',
 
   // SubmitBid page translations
   noPermissionToSubmitBid: 'You do not have permission to submit a bid.',
@@ -178,6 +185,7 @@ const en = {
   bidSubmittedSuccess: 'Bid submitted successfully!',
   bidAmount: 'Bid Amount',
   additionalInformation: 'Additional Information',
+  cannotSubmitBid: 'Cannot submit bid',
 
   // ViewBid page translations
   unableToFetchBid: 'Unable to fetch bid.',

@@ -4,7 +4,8 @@ import { useAuthContext } from '../hooks/use-auth-context';
 import { useFetchAllUsers } from '../hooks/use-fetch-all-users';
 import { permissionRoles } from '../utils/permissions';
 import FileUpload from '../components/File-Upload';
-import useLocalize from '../hooks/use-localize'; // Import the custom hook for localization
+import useLocalize from '../hooks/use-localize';
+import validatePhoneNumber from '../utils/validate-phone-number';
 
 const CreateTender = () => {
   const navigate = useNavigate();
@@ -38,10 +39,16 @@ const CreateTender = () => {
 
   // Show confirmation modal
   const handleConfirm = () => {
+    if (error) {
+      return;
+    }
     setShowConfirm(true);
   };
 
   const handleSubmit = async (e) => {
+    if (error) {
+      return;
+    }
     e.preventDefault();
     setError('');
     setSuccess(false);
@@ -230,9 +237,11 @@ const CreateTender = () => {
             id="contactPhone"
             value={contactPhone}
             onChange={(e) => setContactPhone(e.target.value)}
+            onBlur={() => validatePhoneNumber(contactPhone, setError, localize)}
             required
           />
         </div>
+
 
         <div className="mb-3">
           <label htmlFor="otherRequirements" className="form-label">{localize('otherRequirements')}</label>

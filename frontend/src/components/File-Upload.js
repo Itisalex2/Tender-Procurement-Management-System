@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useLocalize from '../hooks/use-localize'; // Import localization hook
 
-const FileUpload = ({ onFilesChange }) => {
+const FileUpload = ({ onFilesChange, setError }) => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [fileInputs, setFileInputs] = useState([0]);
   const [errorMessage, setErrorMessage] = useState(''); // Error message state
@@ -32,17 +32,26 @@ const FileUpload = ({ onFilesChange }) => {
 
       // Check file type and size
       if (!allowedFileTypes.includes(file.type)) {
+        if (setError) {
+          setError(localize('cannotSubmitBid'))
+        }
         setErrorMessage(localize('invalidFileType'));
         return;
       }
 
       if (file.size > maxSize) {
+        if (setError) {
+          setError(localize('cannotSubmitBid'))
+        }
         setErrorMessage(localize('fileTooLarge'));
         return;
       }
 
       // Clear error message if file is valid
       setErrorMessage('');
+      if (setError) {
+        setError('');
+      }
 
       // Update the files array
       const updatedFiles = [...relatedFiles];

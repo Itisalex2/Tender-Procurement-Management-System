@@ -15,7 +15,6 @@ const SignUp = () => {
     e.preventDefault(); // Prevent page refresh on form submission
 
     await signup(username, email, password, number);
-    console.log(error);
   };
 
   return (

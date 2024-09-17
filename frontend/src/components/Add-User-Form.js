@@ -40,7 +40,7 @@ const AddUserForm = ({ newUser, setNewUser, handleAddUser, addingUser, canChoose
       <div className="mb-3">
         <label className="form-label">{localize('phoneNumber')}</label>
         <input
-          type="text"
+          type="tel"
           className="form-control"
           value={newUser.number}
           onChange={(e) => setNewUser({ ...newUser, number: e.target.value })}
