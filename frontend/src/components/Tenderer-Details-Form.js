@@ -73,10 +73,8 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
 
     const formData = new FormData();
 
-    // Append files with the same field name 'relatedFiles'
-    if (businessLicense) formData.append('relatedFiles', businessLicense);
-    if (legalRepresentativeBusinessCard)
-      formData.append('relatedFiles', legalRepresentativeBusinessCard);
+    formData.append('businessLicense', businessLicense);
+    formData.append('legalRepresentativeBusinessCard', legalRepresentativeBusinessCard);
 
     // Append other form fields
     formData.append('businessType', businessType);

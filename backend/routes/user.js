@@ -2,6 +2,12 @@ const express = require('express')
 const requireAuth = require('../middleware/require-auth')
 const upload = require('../utils/multer');
 
+// Accept multiple fields with different file inputs
+const uploadMultiple = upload.fields([
+  { name: 'businessLicense', maxCount: 1 }, // One file for 'businessLicense'
+  { name: 'legalRepresentativeBusinessCard', maxCount: 1 } // One file for 'legalRepresentativeBusinessCard'
+]);
+
 // controller functions
 
 const { userSignup, userLogin, userLogout, userDownloadFile, userSettings, getUserInfo, getAllUsers, getUserById, updateUserById, updateTendererDetails, getTenderers } = require('../controllers/user-controller')
@@ -17,7 +23,7 @@ router.post('/logout', userLogout)   // logout route. Does nothing but records t
 router.post('/download-file', userDownloadFile) // Record that the user has downloaded a file
 
 router.patch('/settings', userSettings) // settings route
-router.patch('/tenderer-details', upload.array('relatedFiles', 2), updateTendererDetails) // settings route
+router.patch('/tenderer-details', uploadMultiple, updateTendererDetails); // Update tenderer details
 router.patch('/:id', updateUserById)  // Update a user by ID
 router.get('/getTenderers', getTenderers) // Get a list of tenderers
 router.get('/getAll', getAllUsers) // Get a list of all users

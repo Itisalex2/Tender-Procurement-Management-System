@@ -33,11 +33,12 @@ const fileFilter = (req, file, cb) => {
   const extname = allowedFileTypesRegex.test(path.extname(file.originalname).toLowerCase());
   const mimeType = allowedFileTypesRegex.test(file.mimetype);
 
-  if (extname && mimeType) {
+  if (extname && (mimeType || file.mimetype === 'application/vnd.ms-excel')) { // fix: .xls files are not being accepted
     // Accept the file
     cb(null, true);
   } else {
     // Reject the file
+    console.log('Invalid file type. Allowed types: JPEG, PNG, PDF, Word, Excel, PowerPoint, TXT, RTF, ZIP, RAR, and CAD files.');
     cb(new Error('Invalid file type. Allowed types: JPEG, PNG, PDF, Word, Excel, PowerPoint, TXT, RTF, ZIP, RAR, and CAD files.'));
   }
 };

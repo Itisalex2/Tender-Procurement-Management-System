@@ -339,9 +339,9 @@ const updateTendererDetails = async (req, res) => {
     // Retrieve the files from the request
     const files = req.files;
 
-    // Extract file paths 
-    const businessLicense = files[0] ? files[0].filename : null;
-    const legalRepresentativeBusinessCard = files[1] ? files[1].filename : null;
+    // Access files from req.files
+    const businessLicense = req.files.businessLicense ? req.files.businessLicense[0].filename : null;
+    const legalRepresentativeBusinessCard = req.files.legalRepresentativeBusinessCard ? req.files.legalRepresentativeBusinessCard[0].filename : null;
 
     // Extract other fields from req.body
     const { businessType, legalRepresentative, dateOfEstablishment, country, officeAddress, unifiedSocialCreditCode } = req.body;

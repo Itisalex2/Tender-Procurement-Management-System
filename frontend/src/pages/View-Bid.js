@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom';
 import { useAuthContext } from '../hooks/use-auth-context';
 import useFetchUser from '../hooks/use-fetch-user';
 import BidEvaluations from '../components/Bid-Evaluations';
-import { permissionRoles } from '../utils/permissions';
+import { permissionRoles, permissionStatus } from '../utils/permissions';
 import useLocalize from '../hooks/use-localize';
 import DownloadLink from '../components/Download-Link';
+import { useFetchTender } from "../hooks/use-fetch-tender";
 
 const ViewBid = () => {
   const { tenderId, bidId } = useParams();
@@ -16,6 +17,7 @@ const ViewBid = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { localize } = useLocalize();
+  const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(tenderId);
 
   useEffect(() => {
     const fetchBid = async () => {
@@ -47,16 +49,16 @@ const ViewBid = () => {
     }));
   };
 
-  if (userError || error) {
+  if (userError || error || tenderError) {
     return <div className="alert alert-danger">{userError || error}</div>;
   }
 
-  if (userLoading || !bid) {
+  if (userLoading || !bid || tenderLoading) {
     return <div>{localize('loading')}</div>;
   }
 
   const isBidder = bid.bidder._id === userData._id; // Check if the user is the bidder
-  const canViewPage = isBidder || permissionRoles.viewBids.includes(userData.role);
+  const canViewPage = isBidder || (permissionRoles.viewBids.includes(userData.role) && permissionStatus.viewBids.includes(tender.status));
   const canViewEvaluations =
     !isBidder && permissionRoles.viewAndEditBidEvaluations.includes(userData.role); // Non-bidders can view evaluations
 
@@ -70,6 +72,8 @@ const ViewBid = () => {
       <div className="card">
         <div className="card-header">
           <strong>
+            {localize('tender')}: {tender.title}
+            <br />
             {localize('supplier')}: {bid.bidder.username}
           </strong>
         </div>

@@ -7,7 +7,7 @@ const zh = {
 
   // Bid status:
   won: '中标',
-  lost: '为中标',
+  lost: '未中标',
   pending: '审核中',
 
   // Navbar translations

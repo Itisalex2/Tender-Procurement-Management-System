@@ -191,13 +191,13 @@ const ManageTenders = () => {
                           <p><strong>{localize('status')}:</strong> {localize(tender.status)}</p>
                           <p><strong>{localize('targetedUsers')}:</strong></p>
                           <ul>
-                            {tender.targetedUsers.map(user => <li key={user._id}>{user.username}</li>)}
+                            {tender.targetedUsers.map(user => <li key={user._id}>{user && user.username}</li>)}
                           </ul>
                           <p><strong>{localize('bidders')}:</strong></p>
                           <ul>
                             {tender.bids.map(bid => (
                               <li key={bid._id}>
-                                {bid.bidder.username} {new Date(bid.submittedAt).toLocaleString('en-GB', {
+                                {bid && bid.bidder && bid.bidder.username} {new Date(bid.submittedAt).toLocaleString('en-GB', {
                                   year: 'numeric',
                                   month: '2-digit',
                                   day: '2-digit',
@@ -210,7 +210,7 @@ const ManageTenders = () => {
                           </ul>
                           <p><strong>{localize('procurementGroupMembers')}:</strong></p>
                           <ul>
-                            {tender.procurementGroup.map(user => <li key={user._id}>{user.username}</li>)}
+                            {tender.procurementGroup.map(user => <li key={user._id}>{user && user.username}</li>)}
                           </ul>
                           {tender.relatedFiles?.length > 0 && (
                             <>
