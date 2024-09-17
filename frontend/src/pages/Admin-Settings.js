@@ -14,8 +14,8 @@ const AdminSettings = () => {
   const [addingUser, setAddingUser] = useState(false);
   const [showAddUserForm, setShowAddUserForm] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
+  const [searchKeyword, setSearchKeyword] = useState(''); // Search keyword state
 
-  // Form state for adding a new user
   const [newUser, setNewUser] = useState({
     username: '',
     email: '',
@@ -27,7 +27,7 @@ const AdminSettings = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('/api/admin/users', {
+        const response = await fetch('/api/admin/users?sort=true', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,6 @@ const AdminSettings = () => {
         throw new Error(data.error || localize('failedToUpdateUser'));
       }
 
-      // Update the local users state with the updated information
       setUsers((prevUsers) =>
         prevUsers.map((user) => (user._id === userId ? { ...user, ...data } : user))
       );
@@ -76,7 +75,6 @@ const AdminSettings = () => {
     }
   };
 
-  // Confirm before deleting user
   const handleDeleteUser = async (userId) => {
     const confirmDelete = window.confirm(localize('confirmDelete'));
     if (!confirmDelete) return;
@@ -100,7 +98,6 @@ const AdminSettings = () => {
     }
   };
 
-  // Add new user
   const handleAddUser = async (e) => {
     e.preventDefault();
     setAddingUser(true);
@@ -120,7 +117,6 @@ const AdminSettings = () => {
         throw new Error(localize('failedToAddUser'));
       }
 
-      // Update users list
       setUsers([...users, data]);
       setNewUser({
         username: '',
@@ -136,10 +132,11 @@ const AdminSettings = () => {
     }
   };
 
-  // Filter users based on the selected role
+  // Filter users based on the selected role and search keyword.
   const filteredUsers = users.filter((user) => {
-    if (roleFilter === 'all') return true;
-    return user.role === roleFilter;
+    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+    const matchesKeyword = searchKeyword === '' || user.username.toLowerCase().includes(searchKeyword.toLowerCase());
+    return matchesRole && matchesKeyword;
   });
 
   if (loading) {
@@ -154,6 +151,16 @@ const AdminSettings = () => {
     <div className="container mt-5">
       <h1 className="mb-4">{localize('manageUsers')}</h1>
 
+      {/* Search bar */}
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder={localize('searchByUsername')}
+        value={searchKeyword}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+        autoComplete="off"
+      />
+
       {/* Button to toggle the add user form */}
       <button
         className="btn btn-success mb-3"
@@ -162,7 +169,6 @@ const AdminSettings = () => {
         {showAddUserForm ? localize('cancelAddUser') : localize('addUser')}
       </button>
 
-      {/* Conditionally render the form */}
       {showAddUserForm && (
         <AddUserForm
           newUser={newUser}

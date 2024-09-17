@@ -44,6 +44,7 @@ const en = {
   failedToAddUser: 'Failed to add user',
   failedToUpdateUser: 'Failed to update user',
   failedToDeleteUser: 'Failed to delete user',
+  searchByUsername: 'Search by username...',
 
   // CreateTender page translations
   createTenderError: 'Failed to create tender',

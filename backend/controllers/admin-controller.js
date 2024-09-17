@@ -4,10 +4,14 @@ const bcrypt = require('bcrypt');
 
 // Get all users (admin only)
 const getAllUsers = async (req, res) => {
+  const { sort } = req.query;
   try {
-    const users = await User.find().select('-password'); // Exclude password from results
+    const sortOption = sort ? { username: 1 } : {};
+    const users = await User.find().select('-password').sort(sortOption);
+
     res.status(200).json(users);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Failed to fetch users' });
   }
 };

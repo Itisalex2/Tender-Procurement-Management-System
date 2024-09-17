@@ -44,6 +44,7 @@ const zh = {
   failedToAddUser: '添加用户失败',
   failedToUpdateUser: '更新用户失败',
   failedToDeleteUser: '删除用户失败',
+  searchByUsername: '搜索用户名...',
 
   // CreateTender page translations
   createTenderError: '没有成功创建招标',
