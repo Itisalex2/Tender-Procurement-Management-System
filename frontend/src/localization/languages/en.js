@@ -216,7 +216,6 @@ const en = {
   // ViewOwnBids page translations
   noBidsSubmitted: 'You have not submitted any bids.',
   myBids: 'My Bids',
-  amount: 'Amount',
   bidInformation: 'Bid Information',
 
   // ViewTender page translations

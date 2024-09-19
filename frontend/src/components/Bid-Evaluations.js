@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import useLocalize from '../hooks/use-localize';
 import DownloadLink from '../components/Download-Link';
+import FileUpload from '../components/File-Upload';
 
 const BidEvaluations = ({ user, evaluations, bidId, tenderId, canAddEvaluations, onEvaluationAdded }) => {
   const [score, setScore] = useState('');
@@ -10,8 +11,8 @@ const BidEvaluations = ({ user, evaluations, bidId, tenderId, canAddEvaluations,
   const [success, setSuccess] = useState(null);
   const { localize } = useLocalize();
 
-  const handleFileChange = (e) => {
-    setFiles(e.target.files);
+  const handleFilesChange = (updatedFiles) => {
+    setFiles(updatedFiles);
   };
 
   const handleSubmit = async (e) => {
@@ -119,14 +120,7 @@ const BidEvaluations = ({ user, evaluations, bidId, tenderId, canAddEvaluations,
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="files" className="form-label">{localize('relatedFiles')}</label>
-              <input
-                type="file"
-                className="form-control"
-                id="files"
-                multiple
-                onChange={handleFileChange}
-              />
+              <FileUpload onFilesChange={handleFilesChange} files={files} setError={setError} />
             </div>
             <button type="submit" className="btn btn-primary">{localize('submitEvaluation')}</button>
           </form>

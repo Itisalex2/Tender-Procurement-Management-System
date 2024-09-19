@@ -217,7 +217,6 @@ const zh = {
   // ViewOwnBids page translations
   noBidsSubmitted: '您没有提交任何投标。',
   myBids: '我的投标',
-  amount: '金额',
   bidInformation: '投标信息',
 
   // ViewTender page translations

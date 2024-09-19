@@ -34,7 +34,7 @@ const ViewOwnBids = () => {
                     </div>
                     <div className="card-body">
                       <h5 className="card-title">
-                        {localize('amount')}: {bid.amount}
+                        {localize('bidAmount')}: {bid.amount}
                       </h5>
                       <p className="card-text">
                         {localize('status')}: {localize(bid.status)}
