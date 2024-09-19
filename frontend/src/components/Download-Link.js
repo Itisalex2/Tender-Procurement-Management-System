@@ -24,8 +24,7 @@ const DownloadLink = ({ file }) => {
 
       // After logging, open the file in a new tab
 
-      console.log(process.env.REACT_APP_BACKEND_URL)
-      window.open(`${process.env.REACT_APP_BACKEND_URL}${file.fileUrl}`, '_blank');
+      window.open(`${window.location.origin}${file.fileUrl}`, '_blank');
     } catch (error) {
       console.error('Error logging the download:', error);
     }
