@@ -285,7 +285,7 @@ const CreateTender = () => {
           ))}
         </div>
 
-        <FileUpload onFilesChange={handleFilesChange} />
+        <FileUpload onFilesChange={handleFilesChange} files={relatedFiles} />
 
         <button type="button" className="btn btn-primary" onClick={handleConfirm}>
           {localize('createTender')}

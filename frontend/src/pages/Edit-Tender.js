@@ -45,6 +45,9 @@ const EditTender = () => {
   // Fetch the tender data by ID
   const { tender, loading, error } = useFetchTender(id);
 
+  // Control submitting changes
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     if (tender) {
       const formatToLocalDatetime = (dateString) => {
@@ -116,12 +119,13 @@ const EditTender = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
     const updatedTender = {
       ...formData,
       contactInfo: formData.contactInfo,
       targetedUsers: formData.targetedUsers,
-      procurementGroup: formData.procurementGroup
+      procurementGroup: formData.procurementGroup,
     };
 
     try {
@@ -147,18 +151,33 @@ const EditTender = () => {
         body: formDataToSend,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         setFormError(data.error);
+        setSubmitting(false);
         return;
       }
 
+      // Update formData with the updated tender data from the response
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        ...data,
+        relatedFiles: data.relatedFiles,
+      }));
+
+      // Clear the newFiles state as they've been submitted
+      setNewFiles([]);
+
       setSuccessMessage(localize('tenderUpdatedSuccess'));
+      alert(localize('tenderUpdatedSuccess'));
     } catch (err) {
       setFormError(err.message);
       console.error(err);
     }
+    setSubmitting(false);
   };
+
 
   if (loading || usersLoading || procurementLoading) {
     return <div>{localize('loading')}</div>;
@@ -181,7 +200,7 @@ const EditTender = () => {
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-3">
           <label htmlFor="title" className="form-label">
-            {localize('title')} <span className="text-danger">*</span>
+            localize('title') <span className="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -191,6 +210,7 @@ const EditTender = () => {
             value={formData.title}
             onChange={handleInputChange}
             required
+            disabled={submitting}
           />
         </div>
 
@@ -308,7 +328,7 @@ const EditTender = () => {
         </div>
 
         {/* Use the FileUpload component for new file uploads */}
-        <FileUpload onFilesChange={handleFilesChange} />
+        <FileUpload onFilesChange={handleFilesChange} files={newFiles} />
 
         <div className="mb-3">
           <label htmlFor="targetedUsers" className="form-label">{localize('selectTargetedUsers')}</label>
@@ -342,7 +362,7 @@ const EditTender = () => {
           ))}
         </div>
 
-        <button type="submit" className="btn btn-primary">{localize('updateTender')}</button>
+        <button type="submit" className="btn btn-primary">{submitting ? localize('tenderUpdating') : localize('updateTender')}</button>
       </form>
     </div>
   );

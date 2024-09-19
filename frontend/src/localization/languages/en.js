@@ -72,6 +72,7 @@ const en = {
   updateTender: 'Update Tender',
   updateTenderError: 'Failed to update tender',
   tenderUpdatedSuccess: 'Tender updated successfully!',
+  tenderUpdating: 'Updating Tender...',
   existingFiles: 'Existing Files',
   uploadedOn: 'Uploaded On',
   uploadedBy: 'Uploaded By',
@@ -302,6 +303,9 @@ const en = {
 
   // use-fetch-all-users translations
   failedToFetchUsers: 'Failed to fetch users',
+
+  // File-Upload translations
+  addFile: 'Add File',
 };
 
 export default en;

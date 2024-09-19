@@ -72,6 +72,7 @@ const zh = {
   updateTender: '更新招标',
   updateTenderError: '更新招标失败',
   tenderUpdatedSuccess: '招标更新成功！',
+  tenderUpdating: '招标更新中...',
   existingFiles: '现有文件',
   uploadedOn: '上传时间',
   uploadedBy: '上传者',
@@ -302,6 +303,9 @@ const zh = {
 
   // use-fetch-all-users translations
   failedToFetchUsers: '无法获取用户',
+
+  // File-Upload translations
+  addFile: '添加文件',
 };
 
 export default zh;

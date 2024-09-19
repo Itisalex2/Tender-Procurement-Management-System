@@ -128,7 +128,7 @@ const updateTenderById = async (req, res) => {
     // Update the tender in the database
     const updatedTender = await Tender.findByIdAndUpdate(tenderId, updatedData, { new: true });
 
-    res.status(200).json({ message: 'Tender updated successfully', tender: updatedTender });
+    res.status(200).json(updatedTender);
   } catch (error) {
     console.error(error);
     res.status(400).json({ error: error.message });
