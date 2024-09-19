@@ -30,8 +30,8 @@ const FileUpload = ({ onFilesChange, files, setError }) => {
         'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'text/plain', 'application/rtf', 'application/zip',
-        'application/x-rar-compressed', 'image/vnd.dwg', 'image/vnd.dxf',
+        'text/plain', 'application/rtf', 'application/zip', 'application/x-rar',
+        'application/x-rar-compressed', 'application/octet-stream', 'image/vnd.dwg', 'image/vnd.dxf',
       ];
       const maxSize = 1024 * 1024 * 1024; // 1GB
 
