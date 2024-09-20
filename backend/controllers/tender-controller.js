@@ -39,7 +39,7 @@ const createTender = async (req, res) => {
     });
 
     // Save the tender to the database
-    await newTender.save();
+    await newTender.save({ _userId: req.user._id, _changeReason: '创建招标/Create Tender' });
 
     res.status(201).json({ message: 'Tender created successfully', tender: newTender });
   } catch (error) {
@@ -93,7 +93,11 @@ const getTenders = async (req, res) => {
 const updateTenderById = async (req, res) => {
   try {
     const tenderId = req.params.id;
-    const { title, description, issueDate, closingDate, contactInfo, otherRequirements, targetedUsers, procurementGroup } = req.body;
+    const { title, description, issueDate, closingDate, contactInfo, otherRequirements, targetedUsers, procurementGroup, changeReason } = req.body;
+
+    if (!changeReason) {
+      return res.status(400).json({ error: 'Change reason is required' });
+    }
 
     // Parse contactInfo, targetedUsers, and procurementGroup if they are sent as JSON strings
     const updatedData = {
@@ -125,8 +129,11 @@ const updateTenderById = async (req, res) => {
       updatedData.relatedFiles = existingTender.relatedFiles;
     }
 
-    // Update the tender in the database
-    const updatedTender = await Tender.findByIdAndUpdate(tenderId, updatedData, { new: true });
+    // Update the tender with the new data
+    Object.assign(existingTender, updatedData);
+
+    // Save the updated tender (this will trigger the versioning due to the pre-save middleware)
+    const updatedTender = await existingTender.save({ _userId: req.user._id, _changeReason: changeReason });
 
     res.status(200).json(updatedTender);
   } catch (error) {

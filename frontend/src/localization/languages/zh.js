@@ -76,7 +76,9 @@ const zh = {
   existingFiles: '现有文件',
   uploadedOn: '上传时间',
   uploadedBy: '上传者',
-  fetchError: '错误: {0}',
+  fetchError: '错误',
+  changeReason: '更改原因',
+  enterReasonForChange: '输入更改原因...',
 
   // Home page translations
   tenderList: '招标列表',
@@ -233,6 +235,12 @@ const zh = {
 
   // ViewTender page translations
   uploadedAt: '上传时间',
+  versionHistory: '版本历史',
+  viewSnapshot: '查看快照',
+  noVersions: '无版本',
+  restoreCurrentVersion: '恢复当前版本',
+  changedBy: '更改者',
+  changedAt: '更改时间',
 
   // ViewTenderer page translations
   unableToLoadTenderer: '无法加载供应商',

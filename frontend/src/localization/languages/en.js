@@ -76,7 +76,9 @@ const en = {
   existingFiles: 'Existing Files',
   uploadedOn: 'Uploaded On',
   uploadedBy: 'Uploaded By',
-  fetchError: 'Error: {0}',
+  fetchError: 'Error',
+  changeReason: 'Change Reason',
+  enterReasonForChange: 'Enter reason for change...',
 
   // Home page translations
   tenderList: 'Tender List',
@@ -232,6 +234,12 @@ const en = {
 
   // ViewTender page translations
   uploadedAt: 'Uploaded At',
+  versionHistory: 'Version History',
+  viewSnapshot: 'View Snapshot',
+  noVersions: 'No versions',
+  restoreCurrentVersion: 'Restore Current Version',
+  changedBy: 'Changed By',
+  changedAt: 'Changed At',
 
   // ViewTenderer page translations
   unableToLoadTenderer: 'Unable to load tenderer',

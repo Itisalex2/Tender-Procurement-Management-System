@@ -26,7 +26,8 @@ const EditTender = () => {
     otherRequirements: '',
     relatedFiles: [],
     targetedUsers: [],
-    procurementGroup: []
+    procurementGroup: [],
+    changeReason: ''
   });
 
   const [newFiles, setNewFiles] = useState([]);
@@ -68,6 +69,7 @@ const EditTender = () => {
         relatedFiles: tender.relatedFiles || [],
         targetedUsers: tender.targetedUsers.map((user) => user._id),
         procurementGroup: tender.procurementGroup.map((user) => user._id),
+        changeReason: '',
       });
     }
   }, [tender]);
@@ -127,6 +129,7 @@ const EditTender = () => {
       contactInfo: formData.contactInfo,
       targetedUsers: formData.targetedUsers,
       procurementGroup: formData.procurementGroup,
+      changeReason: formData.changeReason,
     };
 
     try {
@@ -167,6 +170,7 @@ const EditTender = () => {
         relatedFiles: data.relatedFiles,
         issueDate: formatToLocalDatetime(data.issueDate),
         closingDate: formatToLocalDatetime(data.closingDate),
+        changeReason: '',
       }));
 
       // Clear the newFiles state as they've been submitted
@@ -203,7 +207,7 @@ const EditTender = () => {
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-3">
           <label htmlFor="title" className="form-label">
-            localize('title') <span className="text-danger">*</span>
+            {localize('title')} <span className="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -363,6 +367,22 @@ const EditTender = () => {
               <label>{user.username}</label>
             </div>
           ))}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="changeReason" className="form-label">
+            {localize('changeReason')} <span className="text-danger">*</span>
+          </label>
+          <textarea
+            className="form-control"
+            id="changeReason"
+            name="changeReason"
+            value={formData.changeReason}
+            onChange={handleInputChange}
+            required
+            disabled={submitting}
+            placeholder={localize('enterReasonForChange')}
+          ></textarea>
         </div>
 
         <button type="submit" className="btn btn-primary">{submitting ? localize('tenderUpdating') : localize('updateTender')}</button>

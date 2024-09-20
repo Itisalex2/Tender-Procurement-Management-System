@@ -8,6 +8,7 @@ import { permissionRoles } from '../utils/permissions';
 import Chatbox from '../components/Chatbox';
 import useLocalize from '../hooks/use-localize';
 import DownloadLink from '../components/Download-Link';
+import { formatDistanceToNow } from 'date-fns';
 
 const ViewTender = () => {
   const { id } = useParams();
@@ -30,10 +31,12 @@ const ViewTender = () => {
     targetedUsers: [],
     conversations: [],
     bids: [],
+    versions: [],
   });
 
   const { tender, loading, error } = useFetchTenderWithConversation(id);
   const { userData, loading: userLoading, error: userError } = useFetchUser();
+  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
 
   useEffect(() => {
     if (tender) {
@@ -48,6 +51,7 @@ const ViewTender = () => {
         targetedUsers: tender.targetedUsers.map((user) => user._id),
         conversations: tender.conversations || [],
         bids: tender.bids || [],
+        versions: tender.versions || [],
       });
     }
   }, [tender]);
@@ -60,6 +64,81 @@ const ViewTender = () => {
       tender.status === 'Open'
     );
   };
+
+  const handleViewSnapshot = (snapshot) => {
+    console.log(snapshot)
+    setSelectedSnapshot(snapshot);
+  };
+
+  const handleRestoreToCurrentVersion = () => {
+    setSelectedSnapshot(null);
+  };
+
+  const renderTenderDetails = (details) => (
+    <>
+      <h1 className="mb-4">{localize('viewTender')}</h1>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('title')}</label>
+        <p>{details.title}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('description')}</label>
+        <p>{details.description}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('issueDate')}</label>
+        <p>{new Date(details.issueDate).toLocaleString()}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('closingDate')}</label>
+        <p>{new Date(details.closingDate).toLocaleString()}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('contactName')}</label>
+        <p>{details.contactInfo.name}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('contactEmail')}</label>
+        <p>{details.contactInfo.email}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('contactPhone')}</label>
+        <p>{details.contactInfo.phone || localize('none')}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('otherRequirements')}</label>
+        <p>{details.otherRequirements || localize('none')}</p>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">{localize('existingFiles')}</label>
+        <ul>
+          {details.relatedFiles.map((file, index) => (
+            <li key={index}>
+              <DownloadLink file={file} />
+              {file.dateUploaded && (
+                <span>
+                  {' '}
+                  - {localize('uploadedAt')}: {new Date(file.dateUploaded).toLocaleString()}
+                </span>
+              )}
+              {file.uploadedBy && (
+                <span> - {localize('uploadedBy')}: {file.uploadedBy.username}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
 
   const handleBidSubmit = () => {
     navigate(`/tender/${id}/bid`);
@@ -76,67 +155,10 @@ const ViewTender = () => {
   return (
     <div className="container mt-5" style={{ display: 'flex', flexDirection: 'row' }}>
       <div className="view-tender-content" style={{ flex: 1 }}>
-        <h1 className="mb-4">{localize('viewTender')}</h1>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('title')}</label>
-          <p>{tenderDetails.title}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('description')}</label>
-          <p>{tenderDetails.description}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('issueDate')}</label>
-          <p>{new Date(tenderDetails.issueDate).toLocaleString()}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('closingDate')}</label>
-          <p>{new Date(tenderDetails.closingDate).toLocaleString()}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('contactName')}</label>
-          <p>{tenderDetails.contactInfo.name}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('contactEmail')}</label>
-          <p>{tenderDetails.contactInfo.email}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('contactPhone')}</label>
-          <p>{tenderDetails.contactInfo.phone || localize('none')}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('otherRequirements')}</label>
-          <p>{tenderDetails.otherRequirements || localize('none')}</p>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">{localize('existingFiles')}</label>
-          <ul>
-            {tenderDetails.relatedFiles.map((file, index) => (
-              <li key={index}>
-                <DownloadLink file={file} />
-                {file.dateUploaded && (
-                  <span>
-                    {' '}
-                    - {localize('uploadedAt')}: {new Date(file.dateUploaded).toLocaleString()}
-                  </span>
-                )}
-                {file.uploadedBy && (
-                  <span> - {localize('uploadedBy')}: {file.uploadedBy.username}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* If a snapshot is selected, render the snapshot's details, else render the current tender details */}
+        {selectedSnapshot
+          ? renderTenderDetails(selectedSnapshot.tenderSnapshot)
+          : renderTenderDetails(tenderDetails)}
 
         {/* Show the list of bidders */}
         {permissionRoles.viewBids.includes(userData.role) && (
@@ -159,6 +181,12 @@ const ViewTender = () => {
           </div>
         )}
 
+        {selectedSnapshot && (
+          <button className="btn btn-secondary mt-3" onClick={handleRestoreToCurrentVersion}>
+            {localize('restoreCurrentVersion')}
+          </button>
+        )}
+
         {canSubmitBid() && (
           <div className="mt-3">
             <button className="btn btn-primary" onClick={handleBidSubmit}>
@@ -166,17 +194,40 @@ const ViewTender = () => {
             </button>
           </div>
         )}
+
+        {/* Version History Section */}
+        {permissionRoles.viewTenderSnapshots.includes(userData.role) && (
+          <>
+            <h3 className="mt-5">{localize('versionHistory')}</h3>
+            {tenderDetails.versions.length > 0 ? (
+              <ul className="list-group">
+                {tenderDetails.versions.slice().reverse().map((version, index) => (
+                  <li key={index} className="list-group-item">
+                    <strong>{localize('changeReason')}:</strong> {version.changeReason} <br />
+                    <strong>{localize('changedBy')}:</strong> {version.changedBy.username} <br />
+                    <strong>{localize('changedAt')}:</strong> {formatDistanceToNow(new Date(version.changedAt), { addSuffix: true })} <br />
+                    <button className="btn btn-link" onClick={() => handleViewSnapshot(version)}>
+                      {localize('viewSnapshot')}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>{localize('noVersions')}</p>
+            )}
+          </>
+        )}
       </div>
 
       {/* Include ChatComponent */}
-      <Chatbox
+      {!selectedSnapshot && (<Chatbox
         tenderDetails={tenderDetails}
         userData={userData}
         user={user}
         tender={tender}
         id={id}
         updateUserById={updateUserById}
-      />
+      />)}
     </div>
   );
 };
