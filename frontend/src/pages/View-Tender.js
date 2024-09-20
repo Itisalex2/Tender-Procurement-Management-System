@@ -13,7 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 const ViewTender = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { updateUserById } = useUpdateUser();
   const { localize } = useLocalize();
   const [tenderDetails, setTenderDetails] = useState({
@@ -183,7 +183,7 @@ const ViewTender = () => {
     navigate(`/tender/${id}/bid`);
   };
 
-  if (loading || userLoading || !userData) {
+  if (loading || userLoading || !userData || authUserLoading) {
     return <div>{localize('loading')}</div>;
   }
 

@@ -5,7 +5,7 @@ import TendererDetailsForm from '../components/Tenderer-Details-Form';
 import useLocalize from '../hooks/use-localize';
 
 const Settings = () => {
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { userData, loading, error } = useFetchUser({ includeTendererDetails: true });
   const [submitting, setSubmitting] = useState(false);
   const [normalSettingsSuccess, setNormalSettingsSuccess] = useState(false); // For normal settings
@@ -58,7 +58,7 @@ const Settings = () => {
     setTendererDetailsSuccess(true); // Set success message for tenderer details
   };
 
-  if (loading) {
+  if (loading || authUserLoading) {
     return <div>{localize('loading')}</div>;
   }
 

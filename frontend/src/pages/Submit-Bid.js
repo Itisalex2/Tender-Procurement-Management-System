@@ -11,7 +11,7 @@ import useLocalize from '../hooks/use-localize';
 const SubmitBid = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { userData, loading: userLoading, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
   const { updateUserById } = useUpdateUser();
@@ -83,7 +83,7 @@ const SubmitBid = () => {
     setFiles(updatedFiles); // Update files state when the user selects files
   };
 
-  if (userLoading || tenderLoading) {
+  if (userLoading || tenderLoading || authUserLoading) {
     return <div>{localize('loading')}</div>;
   }
 

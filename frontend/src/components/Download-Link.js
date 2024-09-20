@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuthContext } from '../hooks/use-auth-context';
 
 const DownloadLink = ({ file }) => {
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
 
   const handleDownload = async (file) => {
     try {
@@ -29,6 +29,10 @@ const DownloadLink = ({ file }) => {
       console.error('Error logging the download:', error);
     }
   };
+
+  if (authUserLoading) {
+    return <div></div>;
+  }
 
   return (
     <button

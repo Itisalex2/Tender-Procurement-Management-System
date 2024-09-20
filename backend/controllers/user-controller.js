@@ -336,9 +336,6 @@ const updateUserById = async (req, res) => {
 const updateTendererDetails = async (req, res) => {
   try {
 
-    // Retrieve the files from the request
-    const files = req.files;
-
     // Access files from req.files
     const businessLicense = req.files.businessLicense ? req.files.businessLicense[0].filename : null;
     const legalRepresentativeBusinessCard = req.files.legalRepresentativeBusinessCard ? req.files.legalRepresentativeBusinessCard[0].filename : null;

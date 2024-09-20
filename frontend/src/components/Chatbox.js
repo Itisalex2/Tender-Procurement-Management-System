@@ -73,7 +73,11 @@ const Chatbox = ({
 
       const formData = new FormData();
       formData.append('content', messageContent);
-      formData.append('tendererId', tendererId);
+
+      if (tendererId) {
+        formData.append('tendererId', tendererId);
+      }
+
       selectedFiles.forEach((file) => {
         formData.append('files', file);
       });

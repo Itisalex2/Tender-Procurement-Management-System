@@ -12,7 +12,7 @@ import { useFetchTender } from "../hooks/use-fetch-tender";
 const ViewBid = () => {
   const { tenderId, bidId } = useParams();
   const { userData, loading: userLoading, error: userError } = useFetchUser();
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const [bid, setBid] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const ViewBid = () => {
     return <div className="alert alert-danger">{userError || error}</div>;
   }
 
-  if (userLoading || !bid || tenderLoading) {
+  if (userLoading || !bid || tenderLoading || authUserLoading) {
     return <div>{localize('loading')}</div>;
   }
 

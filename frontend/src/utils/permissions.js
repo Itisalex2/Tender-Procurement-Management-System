@@ -16,6 +16,7 @@ const permissionRoles = {
   includeInTenderTargetedUsers: ['tenderer'],
   messageOnAllTenders: ['admin', 'tenderProcurementGroup', 'secretary'],
   viewTenderSnapshots: ['admin', 'tenderProcurementGroup', 'secretary'],
+  setNegotiationCandidatesSelectedStatus: ['admin', 'secretary'],
 
   // Bids
   submitBid: ['tenderer'],

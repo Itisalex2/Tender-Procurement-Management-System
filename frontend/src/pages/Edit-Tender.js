@@ -10,7 +10,7 @@ import DownloadLink from '../components/Download-Link';
 
 const EditTender = () => {
   const { id } = useParams();
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { localize } = useLocalize();
 
   const [formData, setFormData] = useState({
@@ -186,7 +186,7 @@ const EditTender = () => {
   };
 
 
-  if (loading || usersLoading || procurementLoading) {
+  if (loading || usersLoading || procurementLoading || authUserLoading) {
     return <div>{localize('loading')}</div>;
   }
 

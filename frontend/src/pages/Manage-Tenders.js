@@ -9,7 +9,7 @@ import DownloadLink from '../components/Download-Link';
 
 const ManageTenders = () => {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { userData } = useFetchUser();
   const [statusFilter, setStatusFilter] = useState('all'); // Default filter status is 'all'
   const { tenders, loading, error, setTenders } = useFetchTenders(statusFilter);
@@ -99,7 +99,7 @@ const ManageTenders = () => {
   });
 
 
-  if (loading || !userData) return <div>{localize('loading')}</div>;
+  if (loading || !userData || authUserLoading) return <div>{localize('loading')}</div>;
   if (error) return <div>{localize('error')}: {error}</div>;
 
   return (
@@ -183,7 +183,7 @@ const ManageTenders = () => {
                         </button>
                       )}
                       {/* Change status to NegotiationCandidatesSelected button */}
-                      {tender.status === 'ClosedAndCanSeeBids' && (
+                      {tender.status === 'ClosedAndCanSeeBids' && permissionRoles.setNegotiationCandidatesSelectedStatus.includes(userData.role) && (
                         <button
                           className="btn btn-success"
                           onClick={() => handleStatusChangeToNegotiationCandidatesSelected(tender._id)}

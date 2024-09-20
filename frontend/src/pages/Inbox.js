@@ -7,7 +7,7 @@ import useLocalize from '../hooks/use-localize';
 const Mail = () => {
   const { mails, loading, error, refetchMails } = useFetchMails(false, true);
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { localize } = useLocalize();
   const [expandedMail, setExpandedMail] = useState(null); // State to track expanded mail
   const [selectedMails, setSelectedMails] = useState([]); // Track selected emails
@@ -122,7 +122,7 @@ const Mail = () => {
     setSelectAll(!selectAll);
   };
 
-  if (loading) {
+  if (loading || authUserLoading) {
     return <div className="text-center my-5">{localize('loading')}</div>;
   }
 

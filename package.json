@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "frontend": "npm run frontend --prefix frontend",
-    "backend": "npm run backend --prefix backend",
+    "frontend:build": "npm run build --prefix frontend >> frontend.log 2>&1",
+    "backend": "npm run backend --prefix backend >> backend.log 2>&1",
     "backend:dev": "npm run backend:dev --prefix backend",
     "dev": "concurrently --no-kill-others \"npm run frontend >> frontend.log 2>&1\" \"npm run backend >> backend.log 2>&1\""
   },

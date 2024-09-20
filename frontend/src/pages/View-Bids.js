@@ -10,7 +10,7 @@ const ViewBids = () => {
   const { id } = useParams(); // Get tender id from URL
   const [bids, setBids] = useState(null);
   const [error, setError] = useState(null);
-  const { user } = useAuthContext();
+  const { user, loading: authUserLoading } = useAuthContext();
   const { userData, error: userError } = useFetchUser();
   const { tender, loading: tenderLoading, error: tenderError } = useFetchTender(id);
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ const ViewBids = () => {
     return <div className="alert alert-danger">{error}</div>;
   }
 
-  if (!userData || !bids || tenderLoading) {
+  if (!userData || !bids || tenderLoading || authUserLoading) {
     return <div>{localize('loading')}</div>;
   }
 

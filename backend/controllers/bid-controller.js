@@ -2,6 +2,7 @@ const Bid = require('../models/bid-model');
 const Tender = require('../models/tender-model');
 const Mail = require('../models/mail-model');
 const convertToUTF8 = require("../utils/file-conversion");
+const { permissionStatus } = require("../../frontend/src/utils/permissions")
 
 // Controller to submit a bid with file uploads
 const submitBid = async (req, res) => {
@@ -108,7 +109,7 @@ const viewBids = async (req, res) => {
     }
 
     // Check if the tender's status allows viewing bids
-    if (tender.status !== 'ClosedAndCanSeeBids' && tender.status !== 'Awarded') {
+    if (!permissionStatus.viewBids.includes(tender.status)) {
       return res.status(403).json({ message: '您无权查看此招标的投标。' });
     }
 

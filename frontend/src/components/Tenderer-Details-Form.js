@@ -93,9 +93,8 @@ const TendererDetailsForm = ({ user, tendererDetails, onSave }) => {
         body: formData, // Send the form data (including files)
       });
 
-      const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || localize('failedToUpdateDetails'));
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }
 
       onSave(); // Optional callback to trigger after successful save

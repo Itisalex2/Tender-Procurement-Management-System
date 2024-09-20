@@ -9,7 +9,7 @@ import validatePhoneNumber from '../utils/validate-phone-number';
 
 const CreateTender = () => {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, loading: userLoading } = useAuthContext();
   const { localize } = useLocalize();
 
   const targetedUserRoles = permissionRoles.includeInTenderTargetedUsers.join(',');
@@ -46,9 +46,6 @@ const CreateTender = () => {
   };
 
   const handleSubmit = async (e) => {
-    if (error) {
-      return;
-    }
     e.preventDefault();
     setError('');
     setSuccess(false);
@@ -101,6 +98,7 @@ const CreateTender = () => {
       navigate('/');
     } catch (err) {
       setError(err.message);
+      throw new Error(err.message || localize('createTenderError'))
     }
   };
 
@@ -113,7 +111,7 @@ const CreateTender = () => {
     );
   };
 
-  if (usersLoading || procurementGroupLoading) return <div>{localize('loading')}</div>;
+  if (usersLoading || procurementGroupLoading || userLoading) return <div>{localize('loading')}</div>;
   if (usersError || procurementGroupError) return <div>{localize('fetchUsersError', usersError || procurementGroupError)}</div>;
 
   return (
