@@ -37,6 +37,8 @@ const ViewTender = () => {
   const { tender, loading, error } = useFetchTenderWithConversation(id);
   const { userData, loading: userLoading, error: userError } = useFetchUser();
   const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+  const [mailSubject, setMailSubject] = useState('');
+  const [mailContent, setMailContent] = useState('');
 
   useEffect(() => {
     if (tender) {
@@ -48,7 +50,7 @@ const ViewTender = () => {
         contactInfo: tender.contactInfo,
         otherRequirements: tender.otherRequirements,
         relatedFiles: tender.relatedFiles || [],
-        targetedUsers: tender.targetedUsers.map((user) => user._id),
+        targetedUsers: tender.targetedUsers || [],
         conversations: tender.conversations || [],
         bids: tender.bids || [],
         versions: tender.versions || [],
@@ -72,6 +74,43 @@ const ViewTender = () => {
 
   const handleRestoreToCurrentVersion = () => {
     setSelectedSnapshot(null);
+  };
+
+  const handleSendMailToSuppliers = async () => {
+    if (!mailSubject || !mailContent) {
+      alert(localize('fillSubjectContent'));
+      return;
+    }
+
+    const supplierIds = tenderDetails.targetedUsers.map(targetedUser => targetedUser._id); // Get all targeted users
+
+    try {
+      const response = await fetch(`/api/mail/sendToSuppliers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          supplierIds,
+          subject: mailSubject,
+          content: mailContent,
+          tenderId: id,
+        }),
+      });
+
+      if (response.ok) {
+        alert(localize('mailSentSuccess'));
+      } else {
+        alert(localize('mailSentError'));
+      }
+
+      setMailSubject('');
+      setMailContent('');
+    } catch (err) {
+      console.error(localize('errorSendingMail'), err);
+      alert(localize('mailSentError'));
+    }
   };
 
   const renderTenderDetails = (details) => (
@@ -178,6 +217,49 @@ const ViewTender = () => {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {/* Show the list of targetedUsers */}
+        {permissionRoles.viewBids.includes(userData.role) && (
+          <div className="mb-3">
+            <label className="form-label">{localize('targetedUsers')}</label>
+            <ul>
+              {tenderDetails.targetedUsers.map((targetedUser, index) => (
+                <li key={index}>
+                  {targetedUser.username}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Mail sending section */}
+        {permissionRoles.viewBids.includes(userData.role) && (
+          <div className="send-mail-section mt-5">
+            <h5>{localize('sendMailToSuppliers')}:</h5>
+            <div className="mb-3">
+              <label>{localize('subject')}</label>
+              <input
+                type="text"
+                className="form-control"
+                value={mailSubject}
+                onChange={(e) => setMailSubject(e.target.value)}
+                placeholder={localize('enterMailSubject')}
+              />
+            </div>
+            <div className="mb-3">
+              <label>{localize('content')}</label>
+              <textarea
+                className="form-control"
+                value={mailContent}
+                onChange={(e) => setMailContent(e.target.value)}
+                placeholder={localize('enterMailContent')}
+              ></textarea>
+            </div>
+            <button className="btn btn-primary" onClick={handleSendMailToSuppliers}>
+              {localize('sendMail')}
+            </button>
           </div>
         )}
 

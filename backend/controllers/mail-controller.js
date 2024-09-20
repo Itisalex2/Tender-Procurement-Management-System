@@ -114,5 +114,23 @@ const deleteMails = async (req, res) => {
   }
 };
 
+const sendToSuppliers = async (req, res) => {
+  const { supplierIds, subject, content, tenderId } = req.body;
+  const senderId = req.user._id;
 
-module.exports = { getUserMails, updateMailById, markMailsAsRead, deleteMails };
+  try {
+    // Send a mail to each supplier
+    const mailPromises = supplierIds.map(async (supplierId) => {
+      await Mail.sendMail(senderId, supplierId, 'tender', subject, content, tenderId);
+    });
+
+    await Promise.all(mailPromises);
+    res.status(200).json({ message: 'Mails sent successfully' });
+  } catch (error) {
+    console.error('Error sending mail:', error);
+    res.status(500).json({ error: 'Failed to send mail' });
+  }
+}
+
+
+module.exports = { getUserMails, updateMailById, markMailsAsRead, deleteMails, sendToSuppliers };

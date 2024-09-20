@@ -240,6 +240,14 @@ const en = {
   restoreCurrentVersion: 'Restore Current Version',
   changedBy: 'Changed By',
   changedAt: 'Changed At',
+  fillSubjectContent: 'Please fill in the subject and content',
+  mailSentSuccess: 'Mail sent successfully!',
+  mailSentError: 'Failed to send mail',
+  errorSendingMail: 'Error sending mail:',
+  sendMailToSuppliers: 'Send Mail to Suppliers',
+  enterMailSubject: 'Enter mail subject...',
+  enterMailContent: 'Enter mail content...',
+  sendMail: 'Send Mail',
 
   // ViewTenderer page translations
   unableToLoadTenderer: 'Unable to load tenderer',

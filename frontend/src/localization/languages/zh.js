@@ -241,6 +241,14 @@ const zh = {
   restoreCurrentVersion: '恢复当前版本',
   changedBy: '更改者',
   changedAt: '更改时间',
+  fillSubjectContent: '请填写主题和内容',
+  mailSentSuccess: '邮件发送成功！',
+  mailSentError: '邮件发送失败',
+  errorSendingMail: '发送邮件时出错',
+  sendMailToSuppliers: '给供应商发送邮件',
+  enterMailSubject: '输入邮件主题...',
+  enterMailContent: '输入邮件内容...',
+  sendMail: '发送邮件',
 
   // ViewTenderer page translations
   unableToLoadTenderer: '无法加载供应商',
