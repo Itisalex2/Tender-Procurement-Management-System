@@ -36,6 +36,9 @@ This project is a **Tender Procurement Management System** designed to streamlin
      - Track who uploaded each file and when.
      - Specify targeted users and procurement group members for each tender.
      - Prevent tender editing after closure.
+   - **Tender version control**:
+     - Keep track of edits and their reasons
+     - View snapshots of previous versions
 
 ### 3. **Bid Management**
    - **Bid Submission**: Tenderers can place bids on open tenders.
@@ -126,6 +129,9 @@ This project is a **Tender Procurement Management System** designed to streamlin
      - 跟踪每个文件的上传者及其上传时间。
      - 为每个招标指定目标用户和采购组成员。
      - 在招标关闭后禁止编辑。
+   - **招标版本控制**:
+     - 跟踪编辑及其原因
+     - 查看之前版本的快照
 
 ### 3. **投标管理**
    - **投标提交**：投标人可以在开放的招标上提交投标。
