@@ -1,8 +1,8 @@
 const Message = require('../models/message-model');
-const User = require('../models/user-model');
 const Conversation = require('../models/conversation-model');
 const Tender = require('../models/tender-model');
 const { permissionRoles } = require('../../frontend/src/utils/permissions');
+const convertToUTF8 = require("../utils/file-conversion");
 
 const addMessageToConversation = async (req, res) => {
   const { id } = req.params; // tender ID
@@ -49,11 +49,19 @@ const addMessageToConversation = async (req, res) => {
       await tender.save();
     }
 
+    // Create an array of related files metadata
+    const relatedFiles = req.files.map((file) => ({
+      fileName: convertToUTF8(file.originalname),
+      fileUrl: `/uploads/${file.filename}`,
+      uploadedBy: userId,
+    }));
+
     // Create a new message
     const newMessage = new Message({
       sender: userId,
       content,
       conversation: conversation._id,
+      relatedFiles,
     });
 
     await newMessage.save();

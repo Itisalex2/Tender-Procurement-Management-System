@@ -30,7 +30,7 @@ router.get('/:id/bids', viewBids); // View bids for a tender
 router.patch('/:tenderId/bid/:bidId/select-winning-bid', selectWinningBid); // Select a winning bid
 
 // Chat
-router.post('/:id/conversation', addMessageToConversation); // Post a message to a conversation
+router.post('/:id/conversation', upload.array('files'), addMessageToConversation); // Post a message to a conversation
 router.get('/:id/conversation', getConversationMessages); // Get all messages for a tender's conversation
 
 

@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { permissionRoles } from '../utils/permissions';
 import useLocalize from '../hooks/use-localize';
+import FileUpload from './File-Upload';
+import DownloadLink from "./Download-Link";
 
 const Chatbox = ({
   tenderDetails,
@@ -16,7 +18,19 @@ const Chatbox = ({
   const [chatError, setChatError] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const { localize } = useLocalize();
+  const chatBoxRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  };
+
+  const handleFileChange = (updatedFiles) => {
+    setSelectedFiles(updatedFiles);
+  };
 
   const handleSelectConversation = (conversation) => {
     setSelectedConversation(conversation);
@@ -40,6 +54,13 @@ const Chatbox = ({
     // eslint-disable-next-line
   }, [tenderDetails.conversations, userData]);
 
+  // Auto-scroll to the bottom when chat messages or selected conversation changes
+  useEffect(() => {
+    if (isChatOpen && chatMessages.length > 0) {
+      scrollToBottom(); // Scroll to the bottom after chat messages or conversation updates
+    }
+  }, [chatMessages, isChatOpen]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
@@ -50,13 +71,19 @@ const Chatbox = ({
     try {
       const tendererId = selectedConversation ? selectedConversation.user._id : null;
 
+      const formData = new FormData();
+      formData.append('content', messageContent);
+      formData.append('tendererId', tendererId);
+      selectedFiles.forEach((file) => {
+        formData.append('files', file);
+      });
+
       const response = await fetch(`/api/tender/${id}/conversation`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ content: messageContent, tendererId }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -88,7 +115,9 @@ const Chatbox = ({
 
       setChatMessages([...chatMessages, newMessage]);
       setMessageContent('');
+      setSelectedFiles([]);
       setChatError('');
+      scrollToBottom(); // Scroll to bottom after sending the message
     } catch (error) {
       setChatError(error.message);
     } finally {
@@ -126,6 +155,7 @@ const Chatbox = ({
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             zIndex: '999',
           }}
+          ref={chatBoxRef}
         >
           {canViewAllConversations() ? (
             <div>
@@ -139,14 +169,20 @@ const Chatbox = ({
               </ul>
               {selectedConversation && (
                 <>
-                  <h3>
-                    {localize('conversationWith')}: {selectedConversation.user.username}
-                  </h3>
+                  <h3>{localize('conversationWith')}: {selectedConversation.user.username}</h3>
                   <div className="chat-box border p-3" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+                    {/* Display chat messages */}
                     {chatMessages.length > 0 ? (
                       chatMessages.map((msg, index) => (
                         <div key={index} className="chat-message mb-2">
                           <strong>{msg.sender.username}:</strong> {msg.content}
+                          {msg.relatedFiles && msg.relatedFiles.length > 0 && (
+                            <div>
+                              {msg.relatedFiles.map((file, index) => (
+                                <DownloadLink key={index} file={file} />
+                              ))}
+                            </div>
+                          )}
                           <span className="text-muted float-end" style={{ fontSize: '0.9rem' }}>
                             {new Date(msg.timestamp).toLocaleString()}
                           </span>
@@ -168,6 +204,7 @@ const Chatbox = ({
                       onChange={(e) => setMessageContent(e.target.value)}
                       rows="3"
                     ></textarea>
+                    <FileUpload onFilesChange={handleFileChange} files={selectedFiles} setError={setChatError} />
                   </div>
                   <button
                     type="submit"
@@ -183,10 +220,18 @@ const Chatbox = ({
             <div>
               <h2>{localize('questionsAndDiscussions')}</h2>
               <div className="chat-box border p-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {/* Display chat messages */}
                 {chatMessages.length > 0 ? (
                   chatMessages.map((msg, index) => (
                     <div key={index} className="chat-message mb-2">
                       <strong>{msg.sender.username}:</strong> {msg.content}
+                      {msg.relatedFiles && msg.relatedFiles.length > 0 && (
+                        <div>
+                          {msg.relatedFiles.map((file, index) => (
+                            <DownloadLink key={index} file={file} />
+                          ))}
+                        </div>
+                      )}
                       <span className="text-muted float-end" style={{ fontSize: '0.9rem' }}>
                         {new Date(msg.timestamp).toLocaleString()}
                       </span>
@@ -205,6 +250,8 @@ const Chatbox = ({
                     onChange={(e) => setMessageContent(e.target.value)}
                     rows="3"
                   ></textarea>
+
+                  <FileUpload onFilesChange={handleFileChange} files={selectedFiles} setError={setChatError} />
                 </div>
                 <button
                   type="submit"
