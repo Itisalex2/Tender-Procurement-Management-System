@@ -6,7 +6,7 @@ const zh = {
   secretary: '招标秘书',
 
   // Bid status:
-  won: '中标',
+  negotiationCandidate: '议标候选人',
   lost: '未中标',
   pending: '审核中',
 
@@ -99,6 +99,10 @@ const zh = {
   errorMarkingMail: '标记邮件时出错',
   errorDeletingMail: '删除邮件时出错',
   errorFetchingTender: '获取招标信息时出错',
+  selectNegotiationCandidateBidSubject: '您的投标已被选为谈判候选人',
+  selectNegotiationCandidateBidContent: '您的投标已被选为谈判候选人。请查看招标详情以获取更多信息。',
+  deselectNegotiationCandidateBidSubject: '抱歉！您的投标已被取消为谈判候选人',
+  deselectNegotiationCandidateBidContent: '抱歉！您的投标已被取消为谈判候选人。请查看招标详情以获取更多信息。',
 
   // Login page translations
   email: '邮件',
@@ -140,7 +144,7 @@ const zh = {
   Open: '开放',
   Closed: '关闭',
   ClosedAndCanSeeBids: '关闭可查看投标',
-  Awarded: '已授予',
+  NegotiationCandidatesSelected: '已选定议标候选人',
   Failed: '流标',
   searchKeyword: '搜索关键字',
   searchPlaceholder: '搜索标题或描述...',
@@ -157,6 +161,10 @@ const zh = {
   failedToDeleteTender: '删除招标失败',
   failedToConfirmBidViewing: '确认查看投标失败',
   errorConfirmingBidViewing: '确认查看投标时出错：',
+  changeStatusToNegotiationCandidatesSelected: '更改状态为议标候选人已选定',
+  failedToChangeStatus: '更改状态失败',
+  statusChangedToNegotiationCandidatesSelected: '状态已更改为议标候选人已选定',
+  errorChangingStatus: '更改状态时出错',
 
   // PageNotFound page translations
   pageNotFound: '404错误：页面未找到',
@@ -205,14 +213,18 @@ const zh = {
   submittedAt: '提交时间',
 
   // ViewBids page translations
-  unableToSelectWinningBid: '无法选择中标投标。',
-  winningBidSelected: '中标投标已成功选择！',
-  failedToSelectWinningBid: '选择中标投标失败。',
+  unableToSelectNegotiationCandidateBid: '无法选择议标候选人。',
+  negotiationCandidateBidSelected: '议标候选人已选定。',
+  failedToSelectNegotiationCandidateBid: '选择议标候选人失败。',
   noPermissionToViewBids: '您无权查看投标，因为投标尚未公开。',
   unableToFetchBids: '无法获取投标。',
   bidList: '投标列表',
   noBids: '没有投标。',
-  selectAsWinningBid: '选择为中标',
+  selectAsNegotiationCandidateBid: '选择为议标候选人',
+  unableToRemoveNegotiationCandidateBid: '无法移除议标候选人。',
+  negotiationCandidateBidRemoved: '议标候选人已移除。',
+  failedToRemoveNegotiationCandidateBid: '移除议标候选人失败。',
+  removeFromNegotiationCandidateList: '从议标候选人列表中移除',
 
   // ViewOwnBids page translations
   noBidsSubmitted: '您没有提交任何投标。',

@@ -190,7 +190,7 @@ const Mail = () => {
                   }}
                   onClick={() => toggleMailContent(mail._id)}
                 >
-                  <h6 className="mb-0">{localize('subject')}: {mail.subject}</h6>
+                  <h6 className="mb-0">{localize('subject')}: {localize(mail.subject)}</h6>
                 </div>
                 <div
                   className="mail-sender text-muted"
@@ -214,7 +214,7 @@ const Mail = () => {
                   }}
                   onClick={() => toggleMailContent(mail._id)}
                 >
-                  {mail.content}
+                  {localize(mail.content)}
                 </div>
                 <small className="text-muted" style={{ marginLeft: 'auto' }}>
                   {new Date(mail.timestamp).toLocaleString()}
@@ -223,7 +223,7 @@ const Mail = () => {
 
               {expandedMail === mail._id && (
                 <div>
-                  <p>{localize('content')}: {mail.content}</p>
+                  <p>{localize('content')}: {localize(mail.content)}</p>
                   {mail.type === 'tender' && mail.relatedItem && (
                     <button
                       className="btn btn-primary mt-3"

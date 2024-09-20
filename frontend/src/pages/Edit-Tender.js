@@ -48,14 +48,15 @@ const EditTender = () => {
   // Control submitting changes
   const [submitting, setSubmitting] = useState(false);
 
+  const formatToLocalDatetime = (dateString) => {
+    const date = new Date(dateString);
+    const offset = date.getTimezoneOffset(); // Get the timezone offset in minutes
+    date.setMinutes(date.getMinutes() - offset); // Adjust to local timezone
+    return date.toISOString().slice(0, 16); // Return in YYYY-MM-DDTHH:MM format
+  };
+
   useEffect(() => {
     if (tender) {
-      const formatToLocalDatetime = (dateString) => {
-        const date = new Date(dateString);
-        const offset = date.getTimezoneOffset(); // Get the timezone offset in minutes
-        date.setMinutes(date.getMinutes() - offset); // Adjust to local timezone
-        return date.toISOString().slice(0, 16); // Return in YYYY-MM-DDTHH:MM format
-      };
 
       setFormData({
         title: tender.title,
@@ -164,6 +165,8 @@ const EditTender = () => {
         ...prevFormData,
         ...data,
         relatedFiles: data.relatedFiles,
+        issueDate: formatToLocalDatetime(data.issueDate),
+        closingDate: formatToLocalDatetime(data.closingDate),
       }));
 
       // Clear the newFiles state as they've been submitted

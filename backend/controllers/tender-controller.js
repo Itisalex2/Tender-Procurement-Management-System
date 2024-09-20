@@ -226,8 +226,35 @@ const deleteTenderById = async (req, res) => {
   }
 };
 
+const changeTenderStatusToNegotiationCandidatesSelected = async (req, res) => {
+  const { id } = req.params;
+  const tenderId = id;
+
+  try {
+    // Find the tender by its ID
+    const tender = await Tender.findById(tenderId);
+
+    if (!tender) {
+      return res.status(404).json({ error: 'Tender not found' });
+    }
+
+    // Ensure that the current status is 'ClosedAndCanSeeBids'
+    if (tender.status !== 'ClosedAndCanSeeBids') {
+      return res.status(400).json({ error: 'Invalid status for this action' });
+    }
+
+    // Change the status to 'NegotiationCandidatesSelected'
+    tender.status = 'NegotiationCandidatesSelected';
+    await tender.save();
+
+    res.status(200).json(tender);
+  } catch (error) {
+    console.error('Error updating tender status:', error);
+    res.status(500).json({ error: 'Failed to update tender status' });
+  }
+};
 
 
 module.exports = {
-  createTender, getTenders, updateTenderById, getTenderById, deleteTenderById,
+  createTender, getTenders, updateTenderById, getTenderById, deleteTenderById, changeTenderStatusToNegotiationCandidatesSelected,
 };

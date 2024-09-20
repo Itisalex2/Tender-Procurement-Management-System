@@ -68,6 +68,28 @@ const ManageTenders = () => {
 
   const handleSearch = (e) => setSearchQuery(e.target.value.toLowerCase());
 
+  const handleStatusChangeToNegotiationCandidatesSelected = async (tenderId) => {
+    try {
+      const response = await fetch(`/api/tender/${tenderId}/change-status-to-negotiation-candidates-selected`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(localize('failedToChangeStatus'));
+      }
+
+      const updatedTender = await response.json();
+      setTenders(tenders.map(tender => (tender._id === tenderId ? updatedTender : tender)));
+      alert(localize('statusChangedToNegotiationCandidatesSelected'));
+    } catch (error) {
+      console.error(localize('errorChangingStatus'), error);
+    }
+  };
+
   // Filter tenders based on search query (title or description)
   const filteredTenders = tenders.filter((tender) => {
     return (
@@ -75,6 +97,7 @@ const ManageTenders = () => {
       tender.description.toLowerCase().includes(searchQuery)
     );
   });
+
 
   if (loading || !userData) return <div>{localize('loading')}</div>;
   if (error) return <div>{localize('error')}: {error}</div>;
@@ -97,7 +120,7 @@ const ManageTenders = () => {
             <option value="Open">{localize('Open')}</option>
             <option value="Closed">{localize('Closed')}</option>
             <option value="ClosedAndCanSeeBids">{localize('ClosedAndCanSeeBids')}</option>
-            <option value="Awarded">{localize('Awarded')}</option>
+            <option value="NegotiationCandidatesSelected">{localize('NegotiationCandidatesSelected')}</option>
             <option value="Failed">{localize('Failed')}</option>
           </select>
         </div>
@@ -157,6 +180,15 @@ const ManageTenders = () => {
                       {permissionRoles.deleteTender.includes(userData.role) && (
                         <button className="btn btn-danger" onClick={(e) => handleDeleteTender(e, tender._id)}>
                           {localize('delete')}
+                        </button>
+                      )}
+                      {/* Change status to NegotiationCandidatesSelected button */}
+                      {tender.status === 'ClosedAndCanSeeBids' && (
+                        <button
+                          className="btn btn-success"
+                          onClick={() => handleStatusChangeToNegotiationCandidatesSelected(tender._id)}
+                        >
+                          {localize('changeStatusToNegotiationCandidatesSelected')}
                         </button>
                       )}
                       {userData && permissionRoles.confirmAllowViewBids.includes(userData.role) && tender.status === 'Closed' && (

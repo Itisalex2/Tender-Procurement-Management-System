@@ -196,7 +196,7 @@ const addBidEvaluation = async (req, res) => {
   }
 };
 
-const selectWinningBid = async (req, res) => {
+const selectNegotiationCandidateBid = async (req, res) => {
   const { tenderId, bidId } = req.params;
   const userId = req.user._id;
 
@@ -204,54 +204,72 @@ const selectWinningBid = async (req, res) => {
     // Find the tender and populate its bids
     const tender = await Tender.findById(tenderId).populate('bids');
 
-
-
     if (!tender) {
       return res.status(404).json({ error: '招标不存在' });
     }
 
-    // Set the status of the winning bid to 'won'
-    const winningBid = await Bid.findById(bidId).populate('bidder');
-    if (!winningBid) {
+    // Set the status of the selectNegotiationCandidateBid bid to 'negotiationCandidate'
+    const negotiationCandidateBid = await Bid.findById(bidId).populate('bidder');
+    if (!negotiationCandidateBid) {
       return res.status(404).json({ error: 'Bid not found' });
     }
 
-    winningBid.status = 'won';
-    await winningBid.save();
+    negotiationCandidateBid.status = 'negotiationCandidate';
+    await negotiationCandidateBid.save();
 
     // Set all other bids in the tender to 'lost'
     for (let bid of tender.bids) {
-      if (bid._id.toString() !== bidId) {
+      if (bid._id.toString() !== bidId && bid.status !== 'negotiationCandidate') {
         bid.status = 'lost';
         await bid.save();
       }
     }
 
-    // Create and save mail to the winner
-    const mail = new Mail({
-      sender: userId,
-      recipient: winningBid.bidder._id,
-      type: 'bid',
-      subject: `您${tender.title}的投标已被选中`,
-      content: `恭喜！您的投标已被选中。请查看招标详情以获取更多信息。`,
-      relatedItem: winningBid._id,
-    });
-
-    const savedMail = await mail.save();
-
-    // Push the saved mail to the winner's inbox
-    winningBid.bidder.inbox.push(savedMail._id);
-    await winningBid.bidder.save();
-
-    // Update the tender's winning bid
-    tender.winningBid = bidId;
-    tender.status = 'Awarded';
+    // Update the tender's selectNegotiationCandidateBid
+    tender.negotiationCandidatesBids.push(bidId);
     await tender.save();
+
+    Mail.sendMail(userId, negotiationCandidateBid.bidder._id, 'bid', 'selectNegotiationCandidateBidSubject', 'selectNegotiationCandidateBidContent', bidId);
 
     res.status(200).json(bidId);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update bids' });
+  }
+};
+
+const removeNegotiationCandidateBid = async (req, res) => {
+  const { tenderId, bidId } = req.params;
+  const userId = req.user._id;
+
+  try {
+    // Find the tender and populate its bids
+    const tender = await Tender.findById(tenderId).populate('bids');
+
+    if (!tender) {
+      return res.status(404).json({ error: 'Tender not found' });
+    }
+
+    // Find the negotiation candidate bid
+    const negotiationCandidateBid = await Bid.findById(bidId);
+    if (!negotiationCandidateBid) {
+      return res.status(404).json({ error: 'Bid not found' });
+    }
+
+    // Update the status of the bid back to its original state (lost)
+    negotiationCandidateBid.status = 'lost'; // 
+    await negotiationCandidateBid.save();
+
+    // Remove the bid from the tender's `negotiationCandidatesBids` list
+    tender.negotiationCandidatesBids = tender.negotiationCandidatesBids.filter(bid => bid.toString() !== bidId);
+    await tender.save();
+
+    Mail.sendMail(userId, negotiationCandidateBid.bidder._id, 'bid', 'deselectNegotiationCandidateBidSubject', 'deselectNegotiationCandidateBidContent', bidId);
+
+    res.status(200).json({ message: 'Bid removed from negotiation candidate list', bidId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to remove negotiation candidate bid' });
   }
 };
 
@@ -263,5 +281,6 @@ module.exports = {
   viewBids,
   getBidById,
   addBidEvaluation,
-  selectWinningBid
+  selectNegotiationCandidateBid,
+  removeNegotiationCandidateBid
 };

@@ -26,7 +26,7 @@ const bidSchema = new mongoose.Schema({
     uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   }],
   evaluations: { type: [bidEvaluationSchema], default: [] },
-  status: { type: String, enum: ['pending', 'won', 'lost'], default: 'pending' }
+  status: { type: String, enum: ['pending', 'negotiationCandidate', 'lost'], default: 'pending' }
 });
 
 const Bid = mongoose.model('Bid', bidSchema);

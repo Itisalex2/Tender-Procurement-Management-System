@@ -40,8 +40,8 @@ This project is a **Tender Procurement Management System** designed to streamlin
 ### 3. **Bid Management**
    - **Bid Submission**: Tenderers can place bids on open tenders.
    - **Bid Viewing**: The Tender Procurement Group can collectively agree to open bids for viewing after tender closure.
-   - **Bid Evaluation**: After tender closure, authorized users can evaluate bids and select the winning bid.
-   - **Bid Notification**: Notify the winning tenderer via email.
+   - **Bid Evaluation**: After tender closure, authorized users can evaluate bids and select the  bids for negotiation.
+   - **Bid Notification**: Notify the negotiation candidate tenderer via email.
 
 ### 4. **Tenderer Management**
    - **Tenderer Database**: A list of tenderers is maintained, allowing admins and secretaries to manage them.

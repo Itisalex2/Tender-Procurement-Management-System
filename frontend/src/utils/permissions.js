@@ -21,15 +21,16 @@ const permissionRoles = {
   confirmAllowViewBids: ['tenderProcurementGroup'],
   viewBids: ['admin', 'tenderProcurementGroup', 'secretary'],
   viewAndEditBidEvaluations: ['admin', 'tenderProcurementGroup'],
-  selectWinningBid: ['secretary'],
+  selectNegotiationCandidateBid: ['secretary'],
   viewOwnBids: ['tenderer'], // Only tenderers have bids
 };
 
 // Permissions based on the status of various things
 const permissionStatus = {
   // Tenders
-  viewBids: ['ClosedAndCanSeeBids', 'Awarded'],
+  viewBids: ['ClosedAndCanSeeBids', 'NegotiationCandidatesSelected'],
   editTender: ['Open'],
+  selectNegotiationCandidateBid: ['ClosedAndCanSeeBids'],
 }
 
 module.exports = { permissionRoles, permissionStatus };

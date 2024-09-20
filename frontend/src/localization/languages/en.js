@@ -6,7 +6,7 @@ const en = {
   secretary: 'Secretary',
 
   // Bid status:
-  won: 'Won',
+  negotiationCandidate: 'Negotiation Candidate',
   lost: 'Lost',
   pending: 'Pending',
 
@@ -99,6 +99,10 @@ const en = {
   errorMarkingMail: 'Error marking mail as read/unread',
   errorDeletingMail: 'Error deleting mails',
   errorFetchingTender: 'Error fetching tender',
+  selectNegotiationCandidateBidSubject: 'Your bid has been selected as a negotiation candidate',
+  selectNegotiationCandidateBidContent: 'Your bid has been selected as a negotiation candidate. Please view the tender details for more information.',
+  deselectNegotiationCandidateBidSubject: 'Sorry! Your bid has been deselected as a negotiation candidate',
+  deselectNegotiationCandidateBidContent: 'Sorry! Your bid has been deselected as a negotiation candidate. Please view the tender details for more information.',
 
   // Login page translations
   email: 'Email',
@@ -133,6 +137,10 @@ const en = {
   notProvided: 'Not Provided',
   viewDetails: 'View Details',
   noTenderersFound: 'No tenderers found matching the criteria',
+  changeStatusToNegotiationCandidatesSelected: 'Change Status to Negotiation Candidates Selected',
+  failedToChangeStatus: 'Failed to change status',
+  statusChangedToNegotiationCandidatesSelected: 'Status changed to Negotiation Candidates Selected',
+  errorChangingStatus: 'Error changing status:',
 
   // ManageTenders page translations
   filterTenderStatus: 'Filter Tender Status',
@@ -140,7 +148,7 @@ const en = {
   Open: 'Open',
   Closed: 'Closed',
   ClosedAndCanSeeBids: 'Closed (Bids Viewable)',
-  Awarded: 'Awarded',
+  NegotiationCandidatesSelected: 'Negotiation candidates selected',
   Failed: 'Failed',
   searchKeyword: 'Search Keyword',
   searchPlaceholder: 'Search title or description...',
@@ -204,14 +212,18 @@ const en = {
   submittedAt: 'Submitted At',
 
   // ViewBids page translations
-  unableToSelectWinningBid: 'Unable to select winning bid.',
-  winningBidSelected: 'Winning bid selected successfully!',
-  failedToSelectWinningBid: 'Failed to select winning bid.',
+  unableToSelectNegotiationCandidateBid: 'Unable to select negotation candidate.',
+  negotiationCandidateBidSelected: 'Negotiation candidate selected successfully!',
+  failedToSelectNegotiationCandidateBid: 'Failed to select negotiation candidate.',
   noPermissionToViewBids: 'You are not authorized to view bids because bids are not yet public.',
   unableToFetchBids: 'Unable to fetch bids.',
   bidList: 'Bid List',
   noBids: 'No bids.',
-  selectAsWinningBid: 'Select as Winning Bid',
+  selectAsNegotiationCandidateBid: 'Select as Negotiation Candidate Bid',
+  unableToRemoveNegotiationCandidateBid: 'Unable to remove negotiation candidate bid.',
+  negotiationCandidateBidRemoved: 'Negotiation candidate bid removed successfully!',
+  failedToRemoveNegotiationCandidateBid: 'Failed to remove negotiation candidate bid.',
+  removeFromNegotiationCandidateList: 'Remove from Negotiation Candidate List',
 
   // ViewOwnBids page translations
   noBidsSubmitted: 'You have not submitted any bids.',
