@@ -131,3 +131,6 @@ dist
 
 # Upload directory
 backend/uploads/
+
+# npm in China
+*.npmrc
