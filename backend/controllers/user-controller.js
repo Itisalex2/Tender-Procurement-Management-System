@@ -10,7 +10,7 @@ const EventLog = require('../models/event-log-model');
 
 // Helper function to create a token
 const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' });
+  return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '100d' });
 };
 
 // User login
