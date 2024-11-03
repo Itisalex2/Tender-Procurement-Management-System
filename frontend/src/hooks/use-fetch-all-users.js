@@ -35,7 +35,7 @@ const useFetchAllUsers = (roles = '') => {
     };
 
     fetchUsers();
-  }, [user.token, roles, localize]);
+  }, [user.token, roles]);
 
   return { users, loading, error };
 };
