@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import useLocalize from '../hooks/use-localize';
 
-const FileUpload = ({ onFilesChange, files, setError }) => {
+const FileUpload = ({ onFilesChange, files, setError, uploadProgress }) => {
   const [fileInputs, setFileInputs] = useState([{ id: Date.now(), file: null }]); // Array to store file inputs, each with unique ID and file
   const [errorMessage, setErrorMessage] = useState('');
   const { localize } = useLocalize();
@@ -93,48 +93,58 @@ const FileUpload = ({ onFilesChange, files, setError }) => {
       {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
 
       {/* File inputs */}
-      {fileInputs.map((input, index) => (
-        <div
-          key={input.id}
-          className="mb-2"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-        >
-          <input
-            type="file"
-            className="form-control"
-            onChange={(e) => handleFileChange(e, input.id)}
-            ref={(el) => (fileInputRefs.current[input.id] = el)} // Store a reference to each file input element
-            style={{ flex: '1' }} // Make the input take up as much space as possible
-          />
-          <button
-            type="button"
-            onClick={() => handleFileRemove(input.id)}
-            style={{
-              backgroundColor: 'red',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50%',
-              cursor: 'pointer',
-              width: '24px',
-              height: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: '10px',
-              fontSize: '16px'
-            }}
-          >
-            &times;
-          </button>
+      {fileInputs.map((input) => (
+        <div key={input.id} className="mb-2">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <input
+              type="file"
+              className="form-control"
+              onChange={(e) => handleFileChange(e, input.id)}
+              ref={(el) => (fileInputRefs.current[input.id] = el)}
+              style={{ flex: '1' }}
+            />
+            <button
+              type="button"
+              onClick={() => handleFileRemove(input.id)}
+              style={{
+                backgroundColor: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: '10px',
+                fontSize: '16px',
+              }}
+            >
+              &times;
+            </button>
+          </div>
+
+          {/* Display upload progress bar for this file */}
+          {uploadProgress && input.file && uploadProgress[input.file.name] !== undefined && (
+            <div className="progress mt-1">
+              <div
+                className="progress-bar"
+                role="progressbar"
+                style={{ width: `${uploadProgress[input.file.name]}%` }}
+                aria-valuenow={uploadProgress[input.file.name]}
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                {Math.round(uploadProgress[input.file.name])}%
+              </div>
+            </div>
+          )}
         </div>
       ))}
 
       {/* Add file button */}
-      <button
-        type="button"
-        onClick={handleAddFile}
-        className="btn btn-secondary mt-2"
-      >
+      <button type="button" onClick={handleAddFile} className="btn btn-secondary mt-2">
         {localize('addFile')}
       </button>
     </div>

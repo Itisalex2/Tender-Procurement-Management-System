@@ -66,6 +66,7 @@ const en = {
   loading: 'Loading...',
   fetchUsersError: 'Error fetching users: {0}',
   invalidPhoneNumber: 'Invalid phone number',
+  uploading: 'Uploading...',
 
   // EditTender page translations
   editTender: 'Edit Tender',

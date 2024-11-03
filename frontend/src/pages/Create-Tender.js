@@ -32,6 +32,8 @@ const CreateTender = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFilesChange = (files) => {
     setRelatedFiles(files);
@@ -45,10 +47,12 @@ const CreateTender = () => {
     setShowConfirm(true);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
+    setIsUploading(true);
+    setUploadProgress(0);
 
     const tenderData = {
       title,
@@ -65,41 +69,53 @@ const CreateTender = () => {
       procurementGroup,
     };
 
-    try {
-      const formData = new FormData();
-      Object.keys(tenderData).forEach((key) => {
-        if (key === 'contactInfo' || key === 'targetedUsers' || key === 'procurementGroup') {
-          formData.append(key, JSON.stringify(tenderData[key]));
-        } else {
-          formData.append(key, tenderData[key]);
-        }
-      });
-
-      relatedFiles.forEach((file) => {
-        formData.append('relatedFiles', file);
-      });
-
-      const response = await fetch('/api/tender/create', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: formData,
-      });
-
-      // Check if the response is not OK
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.error || localize('createTenderError'));
+    const formData = new FormData();
+    Object.keys(tenderData).forEach((key) => {
+      if (
+        key === 'contactInfo' ||
+        key === 'targetedUsers' ||
+        key === 'procurementGroup'
+      ) {
+        formData.append(key, JSON.stringify(tenderData[key]));
+      } else {
+        formData.append(key, tenderData[key]);
       }
+    });
 
-      setSuccess(true);
-      setShowConfirm(false);
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
-      throw new Error(err.message || localize('createTenderError'))
-    }
+    relatedFiles.forEach((file) => {
+      formData.append('relatedFiles', file);
+    });
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '/api/tender/create', true);
+    xhr.setRequestHeader('Authorization', `Bearer ${user.token}`);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        setUploadProgress(percentComplete);
+      }
+    };
+
+    xhr.onload = () => {
+      setIsUploading(false);
+      if (xhr.status === 200 || xhr.status === 201) {
+        setSuccess(true);
+        setShowConfirm(false);
+        navigate('/');
+      } else {
+        const response = JSON.parse(xhr.responseText);
+        setError(response.error || localize('createTenderError'));
+      }
+    };
+
+    xhr.onerror = () => {
+      setIsUploading(false);
+      setError(localize('createTenderError'));
+    };
+
+    xhr.send(formData);
   };
 
   // Handle checkbox selection for targeted users
@@ -118,7 +134,9 @@ const CreateTender = () => {
     <div className="container mt-5">
       <h1 className="mb-4">{localize('createTender')}</h1>
       {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{localize('tenderCreated')}</div>}
+      {success && (
+        <div className="alert alert-success">{localize('tenderCreated')}</div>
+      )}
 
       {/* Confirmation Modal */}
       {showConfirm && (
@@ -127,7 +145,11 @@ const CreateTender = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">{localize('confirmCreateTender')}</h5>
-                <button type="button" className="close" onClick={() => setShowConfirm(false)}>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowConfirm(false)}
+                >
                   <span>&times;</span>
                 </button>
               </div>
@@ -135,11 +157,21 @@ const CreateTender = () => {
                 <p>{localize('confirmCreateTenderBody')}</p>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowConfirm(false)}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowConfirm(false)}
+                  disabled={isUploading}
+                >
                   {localize('cancel')}
                 </button>
-                <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                  {localize('confirm')}
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSubmit}
+                  disabled={isUploading}
+                >
+                  {isUploading ? localize('uploading') : localize('confirm')}
                 </button>
               </div>
             </div>
@@ -283,10 +315,32 @@ const CreateTender = () => {
           ))}
         </div>
 
-        <FileUpload onFilesChange={handleFilesChange} files={relatedFiles} />
+        <FileUpload onFilesChange={handleFilesChange} files={relatedFiles} setError={setError} />
 
-        <button type="button" className="btn btn-primary" onClick={handleConfirm}>
-          {localize('createTender')}
+        {/* Display the upload progress bar */}
+        {isUploading && (
+          <div className="progress mt-2">
+            <div
+              className="progress-bar"
+              role="progressbar"
+              style={{ width: `${uploadProgress}%` }}
+              aria-valuenow={uploadProgress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              {Math.round(uploadProgress)}%
+            </div>
+          </div>
+        )}
+
+        {/* Submit button */}
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleConfirm}
+          disabled={isUploading}
+        >
+          {isUploading ? localize('uploading') : localize('createTender')}
         </button>
       </form>
     </div>

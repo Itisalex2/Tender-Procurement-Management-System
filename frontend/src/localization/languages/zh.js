@@ -66,6 +66,7 @@ const zh = {
   loading: '加载中...',
   fetchUsersError: '获取用户时出错: {0}',
   invalidPhoneNumber: '电话号码格式不正确',
+  uploading: '上传中...',
 
   // EditTender page translations
   editTender: '编辑招标',
