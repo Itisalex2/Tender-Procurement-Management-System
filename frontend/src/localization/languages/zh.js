@@ -266,7 +266,7 @@ const zh = {
   verifyTenderer: '验证供应商',
   unverifyTenderer: '取消验证',
   businessLicense: '营业执照',
-  legalRepresentativeBusinessCard: '法人名片',
+  legalRepresentativeBusinessCard: '法人身份证',
   download: '下载',
   comments: '评论',
   noComments: '无评论',
@@ -316,8 +316,8 @@ const zh = {
   businessLicenseLabel: '营业执照 (jpg, png, pdf) 5MB 上限',
   currentFile: '当前文件',
   downloadBusinessLicense: '下载营业执照',
-  legalRepBusinessCardLabel: '法人名片 (jpg, png, pdf) 5MB 上限',
-  downloadLegalRepBusinessCard: '下载法人名片',
+  legalRepBusinessCardLabel: '法人身份证 (jpg, png, pdf) 5MB 上限',
+  downloadLegalRepBusinessCard: '下载法人身份证',
   saveCompanyDetails: '保存企业详情',
 
   // User-List translations
