@@ -32,7 +32,13 @@ async function sendSMSHelper(phoneNumber, signName, templateCode, templateParam)
   };
 
   try {
-    const response = await client.request('SendRandomSMS', params, requestOption);
+    const response = await client.request('SendSms', params, requestOption);
+    if (response.Code === 'OK') {
+      console.log("SMS sent successfully", response);
+    }
+    else {
+      console.log("SMS did not send properly", response);
+    }
     return response;
   } catch (error) {
     console.error('Error sending SMS:', error);
