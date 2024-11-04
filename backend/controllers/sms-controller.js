@@ -32,7 +32,7 @@ async function sendSMSHelper(phoneNumber, signName, templateCode, templateParam)
   };
 
   try {
-    const response = await client.request('SendSMS', params, requestOption);
+    const response = await client.request('SendRandomSMS', params, requestOption);
     return response;
   } catch (error) {
     console.error('Error sending SMS:', error);
@@ -41,7 +41,7 @@ async function sendSMSHelper(phoneNumber, signName, templateCode, templateParam)
 }
 
 // Send randomn 6-digit code to the user's phone number
-const sendSMS = async (req, res) => {
+const sendRandomSMS = async (req, res) => {
   const { phoneNumber, signName, templateCode } = req.body;
 
   // Generate a random 6-digit code
@@ -101,5 +101,5 @@ const verifyCode = async (req, res) => {
   }
 };
 
-module.exports = { sendSMS, verifyCode };
+module.exports = { sendRandomSMS, verifyCode };
 
