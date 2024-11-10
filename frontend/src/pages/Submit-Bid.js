@@ -23,6 +23,9 @@ const SubmitBid = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState(false);
 
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
   const hasPermissionToSubmitBid = () => {
     return userData && permissionRoles.submitBid.includes(userData.role);
   };
@@ -31,7 +34,7 @@ const SubmitBid = () => {
     updateUserById(userData._id, { newBidId: bidId });
   };
 
-  const handleSubmitBid = async (e) => {
+  const handleSubmitBid = (e) => {
     e.preventDefault();
 
     if (errorMsg) {
@@ -43,6 +46,11 @@ const SubmitBid = () => {
       return;
     }
 
+    setIsUploading(true);
+    setUploadProgress(0);
+    setErrorMsg('');
+    setSuccess(false);
+
     // Create form data to include files
     const formData = new FormData();
     formData.append('amount', amount);
@@ -51,32 +59,42 @@ const SubmitBid = () => {
       formData.append('files', file);
     });
 
-    try {
-      const response = await fetch(`/api/tender/${id}/bid`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: formData, // Send formData including files
-      });
+    const xhr = new XMLHttpRequest();
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || localize('submitBidFailed'));
+    xhr.open('POST', `/api/tender/${id}/bid`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${user.token}`);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        setUploadProgress(percentComplete);
       }
+    };
 
-      const data = await response.json();
-      // Update the tenderer's bid list
-      handleAddBidToTenderer(data._id);
+    xhr.onload = () => {
+      setIsUploading(false);
+      if (xhr.status === 200 || xhr.status === 201) {
+        const data = JSON.parse(xhr.responseText);
+        // Update the tenderer's bid list
+        handleAddBidToTenderer(data._id);
 
-      setSuccess(true);
-      setErrorMsg('');
-      setTimeout(() => {
-        navigate(`/tender/${id}`);
-      }, 2000);
-    } catch (err) {
-      setErrorMsg(err.message);
-    }
+        setSuccess(true);
+        setErrorMsg('');
+        setTimeout(() => {
+          navigate(`/tender/${id}`);
+        }, 2000);
+      } else {
+        const response = JSON.parse(xhr.responseText);
+        setErrorMsg(response.error || localize('submitBidFailed'));
+      }
+    };
+
+    xhr.onerror = () => {
+      setIsUploading(false);
+      setErrorMsg(localize('submitBidFailed'));
+    };
+
+    xhr.send(formData);
   };
 
   const handleFilesChange = (updatedFiles) => {
@@ -129,22 +147,53 @@ const SubmitBid = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
+            disabled={isUploading}
           />
         </div>
 
         <div className="mb-3">
-          <label htmlFor="content" className="form-label">{localize('additionalInformation')}</label>
+          <label htmlFor="content" className="form-label">
+            {localize('additionalInformation')}
+          </label>
           <textarea
             className="form-control"
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            disabled={isUploading}
           ></textarea>
         </div>
 
-        <FileUpload onFilesChange={handleFilesChange} setError={setErrorMsg} />
+        <FileUpload
+          onFilesChange={handleFilesChange}
+          files={files}
+          setError={setErrorMsg}
+          isUploading={isUploading}
+        />
 
-        <button type="submit" className="btn btn-primary">{localize('submitBid')}</button>
+        {/* Display the upload progress bar */}
+        {isUploading && (
+          <div className="progress mt-2">
+            <div
+              className="progress-bar"
+              role="progressbar"
+              style={{ width: `${uploadProgress}%` }}
+              aria-valuenow={uploadProgress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              {Math.round(uploadProgress)}%
+            </div>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isUploading}
+        >
+          {isUploading ? localize('uploading') : localize('submitBid')}
+        </button>
       </form>
     </div>
   );
